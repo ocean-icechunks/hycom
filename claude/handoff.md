@@ -11,23 +11,27 @@ uncompressed NetCDF-3 files, 305.8 TB), published to Source Cooperative at
 `ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis`, with tests going to
 `ocean-icechunks/test-repo/hycom`.
 
-Research, the plan and a **local smoke test** are done (2026-09-18). The smoke test lives
-on branch `smoke-test-issue-1` (`hycom_virtual.py`, `hycom-smoke-test-local.ipynb`,
-`requirements.txt`) and passed in a clean venv; a second smoke test wrote the same window to
-the Source Cooperative scratch prefix and a gridlook viewer sits beside it. There is no
-production notebook and nothing at the published prefix. What it taught, including several things
-in the code that look wrong and are deliberate, is in
-[notes/smoke-test-findings.md](notes/smoke-test-findings.md). The plan, the
-measurements behind it, and every decision Eli has made are in
-[notes/plan-issue-1.md](notes/plan-issue-1.md) — read it before touching anything. The
-scripts that produced the measurements are in `notes/issue-1-research/`.
+**The store is built** (2026-09-18): tag `v1`, 10.45 M references from 63,341 files, validated
+from the public URL, with a gridlook viewer at `ocean-icechunks/hycom/viewer/`. Everything is
+on branch `smoke-test-issue-1` (no PR yet): `hycom_virtual.py`, the production notebook
+`hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
+Still to do for issue #1: the README, mirroring the docs beside the store, and the PR.
 
-The two facts most likely to be got wrong:
+Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
+every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
+(things in the code that look wrong and are deliberate),
+[notes/production-build-2026-09-18.md](notes/production-build-2026-09-18.md) (the build, and
+why `chunks={}` must not be used on this store). Research scripts are in
+`notes/issue-1-research/`.
+
+The three facts most likely to be got wrong:
 
 - **There are two header layouts, 40 bytes apart, and file size — not experiment number —
   tells them apart.** Offsets must come from each file's own header. Reusing one file's
   offsets as a template (as the rsignell/hycom-kerchunk notebook does) misplaces data in
   27,439 files.
+- **Open the store with `chunks=None`, never `chunks={}`** — 2.57 million dask chunks per 4-D
+  variable. This contradicts the skill's general advice and is specific to this store's size.
 - **The time axis is deliberately regular with 931 gaps left as NaN**, and `tau` (NaN at
   gaps) is the presence indicator. A `has_data` flag was considered and rejected as
   invented.
@@ -51,11 +55,11 @@ The two facts most likely to be got wrong:
 
 ## Open threads
 
-- The scratch-prefix smoke test has run and a viewer is published beside it
-  (`test-repo/hycom/`); Eli is checking whether the viewer renders with a CORS extension.
-  After that comes the production notebook, which does not exist yet.
-- `tau`/`experiment` became auxiliary coordinates during the smoke test; Eli has not yet
-  confirmed that.
-- Source bucket has no CORS, so the viewer will not show data in an ordinary browser; a
-  request to help@hycom.org / COAPS is undrafted.
-- README is a stub: the reuse statement is missing and is part of the README deliverable.
+- README with reuse statement; mirror the docs to `ocean-icechunks/hycom/` from merged `main`;
+  open the PR. Eli has confirmed `tau`/`experiment` stay auxiliary coordinates.
+- Eli has seen the test viewer render (with a CORS extension); the production viewer is
+  published and not yet looked at.
+- Source bucket has no CORS; a request to help@hycom.org / COAPS is undrafted.
+- Two things worth feeding back to the `virtual-icechunk` skill: `to_icechunk` has no
+  `encoding=` argument in VirtualiZarr 2.7.3, and `chunks={}` is wrong advice at this scale.
+  nmfs-opensci/agent-skills#19 (viewer + README on every scratch test) is open, unmerged.
