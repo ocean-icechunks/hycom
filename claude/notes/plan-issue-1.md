@@ -104,13 +104,12 @@ source so reads decode to float32.
   experiment ID in the dataset `title`**, plus `references`/source URLs.
 - Also ship a CSV of the 931 missing time steps beside the store.
 
-### Proposed, not yet confirmed
-
-- Per-time `experiment` variable: `int16` along `time`, 530–539 as in the filenames, CF
-  `flag_values`/`flag_meanings` (`expt_53.0 … expt_53.9`), and `0 = no_source_file` rather
-  than a fill value so it stays integer and nothing is guessed at gaps (experiment
-  boundaries fall at 12Z, the hour most often missing).
-- Exact `title` wording.
+- **Per-time `experiment` variable — yes.** `int16` along `time`, 530–539 as in the
+  filenames, CF `flag_values`/`flag_meanings` (`expt_53.0 … expt_53.9`), and
+  `0 = no_source_file` rather than a fill value, so it stays integer and nothing is guessed
+  at gaps (experiment boundaries fall at 12Z, the hour most often missing).
+- **Title**: "HYCOM GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X, 3-hourly,
+  1994–2015".
 
 ## CF repairs (metadata only; checked against standard-name table v94 and UDUNITS)
 

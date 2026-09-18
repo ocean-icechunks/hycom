@@ -11,7 +11,8 @@ uncompressed NetCDF-3 files, 305.8 TB), published to Source Cooperative at
 `ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis`, with tests going to
 `ocean-icechunks/test-repo/hycom`.
 
-Research and a feasibility probe are done; **no build code exists yet**. The plan, the
+Research and a feasibility probe are done and the plan is fully decided (2026-09-18);
+**no build code exists yet**. The plan, the
 measurements behind it, and every decision Eli has made are in
 [notes/plan-issue-1.md](notes/plan-issue-1.md) — read it before touching anything. The
 scripts that produced the measurements are in `notes/issue-1-research/`.
@@ -40,8 +41,6 @@ The two facts most likely to be got wrong:
 
 ## Open threads
 
-- Two plan items await Eli's confirmation: the per-time `experiment` variable and the exact
-  dataset `title` wording.
 - Smoke-test notebook not started.
 - Source bucket has no CORS, so the viewer will not show data in an ordinary browser; a
   request to help@hycom.org / COAPS is undrafted.
