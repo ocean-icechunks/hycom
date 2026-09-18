@@ -64,3 +64,24 @@ the record is 1.85 TB.
 The full 63,341-file header scan; manifest size and open time at ~10.5 M references (the
 2920-steps-per-manifest split is a guess); any write to Source Cooperative; reads from
 outside us-west-2; reconciling the 931 missing steps with hycom.org's FAQ.
+
+## Scratch-prefix run on Source Cooperative (2026-09-18)
+
+`hycom-smoke-test-sc.ipynb` wrote the 16-step 2004 window (both layouts, one gap) to
+`ocean-icechunks/test-repo/hycom/hycom-gofs-3pt1-reanalysis` — the production layout under
+`test-repo/` — in 36 s. Skeleton 0.8 s, each 8-step region batch about 1 s. Snapshots
+`DNWQJ5FF3HQSTYDCGY30` (skeleton), `8Q9WDGN8GD8NNZGV9QS0`, `YGVMB0HB37Z1BQNXPB4G`.
+Anonymous open from `https://data.source.coop/...` took 0.43 s, the virtual container came
+back from the saved config, and raw `int16` matched netCDF4 for one file of each layout.
+One level 0.56 s, the missing step 0.26 s, a 40-chunk profile 6.0 s — the same as the
+local repo, as expected: data reads go to the HYCOM bucket either way. The notebook is
+committed without outputs (it needs credentials), following `~/icechunks`' convention for
+`*-test-sc` notebooks, so these numbers live here.
+
+A gridlook viewer is at `ocean-icechunks/test-repo/hycom/viewer/` (102 files, 22.4 MB,
+gridlook commit `2649e66`, clean). Transport checked: `index.html`, the catalog, the JS
+bundle and the wasm all return 200 with the right content types. Source Cooperative sends
+`access-control-allow-origin: *` on a ranged GET; the HYCOM bucket sends none — so without
+a CORS extension expect axes and no data. gridlook decodes from the array attributes
+`scale_factor`, `add_offset`, `missing_value`/`_FillValue`, all of which the store carries.
+**Whether it actually renders is Eli's to report** — there is no browser on the hub.

@@ -13,8 +13,9 @@ uncompressed NetCDF-3 files, 305.8 TB), published to Source Cooperative at
 
 Research, the plan and a **local smoke test** are done (2026-09-18). The smoke test lives
 on branch `smoke-test-issue-1` (`hycom_virtual.py`, `hycom-smoke-test-local.ipynb`,
-`requirements.txt`) and passed in a clean venv; nothing has been written to Source
-Cooperative and there is no production notebook. What it taught, including several things
+`requirements.txt`) and passed in a clean venv; a second smoke test wrote the same window to
+the Source Cooperative scratch prefix and a gridlook viewer sits beside it. There is no
+production notebook and nothing at the published prefix. What it taught, including several things
 in the code that look wrong and are deliberate, is in
 [notes/smoke-test-findings.md](notes/smoke-test-findings.md). The plan, the
 measurements behind it, and every decision Eli has made are in
@@ -50,8 +51,9 @@ The two facts most likely to be got wrong:
 
 ## Open threads
 
-- Next per the skill's order: a second smoke test writing to the scratch prefix
-  `ocean-icechunks/test-repo/hycom` (needs a fresh `source-coop login`), then production.
+- The scratch-prefix smoke test has run and a viewer is published beside it
+  (`test-repo/hycom/`); Eli is checking whether the viewer renders with a CORS extension.
+  After that comes the production notebook, which does not exist yet.
 - `tau`/`experiment` became auxiliary coordinates during the smoke test; Eli has not yet
   confirmed that.
 - Source bucket has no CORS, so the viewer will not show data in an ordinary browser; a
