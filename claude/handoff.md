@@ -40,6 +40,11 @@ The two facts most likely to be got wrong:
   (`~` has a small quota; pip's cache fills it).
 - Conventions for README, `requirements.txt`, notebooks-as-build-log, mirroring and the
   gridlook viewer follow `~/icechunks` (its `CLAUDE.md` and `claude/notes/`).
+- **Source Cooperative login** goes through the hub proxy. Run
+  `~/.cargo/bin/source-coop login --duration 1d --port 8400`, then open
+  `https://nmfs-openscapes.2i2c.cloud/user/eeholmes/proxy/8400/` in a browser. The hub's
+  hostname is in no environment variable; it was inferred from the scratch bucket name
+  (`nmfs-openscapes-scratch`) and confirmed by Eli using it.
 - No browser on the hub: verify transport (status, content type, CORS) here, and ask Eli
   whether it renders.
 
