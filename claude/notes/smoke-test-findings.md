@@ -85,3 +85,28 @@ bundle and the wasm all return 200 with the right content types. Source Cooperat
 a CORS extension expect axes and no data. gridlook decodes from the array attributes
 `scale_factor`, `add_offset`, `missing_value`/`_FillValue`, all of which the store carries.
 **Whether it actually renders is Eli's to report** — there is no browser on the hub.
+
+## How long the full build will take — measured on one year (2026-09-18)
+
+All of 2004 (2,906 files on a 2,928-step axis) into a local repository, in-region:
+
+| step | time |
+|---|---|
+| list the year | 0.6 s (whole bucket: 12 s) |
+| header scan, 64 threads | 7.7 s = 375 files/s |
+| header scan, 128 threads | 2.9 s = 1,020 files/s |
+| build the year's manifests (479,490 references) | 1.6 s |
+| `to_icechunk` region write | 0.6 s |
+| commit | 1.1 s |
+
+Peak memory 584 MB. The year's manifests are 3.8 MB in 24 files (about 0.93 MB per 4-D
+variable), so the whole store is roughly 85 MB of manifests. Open 0.04 s; first read 0.83 s
+including the manifest fetch. `check_scan` passed on all 2,906, and the year is 2,875
+short-header to 31 long-header files — the layouts really are mixed.
+
+So the full build is **minutes, not hours**: a 1-3 minute header scan plus 22 yearly
+batches of a few seconds each, plus the upload of ~4 MB of manifests per year to Source
+Cooperative (unmeasured at that size; the 8-step batches took ~1 s). The 2.5-hour figure in
+`~/icechunks` does not transfer: that build parses every file, this one parses none. The
+2,920-step manifest split opened fine at one year; whether 22 of them open as fast over
+HTTPS is still to be measured.
