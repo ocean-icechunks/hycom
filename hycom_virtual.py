@@ -214,10 +214,27 @@ def _scan_one(store, key: str) -> dict:
     return row
 
 
-def scan_headers(store, files: pd.DataFrame, max_workers: int = 64) -> pd.DataFrame:
-    """One ranged GET per file. Returns per-file offsets and the facts `check_scan` needs."""
+def scan_headers(store, files: pd.DataFrame, max_workers: int = 64, attempts: int = 4) -> pd.DataFrame:
+    """One ranged GET per file. Returns per-file offsets and the facts `check_scan` needs.
+
+    Tens of thousands of requests will meet the odd dropped connection, so a failed read is
+    retried. A file that still fails raises: a header we could not read is never guessed.
+    """
+    import time
+
+    def one(key: str) -> dict:
+        for attempt in range(attempts):
+            try:
+                return _scan_one(store, key)
+            except ValueError:
+                raise  # the file itself is wrong; retrying will not help
+            except Exception:
+                if attempt == attempts - 1:
+                    raise
+                time.sleep(2 ** attempt)
+
     with ThreadPoolExecutor(max_workers) as pool:
-        rows = list(pool.map(lambda key: _scan_one(store, key), files["key"]))
+        rows = list(pool.map(one, files["key"]))
     return pd.DataFrame(rows, index=files.index)
 
 
