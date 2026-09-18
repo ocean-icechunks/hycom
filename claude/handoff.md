@@ -11,8 +11,12 @@ uncompressed NetCDF-3 files, 305.8 TB), published to Source Cooperative at
 `ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis`, with tests going to
 `ocean-icechunks/test-repo/hycom`.
 
-Research and a feasibility probe are done and the plan is fully decided (2026-09-18);
-**no build code exists yet**. The plan, the
+Research, the plan and a **local smoke test** are done (2026-09-18). The smoke test lives
+on branch `smoke-test-issue-1` (`hycom_virtual.py`, `hycom-smoke-test-local.ipynb`,
+`requirements.txt`) and passed in a clean venv; nothing has been written to Source
+Cooperative and there is no production notebook. What it taught, including several things
+in the code that look wrong and are deliberate, is in
+[notes/smoke-test-findings.md](notes/smoke-test-findings.md). The plan, the
 measurements behind it, and every decision Eli has made are in
 [notes/plan-issue-1.md](notes/plan-issue-1.md) — read it before touching anything. The
 scripts that produced the measurements are in `notes/issue-1-research/`.
@@ -41,7 +45,10 @@ The two facts most likely to be got wrong:
 
 ## Open threads
 
-- Smoke-test notebook not started.
+- Next per the skill's order: a second smoke test writing to the scratch prefix
+  `ocean-icechunks/test-repo/hycom` (needs a fresh `source-coop login`), then production.
+- `tau`/`experiment` became auxiliary coordinates during the smoke test; Eli has not yet
+  confirmed that.
 - Source bucket has no CORS, so the viewer will not show data in an ordinary browser; a
   request to help@hycom.org / COAPS is undrafted.
 - README is a stub: the reuse statement is missing and is part of the README deliverable.
