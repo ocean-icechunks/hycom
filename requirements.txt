@@ -30,5 +30,6 @@ dask[array]>=2026.1
 # an independent reader (its C library reads `<url>#mode=bytes` by byte range).
 netCDF4>=1.7
 
+boto3>=1.42               # Source Cooperative uploads: the viewer and the mirrored docs
 compliance-checker>=6.1   # the CF check in the smoke test
 matplotlib>=3.10          # the verification map
