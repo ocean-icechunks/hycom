@@ -1,7 +1,8 @@
 # Handoff — hycom
 
 Rolling state for this repo. Orientation only: the open threads below are a record of what
-is unfinished, not a task list.
+is unfinished, not a task list. **Eli's own to-do list, written as they signed off on
+2026-09-19, is [notes/todo.md](notes/todo.md)** — it spans the sibling repos too.
 
 ## Where things stand (2026-09-19)
 
@@ -25,7 +26,7 @@ merged to `main` in PR #2 (2026-09-19): `hycom_virtual.py`, the production noteb
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
 The docs are mirrored from merged `main` and checked by checksum: dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
 `hycom/`. Re-mirror after any change to them. Issue #1 is closed and the branch deleted
-(2026-09-19). PRs #2–#5 are merged and their branches deleted: #2 the build, #3 README
+(2026-09-19). PRs #2–#6 are merged and their branches deleted: #2 the build, #3 README
 format and viewer default, #4 the stale-gridlook guard, #5 the "icechunk 1.x will not work"
 README note. The docs were last mirrored after #5.
 
@@ -99,19 +100,15 @@ The three facts most likely to be got wrong:
 
 ## Open threads
 
-- **PR #6 is open, unmerged** (2026-09-19): ports per-store `variables` from
-  ocean-icechunks/icechunks' copy of `publish_viewer.py` and fixes a stale `fish-pace` URL in
-  its docstring. No republish needed. The two copies are otherwise identical below
-  `PRODUCTS`; keep them that way.
+- PR #6 (per-store `variables` in `publish_viewer.py`, ported from ocean-icechunks/icechunks)
+  merged 2026-09-19. The two copies are identical below `PRODUCTS`; keep them that way.
 - **The CORS request to help@hycom.org is drafted, not sent**:
   [notes/cors-request-hycom.md](notes/cors-request-hycom.md). Eli sends it, after checking the
   sentence about egress being covered by AWS's open-data sponsorship, which was not verified
   for this bucket. When the bucket gets a policy: run the curl checks in that note, have Eli
   look with the extension OFF, then remove the "needs a CORS extension" text from both READMEs
   and `publish_viewer.py` and re-mirror.
-- **The Medium citation is unverified.** Title and year (2024) of Rich Signell's Pangeo post
-  in both READMEs came from the URL slug, memory and his repo's date; Medium 403s automated
-  fetches. Eli was asked to confirm and has not.
+- The Medium citation in both READMEs is confirmed: Eli checked the title and year (2024).
 - **Offered, not taken up:** the NOAA disclaimer section for the root README; a self-refresh
   check in published viewers against `build-info.json` (see the caching principle above).
 - **`globcolour-Icechunks` and `cefi-icechunks` did not get the "icechunk 1.x will not work"
