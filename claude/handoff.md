@@ -68,8 +68,13 @@ The three facts most likely to be got wrong:
   hard-codes an OGS Mediterranean store as its default for URLs with no `#…` fragment;
   `publish_viewer.py` injects a default-hash script into the published `index.html` so a bare
   link opens HYCOM. Eli has not yet confirmed it in a browser. The noaa-ohc,
-  oa-indicators and gobai-o2 viewers still have the old default AND the stale gridlook build
-  (`2649e66`); fixing them belongs to `~/icechunks`, and Eli has not asked for it.
+  oa-indicators and gobai-o2 viewers got the same two fixes and a rebuild from `b3c42b1` on
+  2026-09-19 (ocean-icechunks/icechunks#28, merged).
+- **A republished viewer looks unchanged until a hard reload.** Source Cooperative drops the
+  `Cache-Control: no-cache` uploaded with `index.html` and sends only `Last-Modified`, so
+  browsers cache the page heuristically, and the JS is served `max-age=14400`. Check the
+  server with curl before believing "the update isn't there"; tell Eli to Ctrl+Shift+R. A
+  self-refresh check against `build-info.json` was offered and not taken up.
 
 - Follow the `virtual-icechunk` skill's order: plan → smoke test → production → docs. The
   plan is reviewed; the smoke test is next.
