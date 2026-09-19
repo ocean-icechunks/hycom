@@ -199,6 +199,36 @@ def write_catalog(product: dict, dist: Path) -> str | None:
     return spec["path"]
 
 
+_DEFAULT_BEGIN, _DEFAULT_END = "<!-- default-store:begin -->", "<!-- default-store:end -->"
+
+
+def write_default_store(product: dict, dist: Path) -> str:
+    """Make the published viewer open this product's first store when the link names none.
+
+    gridlook hard-codes a demo dataset (`DEFAULT_DATASET` in HashGlobeView.vue) and shows it
+    whenever the URL has no `#...` fragment -- so a bare `.../viewer/index.html` opened an
+    unrelated Mediterranean dataset instead of HYCOM. The app reads `location.hash` when it
+    mounts, and a classic inline script in <head> runs before the deferred module bundle, so
+    setting the hash there is enough. `replaceState` adds no history entry.
+
+    Written into the build output only, like the catalog: the gridlook checkout stays clean,
+    and the bundle is untouched. Idempotent, because one --dist is reused across products.
+    """
+    import re
+
+    stores = _stores(product)
+    variables = product.get("variables")
+    fragment = store_fragment(next(iter(stores.values())), variables[0] if variables else None)
+    index = dist / "index.html"
+    html = index.read_text()
+    html = re.sub(re.escape(_DEFAULT_BEGIN) + ".*?" + re.escape(_DEFAULT_END) + r"\n?", "", html, flags=re.S)
+    block = (f"{_DEFAULT_BEGIN}\n    <script>if (location.hash.length < 2) "
+             f"history.replaceState(null, \"\", {json.dumps('#' + fragment)});</script>\n    {_DEFAULT_END}\n")
+    assert "<head>" in html, "index.html has no <head>"
+    index.write_text(html.replace("<head>", "<head>\n    " + block, 1))
+    return fragment
+
+
 def build(gridlook: Path, dist: Path) -> None:
     gridlook = gridlook.expanduser().resolve()
     if not (gridlook / "package.json").exists():
@@ -319,6 +349,7 @@ def main() -> None:
     written = write_catalog(product, args.dist)
     if written:
         print(f"wrote {written} listing {len(_stores(product))} stores")
+    print(f"default store (links with no #fragment): {write_default_store(product, args.dist)}")
     rows = plan(args.dist)
     size = sum(p.stat().st_size for p, *_ in rows)
     print(f"{len(rows)} files, {size / 2**20:.1f} MB -> s3://{bucket}/{prefix}/")

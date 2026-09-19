@@ -1,4 +1,6 @@
-# HYCOM GOFS 3.1 reanalysis — test store
+# HYCOM GOFS 3.1 reanalysis, test store — Icechunk
+
+**[🌐 View data in browser](#view-it-in-a-browser)** · **[💻 Data access (code)](#how-to-open-it)** · **[📦 Data access (AWS Open Data)](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/)**
 
 A **scratch copy for debugging**, not the published dataset. It holds 16 three-hourly time
 steps (2004-12-27 12Z to 2004-12-29 09Z) of a virtual [Icechunk](https://icechunk.io) store:
@@ -8,7 +10,7 @@ One step, 2004-12-28 12Z, has no source file and reads as missing. Written by
 `hycom-smoke-test-sc.ipynb` in <https://github.com/ocean-icechunks/hycom>; it may be
 rewritten or deleted at any time.
 
-## Open it in the viewer
+## View it in a browser
 
 [water_temp at the surface](https://data.source.coop/ocean-icechunks/test-repo/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/test-repo/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0)
 
@@ -18,7 +20,7 @@ Change `varname=` to `salinity`, `surf_el`, `water_u` or `water_v` for the other
 `Access-Control-Allow-Origin` header, so an ordinary browser draws the axes and blocks the
 data. Each frame is one whole 29 MB level fetched from us-west-2, so it is slow.
 
-## Load it in Python
+## How to open it
 
 Python >= 3.12, `pip install "icechunk>=2.2" "xarray>=2026.7" "zarr>=3.4" "dask[array]"`.
 No credentials are needed.
