@@ -25,6 +25,13 @@ data. Each frame is one whole 29 MB level fetched from us-west-2, so it is slow.
 Python >= 3.12, `pip install "icechunk>=2.2" "xarray>=2026.7" "zarr>=3.4" "dask[array]"`.
 No credentials are needed.
 
+> **icechunk 1.x will not work.** `icechunk.http_storage` does not exist in icechunk 1.x
+> (it arrived in 2.0), and `icechunk.credentials.HttpAccess` arrived in 2.1. Every icechunk
+> 2.x release needs **Python 3.12 or newer**, so on an older Python `pip install icechunk`
+> quietly installs 1.1.x, and the code below fails with
+> `AttributeError: module 'icechunk' has no attribute 'http_storage'`. Check what you have:
+> `python -c "import icechunk; print(icechunk.__version__)"`.
+
 ```python
 import icechunk, xarray as xr, zarr
 
