@@ -1,26 +1,55 @@
-# HYCOM as virtual Icechunk stores
+# HYCOM ocean model output — Icechunk
+
+**[🌐 View data in browser](#view-it-in-a-browser)** · **[💻 Data access (code)](#how-to-open-it)** · **[📦 Data access (HYCOM.org)](https://www.hycom.org/dataserver)**
 
 [HYCOM](https://www.hycom.org) ocean model output, published as
 [Icechunk](https://icechunk.io) stores on
 [Source Cooperative](https://source.coop/ocean-icechunks/hycom) so that a whole archive
 opens in about a second as one lazy `xarray` datacube.
 
+| Dataset | Icechunk repository | Docs |
+|---|---|---|
+| **GOFS 3.1 Global Ocean Reanalysis**, GLBv0.08 expt_53.X — global 1/12°, 40 levels, 3-hourly, 1994–2015 | `https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis` | [README](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md) |
+
+This is the first of several; more HYCOM experiments will be added the same way, one
+repository each.
+
 The stores are **virtual**: each holds only Zarr metadata and byte-range references. The
 arrays stay in the provider's original NetCDF files, nothing is copied or rewritten, and
 every read of a science value goes to the provider's bucket. A store therefore works only
-as long as its source does, and reads exactly what the source files contain.
+as long as its source does, and reads exactly what the source files contain. That costs one
+extra step when opening — see [How to open it](#how-to-open-it) — and it is why the browser
+viewer needs the workaround described below.
 
-## Datasets
+## View it in a browser
 
-One directory per dataset, each with its own README, build notebooks and
-`requirements.txt`. This is the first of several; more HYCOM experiments will be added the
-same way.
+> ### ⚠️ Read this first: the data will not draw unless you disable CORS
+>
+> The viewer loads, lists the variables and draws the map graticule, and then stops —
+> because the science arrays are not in the stores. They are in the provider's bucket, and a
+> browser reading a virtual store therefore talks to two hosts. Source Cooperative allows
+> it; the GOFS 3.1 reanalysis bucket on AWS has no CORS configuration (checked 2026-09-19),
+> so **your browser** refuses to hand those bytes to the page. Nothing the viewer or this
+> repository can contain will waive that; only the bucket's owner can.
+>
+> To look at the data anyway, install a CORS-disabling browser extension (search your
+> browser's extension store for "CORS unblock" or "Allow CORS"), enable it, and reload
+> the viewer. Such an extension switches off a real security protection for the sites you
+> enable it on, so turn it back off when you are done — or use a separate browser profile
+> for it.
+>
+> The code path below has no such problem: this affects browsers only.
 
-| Dataset | Coverage | Store | Docs |
-|---|---|---|---|
-| **GOFS 3.1 Global Ocean Reanalysis**, GLBv0.08 expt_53.X | global 1/12°, 40 levels, 3-hourly, 1994–2015 | `https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis` | [`hycom-gofs-3pt1-reanalysis/`](hycom-gofs-3pt1-reanalysis/README.md) |
+| Dataset | Viewer |
+|---|---|
+| GOFS 3.1 Global Ocean Reanalysis | [Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0) |
 
-## Opening a store
+One [gridlook](https://github.com/eeholmes/gridlook) build, published alongside the data at
+[`hycom/viewer/`](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html), serves every store here: the store to open rides in the URL
+*fragment*, which the host never sees, and the viewer's dataset picker lists them all. Each
+dataset's README has links per variable.
+
+## How to open it
 
 Python ≥ 3.12. No credentials are needed. Each dataset's README has the specifics; the
 shape is always this:
@@ -45,16 +74,19 @@ costs seconds and about a gigabyte on every operation. `chunks=None` is still la
 the times and region you want, then call `.chunk({"time": 1})` on that selection so dask
 streams it instead of loading it at once.
 
-## Viewer
+## About the data
 
-One [gridlook](https://github.com/eeholmes/gridlook) build at
-`https://data.source.coop/ocean-icechunks/hycom/viewer/index.html` serves every store here;
-the store to open rides in the URL fragment, and each dataset's README has its links.
-A browser reading a virtual store talks to two hosts, the store's and the source's. Where
-the source bucket sends no CORS headers — true of the reanalysis bucket — the viewer draws
-the axes and no data unless the browser runs a CORS-disabling extension.
+One directory per dataset in the
+[GitHub repository](https://github.com/ocean-icechunks/hycom), each with its own README —
+coverage, variables, gaps, known problems, what to expect from reads — plus its build
+notebooks, `requirements.txt` and source manifest. On Source Cooperative the same files are
+under `docs/<dataset>/`.
 
-## In this repository
+| Dataset | Source | Details |
+|---|---|---|
+| GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X | [AWS Open Data](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/), 63,341 NetCDF files, 306 TB | [`hycom-gofs-3pt1-reanalysis/`](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md) |
+
+## How this was built
 
 | | |
 |---|---|
@@ -96,3 +128,13 @@ asks for. For HYCOM data, hycom.org
 > Program and the Office of Naval Research. Data assimilative products using HYCOM are funded
 > by the U.S. Navy. Computer time was made available by the DoD High Performance Computing
 > Modernization Program. The output is publicly available at https://hycom.org.
+
+## Credits
+
+- **Data:** the HYCOM Consortium and the U.S. Naval Research Laboratory; served by COAPS
+  (Florida State University). Each dataset's README credits its own source.
+- **Sub-chunking uncompressed NetCDF-3:** Rich Signell.
+- **Icechunk packaging:** built with [Icechunk](https://icechunk.io),
+  [VirtualiZarr](https://virtualizarr.readthedocs.io) and [Xarray](https://xarray.dev),
+  hosted on [Source Cooperative](https://source.coop/ocean-icechunks/hycom); the original
+  file bytes remain with the provider.

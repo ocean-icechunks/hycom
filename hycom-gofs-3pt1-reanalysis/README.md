@@ -1,4 +1,6 @@
-# HYCOM GOFS 3.1 Global Ocean Reanalysis — virtual Icechunk
+# HYCOM GOFS 3.1 Global Ocean Reanalysis — Icechunk
+
+**[🌐 View data in browser](#view-it-in-a-browser)** · **[💻 Data access (code)](#how-to-open-it)** · **[📦 Data access (AWS Open Data)](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/)** · **[📦 Data access (HYCOM.org)](https://www.hycom.org/dataserver/gofs-3pt1/reanalysis)**
 
 One of the HYCOM stores in [ocean-icechunks/hycom](https://github.com/ocean-icechunks/hycom),
 which says what they have in common. This page is about this dataset.
@@ -24,6 +26,49 @@ copied, rewritten or changed.
 | Variables | `water_temp`, `salinity`, `water_u`, `water_v` (4-D); `surf_el`, `water_temp_bottom`, `salinity_bottom`, `water_u_bottom`, `water_v_bottom` (time, lat, lon) |
 | Layout | one repository, one group, one chunk per time step and depth level (29 MB each) |
 | Version | tag `v1`, built 2026-09-18 |
+
+## View it in a browser
+
+> ### ⚠️ Read this first: the data will not draw unless you disable CORS
+>
+> The viewer loads, lists the variables and draws the map graticule, and then stops —
+> because the science arrays are not in the store. They are in the HYCOM bucket on AWS,
+> which serves byte ranges happily to a script but has no CORS configuration (checked
+> 2026-09-19), so **your browser** refuses to hand those bytes to the page. This is a rule
+> browsers enforce on the page's behalf; nothing the viewer or this repository can contain
+> will waive it. Only the bucket's owner can change it, and the store would not need
+> rebuilding if they did.
+>
+> To look at the data anyway, install a CORS-disabling browser extension (search your
+> browser's extension store for "CORS unblock" or "Allow CORS"), enable it, and reload
+> the viewer. Such an extension switches off a real security protection for the sites you
+> enable it on, so turn it back off when you are done — or use a separate browser profile
+> for it.
+>
+> The code path below has no such problem: this affects browsers only.
+
+With that in place, the viewer streams chunks straight from the source files — no install,
+no account, no download:
+
+| Variable | Viewer |
+|---|---|
+| Water temperature | [Open `water_temp` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0) |
+| Salinity | [Open `salinity` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=salinity::dimIndices_time=0::dimIndices_depth=0) |
+| Surface elevation | [Open `surf_el` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=surf_el::dimIndices_time=0) |
+| Eastward velocity | [Open `water_u` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_u::dimIndices_time=0::dimIndices_depth=0) |
+| Northward velocity | [Open `water_v` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_v::dimIndices_time=0::dimIndices_depth=0) |
+
+Each link opens at the first time step, at the surface; the other variables, the time steps
+and the depth levels are controls in the viewer. Everything after `#` is a URL *fragment*,
+which the host never sees, so one viewer build serves any store. Drag the globe and the
+address bar updates — copy it to share the exact view you are looking at.
+
+The viewer is [gridlook](https://github.com/eeholmes/gridlook), a WebGL globe for
+cloud-hosted Zarr and Icechunk stores, published alongside the data at
+[`hycom/viewer/`](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html). Every
+frame is one whole 29 MB level fetched from us-west-2, so it is not quick: treat it as a
+look, not an analysis. With an extension enabled, a 16-step test copy of this store was seen
+to render on 2026-09-18; this full store uses the same viewer build and layout.
 
 ## How to open it
 
@@ -100,7 +145,7 @@ of 923 and says they will not be filled; all 923 are gaps here too. The other 8 
 2014-12-31 run, between experiments 53.8 and 53.9, which is absent from hycom.org's own
 server as well.
 
-## What to expect from reads
+### What to expect from reads
 
 Measured from a JupyterHub in **us-west-2, the same region as the HYCOM bucket**, with
 `async.concurrency = 64`. Metadata comes from Source Cooperative and data from the HYCOM
@@ -124,23 +169,6 @@ rewriting the data would.
 Values decode to **float64**, where the source NetCDF gives float32, because Zarr attributes
 are JSON and cannot say "float32". A decoded level is 117 MB. Use `.astype("float32")` to
 halve that, or `xr.open_zarr(..., mask_and_scale=False)` for the raw `int16`.
-
-## View it in a browser
-
-[water_temp](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0) ·
-[salinity](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=salinity::dimIndices_time=0::dimIndices_depth=0) ·
-[surf_el](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=surf_el::dimIndices_time=0) ·
-[water_u](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_u::dimIndices_time=0::dimIndices_depth=0) ·
-[water_v](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_v::dimIndices_time=0::dimIndices_depth=0)
-
-**This needs a CORS-disabling browser extension.** A browser reading a virtual store talks to
-two hosts. Source Cooperative allows it; the HYCOM bucket answers a ranged GET with no
-`Access-Control-Allow-Origin` header (checked 2026-09-18), so an ordinary browser draws the
-axes and blocks every data read. Only the bucket's owner can change that, with a CORS policy;
-the store would not need rebuilding. With an extension, a 16-step test copy of this store
-was seen to render on 2026-09-18; this full store uses the same viewer build and layout.
-The viewer is [gridlook](https://github.com/eeholmes/gridlook), and each frame is a whole
-29 MB level, so it is not quick.
 
 ## About the data
 
@@ -241,7 +269,7 @@ compliance checker passes `cf:1.11` on an export of it.
 | global | `Conventions = "CF-1.6 NAVO_netcdf_v1.1"` | `CF-1.11`, plus `title`, `experiment_id`, `references`, `source_data`, `comment`; the original kept as `source_Conventions` | the source files name no experiment, grid or version anywhere but the filename |
 | added | — | `experiment` coordinate; `tau` extended over the missing steps as NaN | provenance per time step, and a way to find the gaps without reading data |
 
-### Provenance and validation
+### Provenance
 
 - Store tag **`v1`** = snapshot `VBMJX9KNE9BN8GTG5100`, built 2026-09-18 with icechunk 2.2.2,
   virtualizarr 2.7.3, zarr 3.4.0, xarray 2026.7.0, Python 3.12.
