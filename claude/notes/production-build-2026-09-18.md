@@ -27,6 +27,12 @@ snapshots for nothing.
 
 ## Why it stalled: `chunks={}` on this store — the most important user-facing fact
 
+*Corrected 2026-09-19:* this section first concluded that `chunks={}` must never be used.
+Eli questioned that, and a fairer measurement shows it is slow rather than broken — a few
+seconds and about 1 GB of overhead per operation, tolerable for one large mean, ruinous in a
+loop. The READMEs recommend select-then-chunk and explain the cost; they do not forbid
+`chunks={}`.
+
 With `chunks={}` each 4-D variable is a dask array of **2,570,880 chunks**. Every
 `.sel(...)` on it costs ~1.4 s to build and ~2.2 s to compute, and about 1 GB of memory,
 before any data moves; the validation loop did that ~270 times with two such datasets open.

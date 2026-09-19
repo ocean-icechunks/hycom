@@ -3,7 +3,7 @@
 Rolling state for this repo. Orientation only: the open threads below are a record of what
 is unfinished, not a task list.
 
-## Where things stand (2026-09-18)
+## Where things stand (2026-09-19)
 
 **This repo is a collection: GOFS 3.1 reanalysis is the first of several HYCOM stores Eli
 plans** (said 2026-09-19). So it is laid out like `~/icechunks`: one directory per dataset
@@ -23,9 +23,7 @@ uncompressed NetCDF-3 files, 305.8 TB), with tests going to `ocean-icechunks/tes
 from the public URL, with a gridlook viewer at `ocean-icechunks/hycom/viewer/`. Everything is
 merged to `main` in PR #2 (2026-09-19): `hycom_virtual.py`, the production notebook
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
-The docs were mirrored from merged `main` on 2026-09-19 (again after PR #3) and checked by
-checksum:
-dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
+The docs are mirrored from merged `main` and checked by checksum: dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
 `hycom/`. Re-mirror after any change to them. Issue #1 is closed and the branch deleted
 (2026-09-19). PRs #2–#5 are merged and their branches deleted: #2 the build, #3 README
 format and viewer default, #4 the stale-gridlook guard, #5 the "icechunk 1.x will not work"
@@ -35,7 +33,7 @@ Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measure
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
 (things in the code that look wrong and are deliberate),
 [notes/production-build-2026-09-18.md](notes/production-build-2026-09-18.md) (the build, and
-why `chunks={}` must not be used on this store). Research scripts are in
+what `chunks={}` costs on this store). Research scripts are in
 `notes/issue-1-research/`.
 
 The three facts most likely to be got wrong:
@@ -44,8 +42,12 @@ The three facts most likely to be got wrong:
   tells them apart.** Offsets must come from each file's own header. Reusing one file's
   offsets as a template (as the rsignell/hycom-kerchunk notebook does) misplaces data in
   27,439 files.
-- **Open the store with `chunks=None`, never `chunks={}`** — 2.57 million dask chunks per 4-D
-  variable. This contradicts the skill's general advice and is specific to this store's size.
+- **Recommend `chunks=None`, select, then `.chunk()` — not `chunks={}`.** With `chunks={}`
+  each 4-D variable is 2.57 million dask chunks, and every operation costs seconds and about
+  1 GB before data moves. It is slow, not broken: an early note here said "never", which Eli
+  questioned and measurement softened (10-day box mean: 5 s / 0.45 GB select-then-chunk,
+  14 s / 1.6 GB with `chunks={}`, and `chunks=None` with no `.chunk()` loads everything
+  selected). This contradicts the skill's general advice and is specific to this chunk count.
 - **The time axis is deliberately regular with 931 gaps left as NaN**, and `tau` (NaN at
   gaps) is the presence indicator. A `has_data` flag was considered and rejected as
   invented.
