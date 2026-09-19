@@ -21,10 +21,12 @@ uncompressed NetCDF-3 files, 305.8 TB), with tests going to `ocean-icechunks/tes
 
 **The store is built** (2026-09-18): tag `v1`, 10.45 M references from 63,341 files, validated
 from the public URL, with a gridlook viewer at `ocean-icechunks/hycom/viewer/`. Everything is
-on branch `smoke-test-issue-1` (no PR yet): `hycom_virtual.py`, the production notebook
+merged to `main` in PR #2 (2026-09-19): `hycom_virtual.py`, the production notebook
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
-Both READMEs are written. Still to do for issue #1: the PR, then mirroring the docs from
-merged `main` (`RUN_MIRROR` in the production notebook).
+The docs were mirrored from merged `main` on 2026-09-19 and checked by checksum:
+dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
+`hycom/`. Re-mirror after any change to them. Issue #1 is still open; branch
+`smoke-test-issue-1` is merged but not deleted — Eli had not asked for either.
 
 Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
@@ -67,7 +69,9 @@ The three facts most likely to be got wrong:
 - Open the PR; after merge, mirror the docs (`RUN_MIRROR = True`). Eli has confirmed `tau`/`experiment` stay auxiliary coordinates.
 - Eli has seen the test viewer render (with a CORS extension); the production viewer is
   published and not yet looked at.
-- Source bucket has no CORS; a request to help@hycom.org / COAPS is undrafted.
+- Source bucket has no CORS. The request to help@hycom.org is drafted, not sent, in
+  [notes/cors-request-hycom.md](notes/cors-request-hycom.md), with the S3 policy and the curl
+  checks to run afterwards. Eli sends it.
 - Two things worth feeding back to the `virtual-icechunk` skill: `to_icechunk` has no
   `encoding=` argument in VirtualiZarr 2.7.3, and `chunks={}` is wrong advice at this scale.
   nmfs-opensci/agent-skills#19 (viewer + README on every scratch test) is open, unmerged.
