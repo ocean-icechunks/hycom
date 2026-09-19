@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the gridlook browser viewer and publish it beside a HYCOM Icechunk store.
+"""Build the gridlook browser viewer and publish it beside the HYCOM Icechunk stores.
 
 gridlook (https://github.com/eeholmes/gridlook, a fork of
 https://github.com/d70-t/gridlook) is a WebGL viewer for cloud-hosted Zarr and
@@ -16,8 +16,8 @@ Same script as in https://github.com/fish-pace/icechunks, with this repo's
 are set explicitly here; there is no directory index, so links name
 ``index.html``; and the edge 403s the default ``Python-urllib`` User-Agent.
 
-This store will NOT draw in an ordinary browser
------------------------------------------------
+The GOFS 3.1 reanalysis will NOT draw in an ordinary browser
+------------------------------------------------------------
 A virtual store needs CORS on two hosts: the repository (Source Cooperative,
 wide open) and wherever the referenced bytes live. The HYCOM bucket,
 ``hycom-gofs-3pt1-reanalysis.s3.us-west-2.amazonaws.com``, answers a ranged GET
@@ -69,10 +69,17 @@ from icechunk_utils import get_source_credentials
 
 PUBLIC = "https://data.source.coop"
 
-# Opens on the first time step at the surface. No camera position: the grid is
-# global, so gridlook's default framing is as good as any computed one. To set
-# one, drag the globe and copy `px/py/alt/lat/lon` out of the address bar.
+# One viewer build serves every HYCOM store: the store rides in the URL fragment. Add a
+# dataset here and it appears in both viewers' links and in the dataset picker.
+# `view` opens on the first time step at the surface. No camera position: these grids are
+# global, so gridlook's default framing is as good as a computed one. To set one, drag the
+# globe and copy `px/py/alt/lat/lon` out of the address bar.
+DATASETS = {
+    "hycom-gofs-3pt1-reanalysis": "HYCOM GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X",
+}
 _VIEW = "dimIndices_time=0::dimIndices_depth=0"
+# Offered as links for every store. They are the GOFS 3.1 names; a dataset with different
+# variables is still reachable through the viewer's own variable picker.
 _VARIABLES = ("water_temp", "salinity", "surf_el", "water_u", "water_v")
 
 
@@ -80,19 +87,19 @@ def _product(root: str, title: str) -> dict:
     return {
         "bucket": "ocean-icechunks",
         "viewer_prefix": f"{root}/viewer",
-        "stores": {"": {"url": f"{PUBLIC}/ocean-icechunks/{root}/hycom-gofs-3pt1-reanalysis",
-                        "title": title, "view": _VIEW}},
+        "stores": {name: {"url": f"{PUBLIC}/ocean-icechunks/{root}/{name}", "title": label, "view": _VIEW}
+                   for name, label in DATASETS.items()},
         "variables": _VARIABLES,
         # Without this the published viewer offers gridlook's 70 demo datasets.
         "catalog": {"path": "static/catalog-extended.json", "title": title},
     }
 
 
-# `hycom-test` is the scratch copy written by hycom-smoke-test-sc.ipynb (16 time
-# steps); `hycom` is the published store. Same layout under each root.
+# `hycom-test` is the scratch area the smoke-test notebooks write to; `hycom` holds the
+# published stores. Same layout under each root.
 PRODUCTS = {
-    "hycom-test": _product("test-repo/hycom", "HYCOM GOFS 3.1 reanalysis - smoke test (16 steps)"),
-    "hycom": _product("hycom", "HYCOM GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X"),
+    "hycom-test": _product("test-repo/hycom", "HYCOM - smoke tests"),
+    "hycom": _product("hycom", "HYCOM virtual Icechunk stores"),
 }
 DEFAULT_DIST = Path("/tmp/gridlook-dist")
 
