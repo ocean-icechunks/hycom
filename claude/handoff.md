@@ -55,11 +55,21 @@ The three facts most likely to be got wrong:
   navbar, then View it in a browser / How to open it / About the data / How this was built /
   Reuse and citation / Credits. Reference copy: `ocean-icechunks/noaa-ohc/README.md`. Applies
   to the root README and the test-repo README too. Also saved as a project memory.
+- **One viewer per root, and every dataset is a catalog entry in it** (Eli, 2026-09-19): the
+  published one at `hycom/viewer/`, plus the scratch copy at `test-repo/hycom/viewer/` that
+  the always-a-viewer-for-tests rule calls for. Never a viewer per dataset. A new dataset is
+  one line in `DATASETS` in `publish_viewer.py`.
+- **`~/gridlook` is a per-machine clone and goes stale silently.** On 2026-09-18 the viewer was
+  built from a clone 98 commits behind `eeholmes/gridlook`, missing Eli's log10 transform,
+  swatch fix and CORS pop-up (that work was done on another hub). `publish_viewer.py` now
+  fetches and refuses a stale checkout (PR #4). `~/gridlook-xl` is old and irrelevant. This
+  hub has no Node 24 (gridlook asks for >= 24.16); the build works on Node 20.19.
 - **Never link or publish a viewer that falls back to gridlook's demo dataset.** gridlook
   hard-codes an OGS Mediterranean store as its default for URLs with no `#…` fragment;
   `publish_viewer.py` injects a default-hash script into the published `index.html` so a bare
-  link opens HYCOM. Eli has not yet confirmed it in a browser. The noaa-ohc, oa-indicators
-  and gobai-o2 viewers still have the old default; the lasting fix is in the gridlook fork.
+  link opens HYCOM. Eli has not yet confirmed it in a browser. The noaa-ohc,
+  oa-indicators and gobai-o2 viewers still have the old default AND the stale gridlook build
+  (`2649e66`); fixing them belongs to `~/icechunks`, and Eli has not asked for it.
 
 - Follow the `virtual-icechunk` skill's order: plan → smoke test → production → docs. The
   plan is reviewed; the smoke test is next.
