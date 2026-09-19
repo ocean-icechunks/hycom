@@ -5,17 +5,26 @@ is unfinished, not a task list.
 
 ## Where things stand (2026-09-18)
 
-The repo holds only `LICENSE` (Apache-2.0), a stub `README.md` and this directory. Issue #1
-asks for a virtual Icechunk of the HYCOM GOFS 3.1 reanalysis on AWS Open Data (63,341
-uncompressed NetCDF-3 files, 305.8 TB), published to Source Cooperative at
-`ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis`, with tests going to
-`ocean-icechunks/test-repo/hycom`.
+**This repo is a collection: GOFS 3.1 reanalysis is the first of several HYCOM stores Eli
+plans** (said 2026-09-19). So it is laid out like `~/icechunks`: one directory per dataset
+(`hycom-gofs-3pt1-reanalysis/` holds that dataset's README, notebooks, `hycom_virtual.py`,
+`requirements.txt` and manifests), shared tooling at the root (`icechunk_utils.py`,
+`publish_viewer.py` with a `DATASETS` table), and a root README about the collection. Do not
+write root-level docs as if they were about one dataset. On Source Cooperative the stores sit
+at `ocean-icechunks/hycom/<dataset>`, one viewer at `hycom/viewer/` serves them all, and each
+dataset's docs mirror to `hycom/docs/<dataset>/` — never into an Icechunk prefix.
+`hycom_virtual.py` is deliberately still dataset-specific; lift the generic parts (the
+NetCDF-3 header parser, the scan) to the root when a second dataset shows what is shared.
+
+Issue #1 asked for the first one: the GOFS 3.1 reanalysis on AWS Open Data (63,341
+uncompressed NetCDF-3 files, 305.8 TB), with tests going to `ocean-icechunks/test-repo/hycom`.
 
 **The store is built** (2026-09-18): tag `v1`, 10.45 M references from 63,341 files, validated
 from the public URL, with a gridlook viewer at `ocean-icechunks/hycom/viewer/`. Everything is
 on branch `smoke-test-issue-1` (no PR yet): `hycom_virtual.py`, the production notebook
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
-Still to do for issue #1: the README, mirroring the docs beside the store, and the PR.
+Both READMEs are written. Still to do for issue #1: the PR, then mirroring the docs from
+merged `main` (`RUN_MIRROR` in the production notebook).
 
 Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
@@ -55,11 +64,15 @@ The three facts most likely to be got wrong:
 
 ## Open threads
 
-- README with reuse statement; mirror the docs to `ocean-icechunks/hycom/` from merged `main`;
-  open the PR. Eli has confirmed `tau`/`experiment` stay auxiliary coordinates.
+- Open the PR; after merge, mirror the docs (`RUN_MIRROR = True`). Eli has confirmed `tau`/`experiment` stay auxiliary coordinates.
 - Eli has seen the test viewer render (with a CORS extension); the production viewer is
   published and not yet looked at.
 - Source bucket has no CORS; a request to help@hycom.org / COAPS is undrafted.
 - Two things worth feeding back to the `virtual-icechunk` skill: `to_icechunk` has no
   `encoding=` argument in VirtualiZarr 2.7.3, and `chunks={}` is wrong advice at this scale.
   nmfs-opensci/agent-skills#19 (viewer + README on every scratch test) is open, unmerged.
+- **Attribution names Rich Signell as well as Eli** ("Holmes, E.E. and Signell, R."), at
+  Eli's request: none of his code is used, but sub-chunking this archive is his idea. The
+  LICENSE has no copyright line to add him to — only Apache's unfilled appendix template —
+  and none was added. The Medium post's title and year (2024) in the citation could not be
+  checked: Medium 403s automated fetches. Eli was asked to confirm them.
