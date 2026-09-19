@@ -25,8 +25,8 @@ merged to `main` in PR #2 (2026-09-19): `hycom_virtual.py`, the production noteb
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
 The docs were mirrored from merged `main` on 2026-09-19 and checked by checksum:
 dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
-`hycom/`. Re-mirror after any change to them. Issue #1 is still open; branch
-`smoke-test-issue-1` is merged but not deleted — Eli had not asked for either.
+`hycom/`. Re-mirror after any change to them. Issue #1 is closed and the branch deleted
+(2026-09-19); `main` is the only branch.
 
 Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
