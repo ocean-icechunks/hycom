@@ -27,8 +27,8 @@ The docs were mirrored from merged `main` on 2026-09-19 (again after PR #3) and 
 checksum:
 dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
 `hycom/`. Re-mirror after any change to them. Issue #1 is closed and the branch deleted
-(2026-09-19). PR #3 (README format, viewer default) is merged; its branch
-`readme-standard-format` is not deleted — Eli had not asked.
+(2026-09-19). PRs #3 (README format, viewer default) and #4 (stale-gridlook guard) are
+merged and their branches deleted; `main` is the only branch.
 
 Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
@@ -62,7 +62,7 @@ The three facts most likely to be got wrong:
 - **`~/gridlook` is a per-machine clone and goes stale silently.** On 2026-09-18 the viewer was
   built from a clone 98 commits behind `eeholmes/gridlook`, missing Eli's log10 transform,
   swatch fix and CORS pop-up (that work was done on another hub). `publish_viewer.py` now
-  fetches and refuses a stale checkout (PR #4). `~/gridlook-xl` is old and irrelevant. This
+  fetches and refuses a stale checkout (PR #4, merged). `~/gridlook-xl` is old and irrelevant. This
   hub has no Node 24 (gridlook asks for >= 24.16); the build works on Node 20.19.
 - **Never link or publish a viewer that falls back to gridlook's demo dataset.** gridlook
   hard-codes an OGS Mediterranean store as its default for URLs with no `#…` fragment;
