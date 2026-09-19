@@ -229,10 +229,11 @@ def write_default_store(product: dict, dist: Path) -> str:
     return fragment
 
 
-def build(gridlook: Path, dist: Path) -> None:
+def build(gridlook: Path, dist: Path, allow_stale: bool = False) -> None:
     gridlook = gridlook.expanduser().resolve()
     if not (gridlook / "package.json").exists():
         sys.exit(f"{gridlook} is not a gridlook checkout (no package.json)")
+    check_checkout_is_current(gridlook, allow_stale)
     if not (gridlook / "node_modules").exists():
         subprocess.run(["npm", "ci"], cwd=gridlook, check=True)
     env = dict(os.environ, NODE_OPTIONS="--max-old-space-size=1500")
@@ -241,6 +242,35 @@ def build(gridlook: Path, dist: Path) -> None:
     print("$", " ".join(cmd), f"  (in {gridlook})")
     subprocess.run(cmd, cwd=gridlook, env=env, check=True)
     write_build_info(gridlook, dist)
+
+
+def check_checkout_is_current(gridlook: Path, allow_stale: bool) -> None:
+    """Refuse to build from a gridlook checkout that is behind its remote.
+
+    A clone is per machine, and the fork's work happens on more than one. On 2026-09-18 the
+    HYCOM viewers (and the noaa-ohc and oa-indicators ones before them) were built from a
+    clone 98 commits behind eeholmes/gridlook, silently missing the log10 transform, the
+    colormap-swatch fix and the CORS diagnosis. `gridlook_commit` in build-info.json recorded
+    the commit faithfully, and nobody had a reason to compare it with GitHub.
+    """
+    def git(*args: str) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", *args], cwd=gridlook, capture_output=True, text=True)
+
+    fetch = git("fetch", "--quiet")
+    upstream = git("rev-parse", "--abbrev-ref", "@{upstream}").stdout.strip()
+    if fetch.returncode != 0 or not upstream:
+        problem = f"could not compare {gridlook} with its remote ({fetch.stderr.strip() or 'no upstream branch'})"
+    else:
+        behind = int(git("rev-list", "--count", f"HEAD..{upstream}").stdout.strip() or 0)
+        if behind == 0:
+            print(f"gridlook checkout is current with {upstream}")
+            return
+        problem = (f"{gridlook} is {behind} commit(s) behind {upstream}. "
+                   f"Update it first:  git -C {gridlook} pull --ff-only && (cd {gridlook} && npm ci)")
+    if allow_stale:
+        print(f"WARNING: {problem} -- building anyway (--allow-stale)")
+    else:
+        sys.exit(f"{problem}\nPass --allow-stale to build from it regardless.")
 
 
 def write_build_info(gridlook: Path, dist: Path) -> None:
@@ -252,6 +282,8 @@ def write_build_info(gridlook: Path, dist: Path) -> None:
         "gridlook_remote": git("remote", "get-url", "origin"),
         "gridlook_commit": git("rev-parse", "HEAD"),
         "gridlook_dirty": bool(git("status", "--porcelain", "--untracked-files=no")),
+        "gridlook_behind_remote": int(git("rev-list", "--count", "HEAD..@{upstream}") or 0),
+        "node": subprocess.run(["node", "--version"], capture_output=True, text=True).stdout.strip(),
         "built_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     (dist / "build-info.json").write_text(json.dumps(info, indent=2) + "\n")
@@ -330,6 +362,8 @@ def main() -> None:
                     help="which repo and store to publish the viewer for")
     ap.add_argument("--build", type=Path, metavar="GRIDLOOK_DIR",
                     help="gridlook checkout to build before uploading")
+    ap.add_argument("--allow-stale", action="store_true",
+                    help="build even if the gridlook checkout is behind its remote")
     ap.add_argument("--dist", type=Path, default=DEFAULT_DIST,
                     help=f"build output folder (default {DEFAULT_DIST})")
     ap.add_argument("--prefix", default=None,
@@ -344,7 +378,7 @@ def main() -> None:
     bucket = product["bucket"]
 
     if args.build:
-        build(args.build, args.dist)
+        build(args.build, args.dist, args.allow_stale)
     # Before plan(), so the catalog is part of the upload set.
     written = write_catalog(product, args.dist)
     if written:
