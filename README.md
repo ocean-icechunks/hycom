@@ -54,6 +54,13 @@ dataset's README has links per variable.
 Python ≥ 3.12. No credentials are needed. Each dataset's README has the specifics; the
 shape is always this:
 
+> **icechunk 1.x will not work.** `icechunk.http_storage` does not exist in icechunk 1.x
+> (it arrived in 2.0), and `icechunk.credentials.HttpAccess` arrived in 2.1. Every icechunk
+> 2.x release needs **Python 3.12 or newer**, so on an older Python `pip install icechunk`
+> quietly installs 1.1.x, and the code below fails with
+> `AttributeError: module 'icechunk' has no attribute 'http_storage'`. Check what you have:
+> `python -c "import icechunk; print(icechunk.__version__)"`.
+
 ```python
 import icechunk, xarray as xr, zarr
 
