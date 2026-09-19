@@ -10,7 +10,7 @@ sees, so one build serves any store::
 
     https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp
 
-Same script as in https://github.com/fish-pace/icechunks, with this repo's
+Same script as in https://github.com/ocean-icechunks/icechunks, with this repo's
 ``PRODUCTS``. What Source Cooperative needs from a static site (checked there
 2026-09-17): content types are served as uploaded and never inferred, so they
 are set explicitly here; there is no directory index, so links name
@@ -78,8 +78,8 @@ DATASETS = {
     "hycom-gofs-3pt1-reanalysis": "HYCOM GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X",
 }
 _VIEW = "dimIndices_time=0::dimIndices_depth=0"
-# Offered as links for every store. They are the GOFS 3.1 names; a dataset with different
-# variables is still reachable through the viewer's own variable picker.
+# Offered as links for every store that does not name its own. They are the GOFS 3.1 names;
+# give a dataset with different ones a "variables" key in its store entry (see `_variables`).
 _VARIABLES = ("water_temp", "salinity", "surf_el", "water_u", "water_v")
 
 
@@ -136,6 +136,15 @@ def _stores(product: dict) -> dict[str, dict[str, str]]:
     return out
 
 
+def _variables(product: dict, entry: dict) -> tuple:
+    """A store's own `variables` if it names any, else the product's.
+
+    Stores in one product need not share variable names, and the HYCOM datasets to come
+    will not all be the GOFS 3.1 set. Same as in ocean-icechunks/icechunks.
+    """
+    return tuple(entry.get("variables") or product.get("variables") or ())
+
+
 def store_fragment(entry: dict, var: str | None = None) -> str:
     """The part after `#`: the store, an optional variable, then the view."""
     name = f"::varname={var}" if var else ""
@@ -146,16 +155,14 @@ def store_fragment(entry: dict, var: str | None = None) -> str:
 def viewer_urls(product: dict, prefix: str) -> dict[str, str]:
     """One link per store, or per store and variable if the product names any."""
     base = f"{PUBLIC}/{product['bucket']}/{prefix}/index.html"
-    variables = product.get("variables")
-    stores = _stores(product)
-    if not variables:
-        return {label: f"{base}#{store_fragment(entry)}"
-                for label, entry in stores.items()}
-    return {
-        f"{label} {var}".strip(): f"{base}#{store_fragment(entry, var)}"
-        for label, entry in stores.items()
-        for var in variables
-    }
+    urls = {}
+    for label, entry in _stores(product).items():
+        variables = _variables(product, entry)
+        if not variables:
+            urls[label] = f"{base}#{store_fragment(entry)}"
+        for var in variables:
+            urls[f"{label} {var}".strip()] = f"{base}#{store_fragment(entry, var)}"
+    return urls
 
 
 def write_catalog(product: dict, dist: Path) -> str | None:
@@ -176,15 +183,13 @@ def write_catalog(product: dict, dist: Path) -> str | None:
     spec = product.get("catalog")
     if not spec:
         return None
-    variables = product.get("variables")
-    var = variables[0] if variables else None
     catalog = {
         "type": "gridlook_catalog",
         "title": spec["title"],
         "datasets": [
             {
                 "title": entry["title"],
-                "url": store_fragment(entry, var),
+                "url": store_fragment(entry, next(iter(_variables(product, entry)), None)),
                 "format": "Icechunk",
                 "access": "direct",
                 "grid": "regular",
@@ -216,9 +221,8 @@ def write_default_store(product: dict, dist: Path) -> str:
     """
     import re
 
-    stores = _stores(product)
-    variables = product.get("variables")
-    fragment = store_fragment(next(iter(stores.values())), variables[0] if variables else None)
+    first = next(iter(_stores(product).values()))
+    fragment = store_fragment(first, next(iter(_variables(product, first)), None))
     index = dist / "index.html"
     html = index.read_text()
     html = re.sub(re.escape(_DEFAULT_BEGIN) + ".*?" + re.escape(_DEFAULT_END) + r"\n?", "", html, flags=re.S)
