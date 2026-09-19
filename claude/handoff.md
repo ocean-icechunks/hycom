@@ -23,10 +23,12 @@ uncompressed NetCDF-3 files, 305.8 TB), with tests going to `ocean-icechunks/tes
 from the public URL, with a gridlook viewer at `ocean-icechunks/hycom/viewer/`. Everything is
 merged to `main` in PR #2 (2026-09-19): `hycom_virtual.py`, the production notebook
 `hycom-icechunk-sc.ipynb`, two smoke-test notebooks, `publish_viewer.py`, `requirements.txt`.
-The docs were mirrored from merged `main` on 2026-09-19 and checked by checksum:
+The docs were mirrored from merged `main` on 2026-09-19 (again after PR #3) and checked by
+checksum:
 dataset docs at `hycom/docs/hycom-gofs-3pt1-reanalysis/`, collection README and LICENSE at
 `hycom/`. Re-mirror after any change to them. Issue #1 is closed and the branch deleted
-(2026-09-19); `main` is the only branch.
+(2026-09-19). PR #3 (README format, viewer default) is merged; its branch
+`readme-standard-format` is not deleted — Eli had not asked.
 
 Notes, in reading order: [notes/plan-issue-1.md](notes/plan-issue-1.md) (measurements and
 every decision Eli made), [notes/smoke-test-findings.md](notes/smoke-test-findings.md)
@@ -48,6 +50,16 @@ The three facts most likely to be got wrong:
   invented.
 
 ## Working principles
+
+- **Store READMEs use Eli's standard format** (PR #3): title ending "— Icechunk", the emoji
+  navbar, then View it in a browser / How to open it / About the data / How this was built /
+  Reuse and citation / Credits. Reference copy: `ocean-icechunks/noaa-ohc/README.md`. Applies
+  to the root README and the test-repo README too. Also saved as a project memory.
+- **Never link or publish a viewer that falls back to gridlook's demo dataset.** gridlook
+  hard-codes an OGS Mediterranean store as its default for URLs with no `#…` fragment;
+  `publish_viewer.py` injects a default-hash script into the published `index.html` so a bare
+  link opens HYCOM. Eli has not yet confirmed it in a browser. The noaa-ohc, oa-indicators
+  and gobai-o2 viewers still have the old default; the lasting fix is in the gridlook fork.
 
 - Follow the `virtual-icechunk` skill's order: plan → smoke test → production → docs. The
   plan is reviewed; the smoke test is next.
