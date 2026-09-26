@@ -3,7 +3,7 @@
 Issue: ocean-icechunks/hycom#8. Audit run 2026-09-25 against
 `https://data.hycom.org/datasets/GOMb0.01/reanalysis/data/`, the same files the THREDDS server
 at tds.hycom.org publishes. The files are to be copied to S3 (planned bucket
-`hycom-tsis-gom-reanalysis`, not yet created) before any store is built. The question this
+`hycom-tsis-gom-reanalysis`) before any store is built. The question this
 report answers is whether they need **reprocessing** on the way there.
 
 ## For the file team
@@ -13,7 +13,7 @@ report answers is whether they need **reprocessing** on the way there.
    by how the Icechunk stores are structured, not by rewriting data.
 2. **Experiment 027 needs reprocessing** (2024-04-01 19Z to 2024-09-01 18Z, 3,672 hours, hourly
    and daily). It was written with a different chunk layout from the rest, and a variable cannot
-   change chunk layout partway through a store. Rewrite it to the others' chunking, uncompressed:
+   change chunk layout partway through a virtualized store. Rewrite it to the others' chunking, uncompressed:
    - 2d: `MT/1,Latitude/1537,Longitude/2101`
    - 3z: `MT/1,Depth/10,Latitude/385,Longitude/526`
 
@@ -46,20 +46,12 @@ experiment 027's).
   |---|---|---|---|---|
   | `_2d.nc`, experiments 010 / 023 / 026 | 6 | {1 × 1537 × 2101} | 12.9 MB | 1: the whole map |
   | `_3z.nc`, experiments 010 / 023 / 026 | 5 | {1 × 10 × 385 × 526} | 8.1 MB | 64: 4 depth groups × 16 tiles |
-  | `_2d.nc`, experiment 027 | 6 | {1 × 769 × 1051} | 3.2 MB | 4: 2 × 2 tiles |
-  | `_3z.nc`, experiment 027 | 5 | {1 × 7 × 308 × 421} | 3.6 MB | 150: 6 depth groups × 25 tiles |
+  | `_2d.nc`, experiment 027 | 6 | {1 × 769 × 1051} | 3.2 MB | 4: 2 × 2 tiles ; chunking changed |
+  | `_3z.nc`, experiment 027 | 5 | {1 × 7 × 308 × 421} | 3.6 MB | 150: 6 depth groups × 25 tiles ; chunking changed |
 
   The coordinates `Latitude`, `Longitude` and `Depth` are stored contiguously. `MT` and `Date`
   are chunked at 512, of which each file uses one element.
-- **A tile** is one of the rectangles that a file's own chunking cuts each depth's map into. In
-  the 3z files of experiments 010–026 there are 16 tiles per depth, 4 × 4:
-  - Latitude: 1,537 rows in pieces of 385, 385, 385 and 382 rows, each about 3.5°.
-  - Longitude: 2,101 columns in pieces of 526, 526, 526 and 523, each 5.26°: 98–92.74°W,
-    92.74–87.48°W, 87.48–82.22°W and 82.22–77°W.
 
-  A tile is therefore about 3.5° × 5.3°, roughly 390 × 530 km. The HDF5 library pads the last
-  row and column of tiles to full size on disk. The 2d files of experiments 010–026 have no
-  tiles: each map is one chunk.
 - **Horizontal grid: 1/100°.**
   - Longitude runs from 98°W to 77°W in 0.01° steps, **2,101 points**.
   - Latitude runs from 18.09°N to 31.96°N, **1,537 points**. The spacing is 0.0085–0.0095°,
@@ -70,7 +62,7 @@ experiment 027's).
   product page are the model's own vertical grid. The distributed 3z files are interpolated from
   those layers to these depths, as HYCOM's tutorial notebook also says. A store built from these
   files has 40 depths, not 41 layers.
-- **Time: one hour per file**, two files per hour.
+- **Time: one hour per file**, two files per hour (2d and 3z).
 - **Eleven variables**, all float32 and uncompressed, each stored separately:
   - `_2d.nc`: `ssh`, `mixed_layer_thickness`, `u_barotropic_velocity`,
     `v_barotropic_velocity`, `wnd_ewd`, `wnd_nwd`
@@ -87,26 +79,26 @@ variable at a single hour.
 
 ## Store design: what the files allow
 
-Chunking is now a question of how the Icechunk stores are structured. The files are
-uncompressed, so a store can reference either a whole source chunk, or any contiguous piece of
+The files are
+uncompressed, so a virtualized store can reference either a whole source chunk, or any contiguous piece of
 one ("the offset trick"). A reference must be one contiguous byte range in one file. So a store
 can cut the files' chunks into smaller pieces, but it can never join pieces into a bigger one.
 Both were tested end to end, and reading back through Icechunk gave values identical to h5py
-(`05_split_and_time.py`).
+(`05_split_and_time.py`). This provides a few decisions regarding how the Icechunk stores are structured. 
 
 ### 2d: the whole map, 12.9 MB
 
 Each 2d variable at one hour is a single contiguous 12.9 MB chunk, a good chunk size, and the
-store will reference it whole: one reference per variable per hour, 1.2 M in all. Maps and
-subsets are cheap. A point time series has to fetch 12.9 MB per hour. From S3 that is an
-estimated 7 min per variable per year, against 15 s if the maps were cut into 53-row bands. The
+store can reference it whole: one reference per variable per hour. Maps and
+subsets are cheap. A point time series has to fetch all 12.9 MB for each hour. From S3 that is an
+estimated 7 min per variable per year, against 15 s if the maps were cut into 53-row bands (latitude bands). The
 band option stays available if point time series turn out to matter (`05_split_and_time.py`
-measured both).
+measured both). This decision can be made during performance testing during icechunk creation.
 
 ### 3z: one of four options, to be decided by testing
 
-A 12.9 MB chunk holding one depth's full map is **not possible** for 3z. In these files one
-depth's map is spread over 16 tiles, and each tile stores its 10 depths together:
+A 12.9 MB chunk holding one depth's full map is **not possible** for 3z. In these HDF5 files one
+depth's map is spread over 16 tiles/chunks, and each tile stores its 10 depths together:
 
 ```
 one tile (1 of 16) on disk:  [depth 0 | depth 1 | ... | depth 9]   8.1 MB
@@ -124,9 +116,8 @@ The virtual chunk can be all 10 depths of a tile, or any whole number of depths 
 
 The trade is data wasted per read against the number of references. 663 M references is 63
 times the GOFS 3.1 store, and untested (see
-[Reference counts](#reference-counts-compared-with-gofs-31)). A one-year test on S3 should
-decide: build the year at two or three of these chunkings, then measure build time and memory,
-store open time, a one-depth map, a profile, and a one-depth point time series.
+[Reference counts](#reference-counts-compared-with-gofs-31)). Once files are on S3, conduct a one-year test to decide
+the icechunk chunking above.
 
 ### Other constraints on the design
 
@@ -145,57 +136,22 @@ store open time, a one-depth map, a profile, and a one-depth point time series.
 ### Why experiment 027 must be reprocessed
 
 Experiment 027 (`experiment = "02.3"`) has the same grid, variables and 40 depths as the rest,
-but it was written with a different chunk grid:
+but it was written with a different chunk grid. When creating a virtualized Zarr store (or Icechunk), the 
+variables must share the chunk layout. This constraint may be solved in later versions of VirtualiZarr, but if 
+there are no technical reasons to have changed the chunk layout, it is best to return to the 2001-2023 layout. In anycase, for S3 now, the 027 files will need to be reprocessed to have the same chunk layout.
 
 | | 010 / 023 / 026 | 027 |
 |---|---|---|
 | 2d chunk | {1 × 1537 × 2101} | {1 × 769 × 1051} |
 | 3z chunk | {1 × 10 × 385 × 526} | {1 × 7 × 308 × 421} |
 
-None of the store chunkings above can be cut from 027's pieces. A whole 2d map is four
-separate 769 × 1051 tiles in 027, and 027's 3z tiles do not line up with the others' 385 × 526
-tiles. The only virtual chunk both layouts can express is a single half-row of 1051 values
-(4 KB), which would mean about 3,000 references per map (one variable, one hour, one depth).
-Without reprocessing, 027 would have to be a separate group or store with its own time axis.
-Rewriting its 3,672 hours to the others' layout joins them onto the same arrays:
 
-- 2d: chunk `MT/1,Latitude/1537,Longitude/2101`, uncompressed.
-- 3z: chunk `MT/1,Depth/10,Latitude/385,Longitude/526`, uncompressed.
-
-That is about 0.3 TB of 2d and 10 TB of 3z. For example `nccopy -c "<chunks>"` with no `-d`.
-The 027 2d files were also assembled with NCO (`ncks -A` of the winds, `_nc3_strict`), so check
+Reprocessing involves about 0.3 TB of 2d files and 10 TB of 3z files. Rewrite scripts should be straight-forward. For example `nccopy -c "<chunks>"` with no `-d`. The 027 2d files were also assembled with NCO (`ncks -A` of the winds, `_nc3_strict`), so check
 that the variable order and attributes come out consistent.
 
 ## Findings
 
-Codes are referenced from the scripts. F1–F3 concern HYCOM's own servers, and matter only if a
-store ever pointed at them rather than S3.
-
-### F1. tds.hycom.org cannot serve Icechunk; data.hycom.org can
-
-The THREDDS `fileServer` answers ranged GETs with `206` and `Transfer-Encoding: chunked` but no
-`Content-Length`, over both HTTP/1.1 and HTTP/2. Icechunk 2.2.2's HTTP reader fails every read
-with `Generic HTTP error: Content-Length Header missing from response`.
-`https://data.hycom.org/datasets/GOMb0.01/reanalysis/data/…` serves the same bytes with a
-proper `Content-Length`, and every read in this audit used it. Its directory listings are also
-far quicker than the THREDDS catalog: 6 s per year, against a catalog that had not finished
-after half an hour.
-
-### F2. data.hycom.org answers bursts on one file with 403 Forbidden
-
-Forty 810 KB ranges of one 3z file, at 6–8 concurrent requests, drew intermittent
-`403 Forbidden` responses: 2 of 40, then 11 of 40, then none on a later run
-(`out/hycom-throughput.txt`). The same concurrency spread over different files never did.
-Icechunk does not retry a 403, so a user's read fails outright; this happened twice in
-Icechunk's own reads of a 40-level profile. It looks like a rate limiter. It is moot on S3.
-
-### F3. HYCOM's server is slow for this access pattern
-
-Per connection it gives about 6 requests/s and 3 MB/s. At the 8 connections HYCOM allows, it
-reaches about 60 requests/s for small reads and 9–14 MB/s for large ones. That is 10–30 times
-slower than S3 for the same requests (`out/s3-throughput.txt`).
-
-### F4. Byte offsets vary between otherwise identical files
+### F1. Byte offsets vary between otherwise identical files
 
 Every file sampled has the same variables, shapes, chunking and codec within its experiment.
 The byte offsets, though, differ in some files, because the header's length varies:
@@ -208,12 +164,12 @@ The byte offsets, though, differ in some files, because the header's length vari
 - Experiment 027's 2d offsets differ even within that experiment.
 
 This is the GOFS 3.1 lesson again: a template taken from one file misplaces data in others.
-Scan every file's header. `06_header_cost.py` measured the cost: 1 read of 64 KiB per 2d file,
+**Icechunk preperation scripts much scan every file's header+**. `06_header_cost.py` measured the cost: 1 read of 64 KiB per 2d file,
 and 6 per 3z file, because each variable's chunk index sits just before its data. For
 experiment 027 it is 6 and 17. Over the whole archive that is roughly 1.5 M small reads, which
-takes minutes on S3 and would take a day or more against data.hycom.org.
+takes minutes once data are on S3.
 
-### F5. Eighteen 3z files are empty, and six 3z hours are missing
+### F2. Eighteen 3z files are empty, and six 3z hours are missing
 
 Three runs of six hours in experiment 010 have 3z files of 49 KB (one is 239 bytes). Their data
 variables have a time dimension of length **0**:
@@ -227,20 +183,20 @@ these hours. Leave the empty files out of the S3 copy, or skip them in the build
 those 24 hours read as fill values in the 3z store. They are listed in
 `out/problem-files.csv`.
 
-### F6. Experiments 026 and 027 overlap for 653 hours
+### F3. Experiments 026 and 027 overlap for 653 hours
 
 From 2024-04-01 19Z to 2024-04-28 23Z every hour has both a `026_` and a `027_` file, for 2d and
 3z. Experiment 026 is version `01.0` and was written in December 2024. Experiment 027 is
 version `02.3`, written in September 2025, and runs on to 2024-09-01 18Z. HYCOM should say
 which one is authoritative for the overlap. The store can hold only one per hour.
 
-### F7. The record starts 2001-01-16, not 2001-01-01
+### F4. The record starts 2001-01-16, not 2001-01-01
 
 No file exists before `010_archv.2001_016_00`, although the product page and HYCOM's tutorial
 notebook both say 1 January 2001. It ends at 2024-09-01 18Z, not 2024-08-31. In total there are
 207,115 hourly 2d times and 207,091 3z times.
 
-### F8. HYCOM is still editing the archive
+### F5. HYCOM is still editing the archive
 
 1,609 2d files (2003-09-27 to 2004-06-01) were rewritten on 4–10 September 2026, and 627 3z
 files in March–June 2026. The 2005 3z file sampled from the April batch was produced with
@@ -250,8 +206,7 @@ files in March–June 2026. The 2005 3z file sampled from the April batch was pr
 
 Two consequences:
 
-1. **Freeze the files before the S3 copy.** A virtual reference is a byte offset, so a file
-   rewritten after the build silently returns the wrong bytes.
+1. **The icechunk must be rebuilt when updated files are pushed to S3.** Icechunk has a versioning mechanism.
 2. **Build with a checksum pin anyway.** `07_checksum_pin.py` confirmed that Icechunk's
    per-reference checksum works for these files. A store written with
    `to_icechunk(…, last_updated_at=<build time>)` fails with *"the checksum of the object owning
@@ -262,14 +217,14 @@ Two consequences:
 The interpolated hours are worth listing in the store's documentation. `cell_methods` or
 `history` identifies them without reading any data.
 
-### F9. Stray files in the year directories
+### F6. Stray files in the year directories
 
 - 2016 has sixteen `u.y2016_d300.nc` … `u.y2016_d315.nc` files (493 MB each).
 - 2012 has `010_archv.2012_138_00_3z.nc_COPY`.
 
-Neither matches the naming pattern. Leave them out of the S3 copy.
+Neither matches the naming pattern. Leave them out of the S3 copy?
 
-### F10. Smaller inconsistencies (do not block a build)
+### F7. Smaller inconsistencies (do not block a build)
 
 - **The HDF5 dataset fill value differs.** It is 9.96921e36 in the 027 2d files, the 2026
   repairs and the daily files, and 1.267651e30 elsewhere. The CF `_FillValue` attribute is the
@@ -278,14 +233,16 @@ Neither matches the naming pattern. Leave them out of the S3 copy.
 - **`Conventions`** is `CF-1.6` in 027 and `CF-1.0` elsewhere.
 - **`long_name`** carries the experiment version: `[01.0H]` or `[02.3H]`.
 
-### F11. The 3z files store time at reduced precision
+**Make sure to repair the metadata to ensure CF-compliant icechunk stores.** We have scripts and CF-compliance checkers.
+
+### F8. The 3z files store time at reduced precision
 
 For the same hour, `MT` in the 3z file differs from the 2d file's. At 2010-04-10 01Z the 2d file
 has 39912.04166667 days, exactly 01:00. The 3z file has 39912.04296875 days, which is 01:01:52:
 the value has passed through float32. Experiment 027's 3z files round it to three decimals
 instead (45125.208). `Date` shows the same. Latitude and longitude are identical in the two
-files. Build the time axis from the filenames, as the GOFS 3.1 build did, not from each file's
-`MT`. The two agree to the hour (`08_one_group.py`).
+files. I suggest we build the time axis from the filenames, as the GOFS 3.1 build did, not from each file's
+`MT` or determine some other way to get a consistent time. The two agree to the hour (`08_one_group.py`).
 
 ## Expected performance from S3
 
@@ -317,15 +274,6 @@ The box is the one used in every test here: rows 600–800 and columns 1000–12
 so the 10-depth chunking fetches 4 × 8.1 MB per hour; a box inside a single tile costs a
 quarter of that.
 
-Measured against data.hycom.org rather than S3 (`out/split-timing.txt`), 24 hours of `ssh`
-read through Icechunk behaved like this:
-
-| Virtual chunk | Point, 24 h | 200 × 200 box, 24 h | Full map, 1 h |
-|---|---|---|---|
-| 1 row (8 KB) | 1.0 s | 174 s | 75 s |
-| 53-row band (445 KB) | 3.8 s | 12.7 s | 1.8 s |
-| Whole map (12.9 MB) | 15.9 s | 10.5 s | 2.0 s |
-
 ### Reference counts compared with GOFS 3.1
 
 The local test measured 7.3 bytes per reference in the manifests. Its offsets were more regular
@@ -340,8 +288,7 @@ than the full archive's will be, so treat the sizes as rough.
 | 3z, 1 depth per chunk | 5 × 640 × 207k ≈ 663 M | ~5 GB |
 
 663 M references is 63 times the GOFS 3.1 store (10.45 M). Only a factor of 3.3 of that comes
-from hourly rather than 3-hourly output. The rest comes from the number of pieces each time step
-is cut into:
+from hourly rather than 3-hourly output. The rest comes from the file chunking:
 
 | | Time steps | References per time step | Total |
 |---|---|---|---|
