@@ -1,0 +1,31 @@
+# Transcribed from the 2026-09-25 runs of the code now in 04a_hycom_throughput.py
+# (the runs were made from scratch copies of it; not re-run, to avoid provoking more 403s).
+# Hub in AWS us-west-2; data.hycom.org.
+
+# Different files, one per hour (point-time-series pattern)
+N=1 2d 48 x 8 KB:   8.2s   5.8 req/s   0.0 MB/s  {206: 48}
+N=1 3z 24 x 810 KB: 6.0s   4.0 req/s   3.2 MB/s  {206: 24}
+N=1 2d 24 x 445 KB: 3.5s   6.8 req/s   3.0 MB/s  {206: 24}
+N=4 2d 48 x 8 KB:   1.5s  32.4 req/s   0.3 MB/s  {206: 48}
+N=4 3z 24 x 810 KB: 1.4s  16.8 req/s  13.6 MB/s  {206: 24}
+N=4 2d 24 x 445 KB: 1.3s  17.9 req/s   8.0 MB/s  {206: 24}
+N=8 2d 48 x 8 KB:   0.8s  60.8 req/s   0.5 MB/s  {206: 48}
+N=8 3z 24 x 810 KB: 1.4s  17.2 req/s  14.0 MB/s  {206: 24}
+N=8 2d 24 x 445 KB: 1.2s  20.0 req/s   8.9 MB/s  {206: 24}
+
+# 40 x 810 KB ranges of ONE 3z file (profile pattern)
+N=8 same_file=False: 2.5s {206: 40}
+N=2 same_file=True:  3.0s {206: 40}
+N=4 same_file=True:  2.2s {206: 40}
+N=8 same_file=True:  1.4s {206: 38, 403: 2}
+N=6 same_file=True:  2.5s {206: 40}
+N=6 same_file=True:  6.7s {206: 29, 403: 11}
+N=7 same_file=True:  1.4s {206: 34, 403: 6}
+N=7 same_file=True:  1.7s {206: 40}
+N=8 same_file=True:  1.4s {206: 40}
+N=8 same_file=False: 2.5s {206: 40}
+N=8 same_file=False: 2.4s {206: 40}
+
+# tds.hycom.org/thredds/fileServer: 206 responses carry Transfer-Encoding: chunked and no
+# Content-Length (HTTP/1.1 and HTTP/2). Icechunk 2.2.2 then fails every read with
+# "Generic HTTP error: Content-Length Header missing from response".

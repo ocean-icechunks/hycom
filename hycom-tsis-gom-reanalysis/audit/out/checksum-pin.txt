@@ -1,0 +1,2 @@
+pinned before Last-Modified -> StorageError: the checksum of the object owning the virtual chunk has changed (https://data.hycom.org/datasets/GOMb0.01/reanalysis/data/2010/010_archv.2010_100_00_2d.nc)
+pinned after Last-Modified  -> read OK, equal to h5py: True

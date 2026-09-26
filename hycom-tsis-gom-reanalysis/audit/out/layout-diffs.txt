@@ -1,0 +1,381 @@
+== 2020/023_archv.2020_260_07_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.2,hdf5=1.14.3'"
+== 2024/023_archv.2024_001_18_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.1,hdf5=1.12.2'"
+== 2024/026_archv.2024_001_19_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.1,hdf5=1.12.2'"
+== 2024/026_archv.2024_060_21_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.1,hdf5=1.12.2'"
+== 2024/026_archv.2024_119_23_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.1,hdf5=1.12.2'"
+== 2024/026_archv.2024_113_23_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.1,hdf5=1.12.2'"
+== 2024/027_archv.2024_092_19_2d.nc
+  Date@next_Date: None -> [20240502.04166667]
+  MT@calendar: b'standard' -> b'gregorian'
+  MT@next_MT: None -> [45048.04166667]
+  mixed_layer_thickness.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  mixed_layer_thickness@long_name: b'mix.layr.thickness [01.0H]' -> b'mix.layr.thickness [02.3H]'
+  ssh.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  ssh@long_name: b' sea surf. height  [01.0H]' -> b' sea surf. height  [02.3H]'
+  u_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u_barotropic_velocity@long_name: b'    baro. u-vel.[01.0H]' -> b'    baro. u-vel.   [02.3H]'
+  v_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v_barotropic_velocity@long_name: b'    baro. v-vel. [01.0H]' -> b'    baro. v-vel.   [02.3H]'
+  wnd_ewd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_nwd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  global@Conventions: "b'CF-1.0'" -> "b'CF-1.6'"
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@comment: None -> "b'p-grid'"
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Fri Sep 19 17:22:15 2025: ncks -x -v surface_e_stress,surface_n_stress orig.nc 027_archv.2024_092_19_2d.nc\\nFri Sep 19 17:22:14 2025: ncks -A -v wnd_nwd,wnd_ewd wind.nc orig.nc\\narchv2ncdf2d'"
+  global@history_of_appended_files: None -> 'b\'Fri Sep 19 17:22:14 2025: Appended file wind.nc had following "history" attribute:\\nFri Sep 19 17:22:14 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc\\nFri Sep 19 17:22:13 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc\\nFri Sep 19 17:22:13 2025: ncks -d MT,19,19 wndewd_124d.nc test
+== 2024/027_archv.2024_169_07_2d.nc
+  Date@next_Date: None -> [20240702.04166667]
+  MT@calendar: b'standard' -> b'gregorian'
+  MT@next_MT: None -> [45109.04166667]
+  mixed_layer_thickness.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  mixed_layer_thickness@long_name: b'mix.layr.thickness [01.0H]' -> b'mix.layr.thickness [02.3H]'
+  ssh.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  ssh@long_name: b' sea surf. height  [01.0H]' -> b' sea surf. height  [02.3H]'
+  u_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u_barotropic_velocity@long_name: b'    baro. u-vel.[01.0H]' -> b'    baro. u-vel.   [02.3H]'
+  v_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v_barotropic_velocity@long_name: b'    baro. v-vel. [01.0H]' -> b'    baro. v-vel.   [02.3H]'
+  wnd_ewd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_nwd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  global@Conventions: "b'CF-1.0'" -> "b'CF-1.6'"
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@comment: None -> "b'p-grid'"
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Fri Sep 19 18:58:40 2025: ncks -x -v surface_e_stress,surface_n_stress orig.nc 027_archv.2024_169_07_2d.nc\\nFri Sep 19 18:58:37 2025: ncks -A -v wnd_nwd,wnd_ewd wind.nc orig.nc\\narchv2ncdf2d'"
+  global@history_of_appended_files: None -> 'b\'Fri Sep 19 18:58:37 2025: Appended file wind.nc had following "history" attribute:\\nFri Sep 19 18:58:31 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc\\nFri Sep 19 18:58:22 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc\\nFri Sep 19 18:58:17 2025: ncks -d MT,391,391 wndewd_124f.nc te
+== 2024/027_archv.2024_245_18_2d.nc
+  Date@next_Date: None -> [20240902.04166667]
+  MT@calendar: b'standard' -> b'gregorian'
+  MT@next_MT: None -> [45171.04166667]
+  mixed_layer_thickness.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  mixed_layer_thickness@long_name: b'mix.layr.thickness [01.0H]' -> b'mix.layr.thickness [02.3H]'
+  ssh.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  ssh@long_name: b' sea surf. height  [01.0H]' -> b' sea surf. height  [02.3H]'
+  u_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u_barotropic_velocity@long_name: b'    baro. u-vel.[01.0H]' -> b'    baro. u-vel.   [02.3H]'
+  v_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v_barotropic_velocity@long_name: b'    baro. v-vel. [01.0H]' -> b'    baro. v-vel.   [02.3H]'
+  wnd_ewd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_nwd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  global@Conventions: "b'CF-1.0'" -> "b'CF-1.6'"
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@comment: None -> "b'p-grid'"
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Fri Sep 19 19:10:03 2025: ncks -x -v surface_e_stress,surface_n_stress orig.nc 027_archv.2024_245_18_2d.nc\\nFri Sep 19 19:10:02 2025: ncks -A -v wnd_nwd,wnd_ewd wind.nc orig.nc\\narchv2ncdf2d'"
+  global@history_of_appended_files: None -> 'b\'Fri Sep 19 19:10:02 2025: Appended file wind.nc had following "history" attribute:\\nFri Sep 19 19:10:02 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc\\nFri Sep 19 19:10:01 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc\\nFri Sep 19 19:10:01 2025: ncks -d MT,762,762 wndewd_124h.nc te
+== 2024/027_archv.2024_111_05_2d.nc
+  Date@next_Date: None -> [20240502.04166667]
+  MT@calendar: b'standard' -> b'gregorian'
+  MT@next_MT: None -> [45048.04166667]
+  mixed_layer_thickness.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  mixed_layer_thickness@long_name: b'mix.layr.thickness [01.0H]' -> b'mix.layr.thickness [02.3H]'
+  ssh.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  ssh@long_name: b' sea surf. height  [01.0H]' -> b' sea surf. height  [02.3H]'
+  u_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u_barotropic_velocity@long_name: b'    baro. u-vel.[01.0H]' -> b'    baro. u-vel.   [02.3H]'
+  v_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v_barotropic_velocity@long_name: b'    baro. v-vel. [01.0H]' -> b'    baro. v-vel.   [02.3H]'
+  wnd_ewd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_nwd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  global@Conventions: "b'CF-1.0'" -> "b'CF-1.6'"
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@comment: None -> "b'p-grid'"
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Fri Sep 19 17:37:44 2025: ncks -x -v surface_e_stress,surface_n_stress orig.nc 027_archv.2024_111_05_2d.nc\\nFri Sep 19 17:37:44 2025: ncks -A -v wnd_nwd,wnd_ewd wind.nc orig.nc\\narchv2ncdf2d'"
+  global@history_of_appended_files: None -> 'b\'Fri Sep 19 17:37:44 2025: Appended file wind.nc had following "history" attribute:\\nFri Sep 19 17:37:44 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc\\nFri Sep 19 17:37:43 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc\\nFri Sep 19 17:37:43 2025: ncks -d MT,461,461 wndewd_124d.nc te
+== 2024/027_archv.2024_092_19_3z.nc
+  salinity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  salinity.fill: 1.267651e+30 -> 1.2676506e+30
+  salinity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  salinity@long_name: b'salinity [01.0H]' -> b' salinity [02.3H]'
+  u.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  u.fill: 1.267651e+30 -> 1.2676506e+30
+  u@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u@long_name: b'u-veloc. [01.0H]' -> b' u-veloc. [02.3H]'
+  v.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  v.fill: 1.267651e+30 -> 1.2676506e+30
+  v@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v@long_name: b'v-veloc. [01.0H]' -> b' v-veloc. [02.3H]'
+  w_velocity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  w_velocity.fill: 1.267651e+30 -> 1.2676506e+30
+  w_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  w_velocity@long_name: b'w-veloc. [01.0H]' -> b' w-veloc. [02.3H]'
+  water_temp.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  water_temp.fill: 1.267651e+30 -> 1.2676506e+30
+  water_temp@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  water_temp@long_name: b'temp [01.0H]' -> b'  temp [02.3H]'
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.0,hdf5=1.12.2'"
+  global@_nc3_strict: None -> '1'
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'archv2ncdf3z'"
+== 2024/027_archv.2024_169_07_3z.nc
+  salinity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  salinity.fill: 1.267651e+30 -> 1.2676506e+30
+  salinity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  salinity@long_name: b'salinity [01.0H]' -> b' salinity [02.3H]'
+  u.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  u.fill: 1.267651e+30 -> 1.2676506e+30
+  u@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u@long_name: b'u-veloc. [01.0H]' -> b' u-veloc. [02.3H]'
+  v.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  v.fill: 1.267651e+30 -> 1.2676506e+30
+  v@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v@long_name: b'v-veloc. [01.0H]' -> b' v-veloc. [02.3H]'
+  w_velocity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  w_velocity.fill: 1.267651e+30 -> 1.2676506e+30
+  w_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  w_velocity@long_name: b'w-veloc. [01.0H]' -> b' w-veloc. [02.3H]'
+  water_temp.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  water_temp.fill: 1.267651e+30 -> 1.2676506e+30
+  water_temp@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  water_temp@long_name: b'temp [01.0H]' -> b'  temp [02.3H]'
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.0,hdf5=1.12.2'"
+  global@_nc3_strict: None -> '1'
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'archv2ncdf3z'"
+== 2024/027_archv.2024_245_18_3z.nc
+  salinity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  salinity.fill: 1.267651e+30 -> 1.2676506e+30
+  salinity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  salinity@long_name: b'salinity [01.0H]' -> b' salinity [02.3H]'
+  u.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  u.fill: 1.267651e+30 -> 1.2676506e+30
+  u@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u@long_name: b'u-veloc. [01.0H]' -> b' u-veloc. [02.3H]'
+  v.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  v.fill: 1.267651e+30 -> 1.2676506e+30
+  v@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v@long_name: b'v-veloc. [01.0H]' -> b' v-veloc. [02.3H]'
+  w_velocity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  w_velocity.fill: 1.267651e+30 -> 1.2676506e+30
+  w_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  w_velocity@long_name: b'w-veloc. [01.0H]' -> b' w-veloc. [02.3H]'
+  water_temp.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  water_temp.fill: 1.267651e+30 -> 1.2676506e+30
+  water_temp@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  water_temp@long_name: b'temp [01.0H]' -> b'  temp [02.3H]'
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.0,hdf5=1.12.2'"
+  global@_nc3_strict: None -> '1'
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'archv2ncdf3z'"
+== 2024/027_archv.2024_111_05_3z.nc
+  salinity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  salinity.fill: 1.267651e+30 -> 1.2676506e+30
+  salinity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  salinity@long_name: b'salinity [01.0H]' -> b' salinity [02.3H]'
+  u.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  u.fill: 1.267651e+30 -> 1.2676506e+30
+  u@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u@long_name: b'u-veloc. [01.0H]' -> b' u-veloc. [02.3H]'
+  v.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  v.fill: 1.267651e+30 -> 1.2676506e+30
+  v@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v@long_name: b'v-veloc. [01.0H]' -> b' v-veloc. [02.3H]'
+  w_velocity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  w_velocity.fill: 1.267651e+30 -> 1.2676506e+30
+  w_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  w_velocity@long_name: b'w-veloc. [01.0H]' -> b' w-veloc. [02.3H]'
+  water_temp.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  water_temp.fill: 1.267651e+30 -> 1.2676506e+30
+  water_temp@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  water_temp@long_name: b'temp [01.0H]' -> b'  temp [02.3H]'
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.0,hdf5=1.12.2'"
+  global@_nc3_strict: None -> '1'
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'archv2ncdf3z'"
+== 2005/010_archv.2005_079_04_3z.nc
+  Date@cell_methods: None -> b'MT: mean'
+  MT@cell_methods: None -> b'MT: mean'
+  salinity.fill: 1.267651e+30 -> 9.96921e+36
+  salinity@cell_methods: None -> b'MT: mean'
+  u.fill: 1.267651e+30 -> 9.96921e+36
+  u@cell_methods: None -> b'MT: mean'
+  v.fill: 1.267651e+30 -> 9.96921e+36
+  v@cell_methods: None -> b'MT: mean'
+  w_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  w_velocity@cell_methods: None -> b'MT: mean'
+  water_temp.fill: 1.267651e+30 -> 9.96921e+36
+  water_temp@cell_methods: None -> b'MT: mean'
+  global@NCO: None -> "b'netCDF Operators version 4.9.7 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.3,hdf5=1.10.6,'"
+  global@history: "b'python'" -> "b'Tue Apr 14 13:17:23 2026: ncra 010_archv.2005_079_03_3z.nc 010_archv.2005_079_05_3z.nc 010_archv.2005_079_04_3z.nc\\npython'"
+== 2003/010_archv.2003_274_00_2d.nc
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.9.4-development,hdf5=1.14.2'"
+== 2002/010_archv.2002_347_01_3z.nc
+  salinity.shape: (1, 40, 1537, 2101) -> (0, 40, 1537, 2101)
+  u.shape: (1, 40, 1537, 2101) -> (0, 40, 1537, 2101)
+  v.shape: (1, 40, 1537, 2101) -> (0, 40, 1537, 2101)
+  w_velocity.shape: (1, 40, 1537, 2101) -> (0, 40, 1537, 2101)
+  water_temp.shape: (1, 40, 1537, 2101) -> (0, 40, 1537, 2101)
+== daily_netcdf/2010/gomb1_daily_2010_001_2d.nc
+  Date@cell_methods: None -> b'MT: mean'
+  MT@cell_methods: None -> b'MT: mean'
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@cell_methods: None -> b'MT: mean'
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@cell_methods: None -> b'MT: mean'
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@cell_methods: None -> b'MT: mean'
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@cell_methods: None -> b'MT: mean'
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@cell_methods: None -> b'MT: mean'
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@cell_methods: None -> b'MT: mean'
+  global@NCO: None -> "b'netCDF Operators version 4.9.7 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.3,hdf5=1.10.6,'"
+  global@history: "b'python'" -> "b'Sat Sep 20 15:31:38 2025: ncra --wgt 0.92,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.92 /hycom/ftp/datasets/GOMb0.01/reanalysis/data/2010//010_archv.2010_001_12_2d.nc /hycom/ftp/datasets/GOMb0.01/reanalysis/data/2010//010_archv.2010_001_13_2d.nc 
+== daily_netcdf/2010/gomb1_daily_2010_001_3z.nc
+  Date@cell_methods: None -> b'MT: mean'
+  MT@cell_methods: None -> b'MT: mean'
+  salinity.fill: 1.267651e+30 -> 9.96921e+36
+  salinity@cell_methods: None -> b'MT: mean'
+  u.fill: 1.267651e+30 -> 9.96921e+36
+  u@cell_methods: None -> b'MT: mean'
+  v.fill: 1.267651e+30 -> 9.96921e+36
+  v@cell_methods: None -> b'MT: mean'
+  w_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  w_velocity@cell_methods: None -> b'MT: mean'
+  water_temp.fill: 1.267651e+30 -> 9.96921e+36
+  water_temp@cell_methods: None -> b'MT: mean'
+  global@NCO: None -> "b'netCDF Operators version 4.9.7 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.3,hdf5=1.10.6,'"
+  global@history: "b'python'" -> "b'Sat Sep 20 15:32:01 2025: ncra --wgt 0.92,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.92 /hycom/ftp/datasets/GOMb0.01/reanalysis/data/2010//010_archv.2010_001_12_3z.nc /hycom/ftp/datasets/GOMb0.01/reanalysis/data/2010//010_archv.2010_001_13_3z.nc 
+== daily_netcdf/2024/gomb1_daily_2024_200_2d.nc
+  Date@cell_methods: None -> b'MT: mean'
+  Date@next_Date: None -> [20240802.04166667]
+  MT@calendar: b'standard' -> b'gregorian'
+  MT@cell_methods: None -> b'MT: mean'
+  MT@next_MT: None -> [45140.04166667]
+  mixed_layer_thickness.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  mixed_layer_thickness.fill: 1.267651e+30 -> 9.96921e+36
+  mixed_layer_thickness@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  mixed_layer_thickness@cell_methods: None -> b'MT: mean'
+  mixed_layer_thickness@long_name: b'mix.layr.thickness [01.0H]' -> b'mix.layr.thickness [02.3H]'
+  ssh.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  ssh.fill: 1.267651e+30 -> 9.96921e+36
+  ssh@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  ssh@cell_methods: None -> b'MT: mean'
+  ssh@long_name: b' sea surf. height  [01.0H]' -> b' sea surf. height  [02.3H]'
+  u_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  u_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  u_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u_barotropic_velocity@cell_methods: None -> b'MT: mean'
+  u_barotropic_velocity@long_name: b'    baro. u-vel.[01.0H]' -> b'    baro. u-vel.   [02.3H]'
+  v_barotropic_velocity.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  v_barotropic_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  v_barotropic_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v_barotropic_velocity@cell_methods: None -> b'MT: mean'
+  v_barotropic_velocity@long_name: b'    baro. v-vel. [01.0H]' -> b'    baro. v-vel.   [02.3H]'
+  wnd_ewd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_ewd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_ewd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_ewd@cell_methods: None -> b'MT: mean'
+  wnd_nwd.chunks: (1, 1537, 2101) -> (1, 769, 1051)
+  wnd_nwd.fill: 1.267651e+30 -> 9.96921e+36
+  wnd_nwd@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  wnd_nwd@cell_methods: None -> b'MT: mean'
+  global@Conventions: "b'CF-1.0'" -> "b'CF-1.6'"
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@comment: None -> "b'p-grid'"
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Fri Sep 19 20:34:44 2025: ncra --wgt 0.92,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.92 /p/work1/abozec/HYCOM-TSIS/GOMb0.01/expt_02.7/data/archive/netcdf//027_archv.2024_200_12_2d.nc /p/work1/abozec/HYCOM-TSIS/GOMb0.01/expt_02.7/data/archive/netc
+  global@history_of_appended_files: None -> 'b\'Fri Sep 19 18:28:46 2025: Appended file wind.nc had following "history" attribute:\\nFri Sep 19 18:28:45 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc\\nFri Sep 19 18:28:45 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc\\nFri Sep 19 18:28:45 2025: ncks -d MT,420,420 wndewd_124g.nc te
+== daily_netcdf/2024/gomb1_daily_2024_200_3z.nc
+  Date@cell_methods: None -> b'MT: mean'
+  MT@cell_methods: None -> b'MT: mean'
+  salinity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  salinity.fill: 1.267651e+30 -> 9.96921e+36
+  salinity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  salinity@cell_methods: None -> b'MT: mean'
+  salinity@long_name: b'salinity [01.0H]' -> b' salinity [02.3H]'
+  u.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  u.fill: 1.267651e+30 -> 9.96921e+36
+  u@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  u@cell_methods: None -> b'MT: mean'
+  u@long_name: b'u-veloc. [01.0H]' -> b' u-veloc. [02.3H]'
+  v.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  v.fill: 1.267651e+30 -> 9.96921e+36
+  v@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  v@cell_methods: None -> b'MT: mean'
+  v@long_name: b'v-veloc. [01.0H]' -> b' v-veloc. [02.3H]'
+  w_velocity.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  w_velocity.fill: 1.267651e+30 -> 9.96921e+36
+  w_velocity@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  w_velocity@cell_methods: None -> b'MT: mean'
+  w_velocity@long_name: b'w-veloc. [01.0H]' -> b' w-veloc. [02.3H]'
+  water_temp.chunks: (1, 10, 385, 526) -> (1, 7, 308, 421)
+  water_temp.fill: 1.267651e+30 -> 9.96921e+36
+  water_temp@_FillValue: [1.267651e+30] -> [1.2676506e+30]
+  water_temp@cell_methods: None -> b'MT: mean'
+  water_temp@long_name: b'temp [01.0H]' -> b'  temp [02.3H]'
+  global@NCO: None -> "b'netCDF Operators version 4.9.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco)'"
+  global@_NCProperties: "b'version=2,netcdf=4.9.2,hdf5=1.14.4'" -> "b'version=2,netcdf=4.7.4,hdf5=1.10.6,'"
+  global@_nc3_strict: None -> '1'
+  global@experiment: "b'01.0'" -> "b'02.3'"
+  global@history: "b'python'" -> "b'Thu Sep 18 17:37:41 2025: ncra --wgt 0.92,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.92 /p/work1/abozec/HYCOM-TSIS/GOMb0.01/expt_02.7/data/archive/netcdf//027_archv.2024_200_12_3z.nc /p/work1/abozec/HYCOM-TSIS/GOMb0.01/expt_02.7/data/archive/netc
