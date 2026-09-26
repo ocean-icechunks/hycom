@@ -6,6 +6,9 @@ wrong.
 
 ## Status (2026-09-26)
 
+**The follow-up task is issue #11:** the store design and 3z chunking, with the options table, test
+plan and build facts. #8 is closed; the `audit-gom-issue-8` branch is deleted.
+
 **Waiting on another team.** They will copy the files to S3 (planned bucket
 `hycom-tsis-gom-reanalysis`, which did not exist on 2026-09-25). The bucket and the copy are
 theirs, not ours. **Our next step starts when one year of hourly files is on S3.** Then we

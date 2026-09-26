@@ -7,13 +7,13 @@ is unfinished, not a task list. **Eli's own to-do list, written as they signed o
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
 **HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
-Issue #8 asked whether its NetCDF-4 files need reprocessing first. The audit is merged (PR #10):
+Issue #8 asked whether its NetCDF-4 files need reprocessing first. The audit is merged (PR #10; #8 closed, branch deleted):
 `hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are, except
 experiment 027, which the file team will reprocess. 2d will use whole 12.9 MB maps. The 3z
 chunking is open.
 
 **Next step for us: when one year of hourly files is on S3**, decide the 3z chunking and run
-performance tests. Copying the files to S3 (planned bucket `hycom-tsis-gom-reanalysis`) is
+performance tests. That task is issue #11, which carries the chunking options and build facts. Copying the files to S3 (planned bucket `hycom-tsis-gom-reanalysis`) is
 another team's job, not ours. Until they have a year there, nothing is ours to do. Eli's
 decisions, the test plan, and the facts most likely to be got wrong are in
 [notes/gomb0pt01-audit-2026-09.md](notes/gomb0pt01-audit-2026-09.md).
