@@ -1,0 +1,5 @@
+variables in one group: ['ssh', 'water_temp']; dims {'time': 2, 'lat': 1537, 'lon': 2101, 'depth': 40}
+ssh chunks (1, 53, 2101), water_temp chunks (1, 1, 385, 526)
+2d and 3z Latitude and Longitude identical, MT equal to the hour, in both hours: True
+hour 0: ssh equal True, water_temp equal True
+hour 1: ssh equal True, water_temp equal True

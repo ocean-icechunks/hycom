@@ -1,0 +1,6 @@
+manifests: 278585 bytes for 38248 references = 7.3 bytes/reference
+ssh, 24 hours, from data.hycom.org at concurrency 4. Values checked against h5py.
+  ssh_row     point x24h   1.00s | 200x200 box x24h 173.85s | full map 1h  74.78s | equal=True
+  ssh_band53  point x24h   3.77s | 200x200 box x24h  12.65s | full map 1h   1.83s | equal=True
+  ssh_full    point x24h  15.85s | 200x200 box x24h  10.51s | full map 1h   1.97s | equal=True
+water_temp split per level: 200x200 box at one depth 0.91s equal=True | 40-level profile 3.02s equal=True

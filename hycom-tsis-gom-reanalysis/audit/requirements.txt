@@ -1,0 +1,12 @@
+# The GOMb0.01 audit scripts (issue #8). Python >= 3.12 (icechunk 2.x).
+# Tested 2026-09-25 in a clean venv with the versions in brackets.
+icechunk>=2.2        # [2.2.2]
+virtualizarr>=2.7    # [2.7.3]
+zarr>=3.4            # [3.4.0]
+xarray>=2026.7       # [2026.7.0]
+numpy>=2.3
+pandas>=2.2
+h5py>=3.12           # reads each file's chunk index over HTTP
+fsspec>=2025.1       # HTTP file object for h5py
+aiohttp>=3.10        # fsspec's HTTP backend, and the throughput scripts
+requests>=2.32
