@@ -4,6 +4,20 @@ Rolling state for this repo. Orientation only: the open threads below are a reco
 is unfinished, not a task list. **Eli's own to-do list, written as they signed off on
 2026-09-19, is [notes/todo.md](notes/todo.md)** — it spans the sibling repos too.
 
+## Second dataset: GOMb0.01 reanalysis (2026-09-26)
+
+**HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
+Issue #8 asked whether its NetCDF-4 files need reprocessing first. The audit is merged (PR #10):
+`hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are, except
+experiment 027, which the file team will reprocess. 2d will use whole 12.9 MB maps. The 3z
+chunking is open.
+
+**Next step for us: when one year of hourly files is on S3**, decide the 3z chunking and run
+performance tests. Copying the files to S3 (planned bucket `hycom-tsis-gom-reanalysis`) is
+another team's job, not ours. Until they have a year there, nothing is ours to do. Eli's
+decisions, the test plan, and the facts most likely to be got wrong are in
+[notes/gomb0pt01-audit-2026-09.md](notes/gomb0pt01-audit-2026-09.md).
+
 ## Where things stand (2026-09-19)
 
 **This repo is a collection: GOFS 3.1 reanalysis is the first of several HYCOM stores Eli
@@ -116,10 +130,12 @@ The three facts most likely to be got wrong:
   copy; cefi is in the `noaa-nwfsc` org, whose SAML SSO the GitHub CLI token is not
   authorized for (`gh auth refresh -h github.com`, approve the org). cefi's README also still
   authorizes with the deprecated `{prefix: None}`.
-- **Next HYCOM datasets**: nothing chosen yet. Eli said this is the first of several. Start
+- **Next HYCOM datasets**: GOMb0.01 is the second (above). No third chosen yet. Eli said this is the first of several. Start
   from the plan→local smoke test→scratch test (with viewer and README)→production order in
   the `virtual-icechunk` skill; add the store to `DATASETS` in `publish_viewer.py`; lift the
   generic parts of `hycom_virtual.py` (header parser, scan, `check_scan`) to the root when
-  the second dataset shows what is really shared.
+  the second dataset shows what is really shared. GOMb0.01 is NetCDF-4/HDF5, not NetCDF-3, so
+  the NetCDF-3 header parser is not shared; its audit reads offsets with h5py
+  (`hycom-tsis-gom-reanalysis/audit/common.py`).
 - Lessons from this build that the skill does not have yet are written up in
   `~/agent-skills/claude/notes/inbound-from-hycom-2026-09.md` (pushed there 2026-09-19).

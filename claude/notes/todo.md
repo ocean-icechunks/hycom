@@ -28,7 +28,9 @@ Cross items off here as they are done.
 
 ## Could be picked up by a session
 
-- [ ] **The next HYCOM dataset.** None chosen. Same order as the first: plan → local smoke
+- [ ] **GOMb0.01 (second HYCOM dataset):** waits on the file team putting one year on S3; then
+      the 3z chunking decision and performance tests. See
+      [gomb0pt01-audit-2026-09.md](gomb0pt01-audit-2026-09.md). Another dataset after that: none chosen. Same order as the first: plan → local smoke
       test → scratch test under `ocean-icechunks/test-repo/hycom/` with its viewer and README →
       production → READMEs in the standard format → mirror from merged `main`. Add the store to
       `DATASETS` in `publish_viewer.py`; lift the generic parts of `hycom_virtual.py` (header
