@@ -13,10 +13,11 @@ plots mid-July bottom temperature and cold-pool (< 2 °C) fraction, 1994–2015,
 snow crab box 57–61°N, 165–173°W. It takes about 10 s in us-west-2 and has not yet been
 tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001–05 and 2014–15.
 
-- **README:** the `### Example notebook` subsection is committed on branch `readme-cleanups`
-  (pushed, no PR yet). Eli is adding other README cleanups there. The Source Cooperative
-  copy of the README goes out of date once this merges, until it is mirrored again
-  (`RUN_MIRROR = True` in the build notebook).
+- **READMEs:** Eli's shorter collection and GOFS READMEs, plus the `### Example notebook`
+  link, were merged in PR #12 on 2026-09-29 and mirrored to Source Cooperative the same
+  day. The served copies match `main`. Links to dataset READMEs go to Source Cooperative, not
+  GitHub. The wording "a demonstration product **for** the HYCOM Consortium" is deliberate:
+  Eli is not a member.
 - **Pitfall:** `xr.concat` on this lazy store (`chunks=None`) reads everything. It OOM'd
   the hub, so `.load()` each side of the dateline before joining them.
 - **The GOBAI-O2 version is finished:** `GOBAI-O2/gobai-o2-oxygen-niche-demo.ipynb` in
