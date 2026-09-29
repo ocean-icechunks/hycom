@@ -98,8 +98,9 @@ The three facts most likely to be got wrong:
   installing 1.1.21, 2.0.1, 2.1.0), and every 2.x needs Python >= 3.12.
 - **Store READMEs use Eli's standard format** (PR #3): title ending "— Icechunk", the emoji
   navbar, then View it in a browser / How to open it / About the data / How this was built /
-  Reuse and citation / Credits. Reference copy: `ocean-icechunks/noaa-ohc/README.md`. Applies
-  to the root README and the test-repo README too. Also saved as a project memory.
+  Reuse and citation / Credits. **Reference copy is now this repo's own READMEs** (root and
+  GOFS 3.1), not noaa-ohc (Eli, 2026-09-29). Applies to the root README and the test-repo
+  README too. Also saved as a project memory.
 - **One viewer per root, and every dataset is a catalog entry in it** (Eli, 2026-09-19): the
   published one at `hycom/viewer/`, plus the scratch copy at `test-repo/hycom/viewer/` that
   the always-a-viewer-for-tests rule calls for. Never a viewer per dataset. A new dataset is
@@ -138,6 +139,12 @@ The three facts most likely to be got wrong:
 
 ## Open threads
 
+- **`icechunk-readme` skill planned (Eli will do it later; not a task for now):**
+  [eeholmes/claude-config#4](https://github.com/eeholmes/claude-config/issues/4). A personal
+  skill that creates, updates (asking which ones first), and QC-checks store READMEs in any
+  repo, modelled on the HYCOM READMEs. It uses one README per data product (groups such as
+  CEFI's get none), no per-variable viewer table, no wrapper function in the open code, and
+  a standard performance table. The full spec is in the issue.
 - PR #6 (per-store `variables` in `publish_viewer.py`, ported from ocean-icechunks/icechunks)
   merged 2026-09-19. The two copies are identical below `PRODUCTS`; keep them that way.
 - **The CORS request to help@hycom.org is drafted, not sent**:
