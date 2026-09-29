@@ -177,6 +177,16 @@ Values decode to **float64**, where the source NetCDF gives float32, because Zar
 are JSON and cannot say "float32". A decoded level is 117 MB. Use `.astype("float32")` to
 halve that, or `xr.open_zarr(..., mask_and_scale=False)` for the raw `int16`.
 
+### Example notebook
+
+[`bering-sea-snow-crab-demo.ipynb`](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/bering-sea-snow-crab-demo.ipynb)
+([open in Colab](https://colab.research.google.com/github/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/bering-sea-snow-crab-demo.ipynb))
+is a short worked example. It opens the store, maps sea-floor temperature over the Bering
+Sea, and plots mid-July bottom temperature and the extent of the cold pool (below 2 °C) on
+the eastern-shelf snow crab grounds for every year from 1994 to 2015. The Bering Sea crosses
+the dateline, and the notebook shows how to join the two sides without reading the whole
+store. It makes 23 whole-level reads and runs in about 10 s in us-west-2.
+
 ## About the data
 
 Global Ocean Forecasting System (GOFS) 3.1 reanalysis by the U.S. Naval Research Laboratory,
