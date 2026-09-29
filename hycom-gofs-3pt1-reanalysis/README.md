@@ -35,6 +35,9 @@ Choose variables from the dropdown in the viewer dashboard:
 
 [Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0)
 
+Every frame is one whole 29 MB level fetched from us-west-2, so it is not quick: treat the
+viewer as a look, not an analysis.
+
 ## How to open it
 
 **Required:** Python ≥ 3.12, icechunk ≥ 2.2. No credentials are needed. On older Python,
@@ -53,7 +56,7 @@ url = "https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis
 repo = icechunk.Repository.open(icechunk.http_storage(url))
 # Each virtual chunk container has to be explicitly authorized
 auth = {p: icechunk.credentials.HttpAccess for p in repo.config.virtual_chunk_containers}
-store = repo.reopen(authorize_virtual_chunk_access=auth).readonly_session("main").store
+store = repo.reopen(authorize_virtual_chunk_access=auth).readonly_session(tag="v1").store
 ds = xr.open_zarr(store, consolidated=False, chunks=None)
 ```
 
@@ -288,7 +291,7 @@ in any publication using HYCOM data:
 > by the U.S. Navy. Computer time was made available by the DoD High Performance Computing
 > Modernization Program. The output is publicly available at https://hycom.org.
 
-The data is a demonstration product for the HYCOM Consortium, provided as is.
+This store is a demonstration product for the HYCOM Consortium, provided as is.
 
 ## Credits
 

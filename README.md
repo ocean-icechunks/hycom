@@ -9,17 +9,11 @@ opens in about a second as one lazy `xarray` datacube.
 
 | Dataset | Icechunk repository | Docs |
 |---|---|---|
-| **GOFS 3.1 Global Ocean Reanalysis**, GLBv0.08 expt_53.X — global 1/12°, 40 levels, 3-hourly, 1994–2015 | `https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis` | [README](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md) |
+| **GOFS 3.1 Global Ocean Reanalysis**, GLBv0.08 expt_53.X — global 1/12°, 40 levels, 3-hourly, 1994–2015 | `https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis` | [README](https://source.coop/ocean-icechunks/hycom/docs/hycom-gofs-3pt1-reanalysis) |
 
-This is the first of several; more HYCOM experiments will be added the same way, one
-repository each.
+This is the first of several planned HYCOM icechunks.
 
-The stores are **virtual**: each holds only Zarr metadata and byte-range references. The
-arrays stay in the provider's original NetCDF files, nothing is copied or rewritten, and
-every read of a science value goes to the provider's bucket. A store therefore works only
-as long as its source does, and reads exactly what the source files contain. That costs one
-extra step when opening — see [How to open it](#how-to-open-it) — and it is why the browser
-viewer needs the workaround described below.
+The stores are **virtual**: each holds only Zarr metadata and byte-range references to the  NetCDF files on AWS Open Data.
 
 ## View it in a browser
 
@@ -41,7 +35,7 @@ viewer needs the workaround described below.
 
 | Dataset | Code to Open |
 |---|---|
-| GOFS 3.1 Global Ocean Reanalysis | [Open in Python](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md#how-to-open-it) |
+| GOFS 3.1 Global Ocean Reanalysis | [Open in Python](https://source.coop/ocean-icechunks/hycom/docs/hycom-gofs-3pt1-reanalysis#how-to-open-it) |
 
 ## About the data
 
@@ -51,9 +45,9 @@ coverage, variables, gaps, known problems, what to expect from reads — plus it
 notebooks, `requirements.txt` and source manifest. On Source Cooperative the same files are
 under `docs/<dataset>/`.
 
-| Dataset | Source | Details |
+| Dataset | Source | Details | 
 |---|---|---|
-| GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X | [AWS Open Data](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/), 63,341 NetCDF files, 306 TB | [`hycom-gofs-3pt1-reanalysis/`](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md) |
+| GOFS 3.1 Global Ocean Reanalysis, GLBv0.08 expt_53.X | [AWS Open Data](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/), 63,341 NetCDF files, 306 TB | [`docs/hycom-gofs-3pt1-reanalysis/`](https://source.coop/ocean-icechunks/hycom/docs/hycom-gofs-3pt1-reanalysis) |
 
 ## How this was built
 
