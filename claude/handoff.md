@@ -13,9 +13,9 @@ plots mid-July bottom temperature and cold-pool (< 2 °C) fraction, 1994–2015,
 snow crab box 57–61°N, 165–173°W. It takes about 10 s in us-west-2 and has not yet been
 tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001–05 and 2014–15.
 
-- **Not done:** the README has an uncommitted `### Example notebook` subsection at the end of
-  "How to open it". Eli has not said whether it goes to `main` or a PR. The Source
-  Cooperative copy of the README is also out of date until it is mirrored again
+- **README:** the `### Example notebook` subsection is committed on branch `readme-cleanups`
+  (pushed, no PR yet). Eli is adding other README cleanups there. The Source Cooperative
+  copy of the README goes out of date once this merges, until it is mirrored again
   (`RUN_MIRROR = True` in the build notebook).
 - **Pitfall:** `xr.concat` on this lazy store (`chunks=None`) reads everything. It OOM'd
   the hub, so `.load()` each side of the dateline before joining them.

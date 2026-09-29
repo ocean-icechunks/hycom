@@ -2,9 +2,6 @@
 
 **[🌐 View data in browser](#view-it-in-a-browser)** · **[💻 Data access (code)](#how-to-open-it)** · **[📦 Data access (AWS Open Data)](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/)** · **[📦 Data access (HYCOM.org)](https://www.hycom.org/dataserver/gofs-3pt1/reanalysis)**
 
-One of the HYCOM stores in [ocean-icechunks/hycom](https://github.com/ocean-icechunks/hycom),
-which says what they have in common. This page is about this dataset.
-
 The [HYCOM GOFS 3.1 global reanalysis](https://www.hycom.org/dataserver/gofs-3pt1/reanalysis)
 (GLBv0.08 **expt_53.X**, 41-layer HYCOM + NCODA, 1/12°, **3-hourly, 1994–2015**) as one
 [Icechunk](https://icechunk.io) store that opens in about a second as a single
@@ -13,11 +10,9 @@ The [HYCOM GOFS 3.1 global reanalysis](https://www.hycom.org/dataserver/gofs-3pt
 **`https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis`**
 
 This is a **virtual** store. It holds about 85 MB of Zarr metadata and 10,451,265 byte-range
-references; the 306 TB of arrays stay where they are, in 63,341 NetCDF files in the
+references. The 306 TB of arrays stay in the 63,341 NetCDF files they came from, in the
 [HYCOM bucket on AWS Open Data](https://registry.opendata.aws/hycom-gofs-3pt1-reanalysis/)
-(`s3://hycom-gofs-3pt1-reanalysis`, us-west-2, managed by COAPS). Every read of a science
-value goes to that bucket, so the store works only as long as the bucket does. No data was
-copied, rewritten or changed.
+(`s3://hycom-gofs-3pt1-reanalysis`, us-west-2, managed by COAPS).
 
 | | |
 |---|---|
@@ -29,89 +24,50 @@ copied, rewritten or changed.
 
 ## View it in a browser
 
-> ### ⚠️ Read this first: the data will not draw unless you disable CORS
+> ### ⚠️ The data will not draw unless you disable CORS
 >
-> The viewer loads, lists the variables and draws the map graticule, and then stops —
-> because the science arrays are not in the store. They are in the HYCOM bucket on AWS,
-> which serves byte ranges happily to a script but has no CORS configuration (checked
-> 2026-09-19), so **your browser** refuses to hand those bytes to the page. This is a rule
-> browsers enforce on the page's behalf; nothing the viewer or this repository can contain
-> will waive it. Only the bucket's owner can change it, and the store would not need
-> rebuilding if they did.
->
-> To look at the data anyway, install a CORS-disabling browser extension (search your
-> browser's extension store for "CORS unblock" or "Allow CORS"), enable it, and reload
-> the viewer. Such an extension switches off a real security protection for the sites you
-> enable it on, so turn it back off when you are done — or use a separate browser profile
-> for it.
->
-> The code path below has no such problem: this affects browsers only.
+> The data arrays are read from the provider's bucket, and the GOFS 3.1 reanalysis bucket on
+> AWS has no CORS configuration (checked 2026-09-19), so **your browser** will refuse to hand
+> those bytes to the page. To look at the data anyway, you can install a CORS-disabling browser extension (search your
+> browser's extension store for "CORS unblock" or "Allow CORS"). This affects browsers only; loading data via code works normally.
 
-With that in place, the viewer streams chunks straight from the source files — no install,
-no account, no download:
+Choose variables from the dropdown in the viewer dashboard:
 
-| Variable | Viewer |
-|---|---|
-| Water temperature | [Open `water_temp` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0) |
-| Salinity | [Open `salinity` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=salinity::dimIndices_time=0::dimIndices_depth=0) |
-| Surface elevation | [Open `surf_el` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=surf_el::dimIndices_time=0) |
-| Eastward velocity | [Open `water_u` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_u::dimIndices_time=0::dimIndices_depth=0) |
-| Northward velocity | [Open `water_v` in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_v::dimIndices_time=0::dimIndices_depth=0) |
+[Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0)
 
-Each link opens at the first time step, at the surface; the other variables, the time steps
-and the depth levels are controls in the viewer. Everything after `#` is a URL *fragment*,
-which the host never sees, so one viewer build serves any store. Drag the globe and the
-address bar updates — copy it to share the exact view you are looking at.
-
-The viewer is [gridlook](https://github.com/eeholmes/gridlook), a WebGL globe for
-cloud-hosted Zarr and Icechunk stores, published alongside the data at
-[`hycom/viewer/`](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html). Every
-frame is one whole 29 MB level fetched from us-west-2, so it is not quick: treat it as a
-look, not an analysis. With an extension enabled, a 16-step test copy of this store was seen
-to render on 2026-09-18; this full store uses the same viewer build and layout.
+Every map is one whole 29 MB level fetched from us-west-2, so it is not quick. Be patient.
 
 ## How to open it
 
-Python ≥ 3.12 (Icechunk 2.x requires it). No credentials are needed for anything.
+**Required:** Python ≥ 3.12, icechunk ≥ 2.2. No credentials are needed. On older Python,
+`pip install icechunk` quietly installs icechunk 1.x, which will not work.
 
 ```
 pip install "icechunk>=2.2" "xarray>=2026.7" "zarr>=3.4" "dask[array]"
 ```
 
-> **icechunk 1.x will not work.** `icechunk.http_storage` does not exist in icechunk 1.x
-> (it arrived in 2.0), and `icechunk.credentials.HttpAccess` arrived in 2.1. Every icechunk
-> 2.x release needs **Python 3.12 or newer**, so on an older Python `pip install icechunk`
-> quietly installs 1.1.x, and the code below fails with
-> `AttributeError: module 'icechunk' has no attribute 'http_storage'`. Check what you have:
-> `python -c "import icechunk; print(icechunk.__version__)"`.
-
 ```python
 import icechunk, xarray as xr, zarr
 
-# Zarr's default of 10 concurrent requests badly under-uses object storage.
-zarr.config.set({"async.concurrency": 64})
+zarr.config.set({"async.concurrency": 64})    # the default of 10 badly under-uses object storage
 
-def open_hycom(ref="v1"):
-    """The HYCOM GOFS 3.1 reanalysis as a lazy xarray Dataset. `ref` is a tag or "main"."""
-    url = "https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis"
-    repo = icechunk.Repository.open(icechunk.http_storage(url))
-    # The arrays live in the HYCOM bucket, outside the store, so each virtual chunk container
-    # has to be authorized — anonymously here. This is the one step a virtual store adds. The
-    # container is in the store's saved config, so you do not need to know its URL.
-    auth = {p: icechunk.credentials.HttpAccess for p in repo.config.virtual_chunk_containers}
-    repo = repo.reopen(authorize_virtual_chunk_access=auth)
-    session = repo.readonly_session("main") if ref == "main" else repo.readonly_session(tag=ref)
-    return xr.open_zarr(session.store, consolidated=False, chunks=None)   # lazy; see below
-
-ds = open_hycom()
+url = "https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis"
+repo = icechunk.Repository.open(icechunk.http_storage(url))
+# Each virtual chunk container has to be explicitly authorized
+auth = {p: icechunk.credentials.HttpAccess for p in repo.config.virtual_chunk_containers}
+store = repo.reopen(authorize_virtual_chunk_access=auth).readonly_session(tag="v1").store
+ds = xr.open_zarr(store, consolidated=False, chunks=None)
 ```
 
 ### Select first, then chunk
 
-`chunks=None` above is deliberate, and it is **still lazy** — nothing is read until you ask
-for values. The usual `chunks={}` works here but is slow: it makes each 4-D variable a dask
-array of **2,570,880 chunks**, and dask then spends seconds and about a gigabyte on every
-operation, however small the selection. Select what you want first and hand dask only that:
+The reanalysis has
+2.57 million chunks per 4-D variable. Handing dask the whole dataset with `chunks={}`
+costs seconds and about a gigabyte on every operation. `chunks=None` is still lazy. Select
+the times and region you want, then call `.chunk({"time": 1})` on that selection so dask
+works only with the smaller dataset.
+
+Example:
 
 ```python
 sst = ds.water_temp.isel(depth=0).sel(time=slice("2010-06-01", "2010-06-10"),
@@ -176,6 +132,16 @@ rewriting the data would.
 Values decode to **float64**, where the source NetCDF gives float32, because Zarr attributes
 are JSON and cannot say "float32". A decoded level is 117 MB. Use `.astype("float32")` to
 halve that, or `xr.open_zarr(..., mask_and_scale=False)` for the raw `int16`.
+
+### Example notebook
+
+[`bering-sea-snow-crab-demo.ipynb`](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/bering-sea-snow-crab-demo.ipynb)
+([open in Colab](https://colab.research.google.com/github/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/bering-sea-snow-crab-demo.ipynb))
+is a short worked example. It opens the store, maps sea-floor temperature over the Bering
+Sea, and plots mid-July bottom temperature and the extent of the cold pool (below 2 °C) on
+the eastern-shelf snow crab grounds for every year from 1994 to 2015. The Bering Sea crosses
+the dateline, and the notebook shows how to join the two sides without reading the whole
+store. It makes 23 whole-level reads and runs in about 10 s in us-west-2.
 
 ## About the data
 
@@ -262,8 +228,8 @@ followed by one commit per year, so its history is its build log:
 
 ### What was changed from the source
 
-Metadata only — no array value is touched — to make the store CF-1.11 compliant. The IOOS
-compliance checker passes `cf:1.11` on an export of it.
+Metadata only — no array value is touched — to make the store CF-1.11 compliant. The [IOOS
+compliance checker](https://github.com/ioos/compliance-checker) passes `cf:1.11` on an export of it.
 
 | what | source | store | why |
 |---|---|---|---|
@@ -313,7 +279,7 @@ rewriting them. None of his code is used here, but the approach is his. Please c
 >
 > Signell, R. (2024). *hycom-kerchunk*. https://github.com/rsignell/hycom-kerchunk
 
-**Data.** The data is not ours, and this store contains none of it — only references to
+**Data.** The underlying data is not ours, and this store contains none of it — only references to
 files in the HYCOM bucket. The AWS Open Data registry states "There are no restrictions on
 the use of this data." hycom.org
 [recommends this acknowledgement](https://www.hycom.org/publications/acknowledgements/hycom-data)
@@ -324,7 +290,7 @@ in any publication using HYCOM data:
 > by the U.S. Navy. Computer time was made available by the DoD High Performance Computing
 > Modernization Program. The output is publicly available at https://hycom.org.
 
-The data is a demonstration product of the HYCOM Consortium, provided as is.
+This store is a demonstration product for the HYCOM Consortium, provided as is.
 
 ## Credits
 
@@ -335,3 +301,9 @@ The data is a demonstration product of the HYCOM Consortium, provided as is.
 - **Icechunk packaging:** built with [Icechunk](https://icechunk.io),
   [VirtualiZarr](https://virtualizarr.readthedocs.io) and [Xarray](https://xarray.dev),
   hosted on [Source Cooperative](https://source.coop/ocean-icechunks/hycom).
+- **Viewer:** [gridlook](https://github.com/d70-t/gridlook), a WebGL visualizer for
+  cloud-hosted Zarr and Icechunk stores, developed by Andrej Fast, Tobi Kölling, Fabian
+  Wachsmann and contributors at Deutsches Klimarechenzentrum (DKRZ) and the Max Planck
+  Institute for Meteorology. The copy published alongside the data, at
+  [`hycom/viewer/`](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html), is
+  built from a fork, [eeholmes/gridlook](https://github.com/eeholmes/gridlook).
