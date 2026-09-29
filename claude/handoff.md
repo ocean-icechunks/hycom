@@ -4,6 +4,27 @@ Rolling state for this repo. Orientation only: the open threads below are a reco
 is unfinished, not a task list. **Eli's own to-do list, written as they signed off on
 2026-09-19, is [notes/todo.md](notes/todo.md)** — it spans the sibling repos too.
 
+## Demo notebook for GOFS 3.1 (2026-09-29)
+
+`hycom-gofs-3pt1-reanalysis/bering-sea-snow-crab-demo.ipynb` is on `main` (commit 25324b3).
+Eli wrote it for a Colab demo and called it "perfect. Short and clear and compelling", so use
+it as the model for future demo notebooks. It maps Bering Sea `water_temp_bottom` and
+plots mid-July bottom temperature and cold-pool (< 2 °C) fraction, 1994–2015, over the
+snow crab box 57–61°N, 165–173°W. It takes about 10 s in us-west-2 and has not yet been
+tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001–05 and 2014–15.
+
+- **Not done:** the README has an uncommitted `### Example notebook` subsection at the end of
+  "How to open it". Eli has not said whether it goes to `main` or a PR. The Source
+  Cooperative copy of the README is also out of date until it is mirrored again
+  (`RUN_MIRROR = True` in the build notebook).
+- **Pitfall:** `xr.concat` on this lazy store (`chunks=None`) reads everything. It OOM'd
+  the hub, so `.load()` each side of the dateline before joining them.
+- **Follow-on in another repo:** a GOBAI-O2 version of this notebook is
+  [nmfs-opensci/gobai-rfrom-icechunks#36](https://github.com/nmfs-opensci/gobai-rfrom-icechunks/issues/36).
+  GOBAI HR has **no data on the Bering shelf**, so it can't show bottom O₂ on the crab
+  grounds. The issue shows the oxygen-niche depth instead (first level with O₂ < 60 µmol
+  kg⁻¹) over the Aleutian Basin. The measurements and code are in the issue.
+
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
 **HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
