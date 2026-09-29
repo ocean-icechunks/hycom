@@ -35,8 +35,7 @@ Choose variables from the dropdown in the viewer dashboard:
 
 [Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0)
 
-Every frame is one whole 29 MB level fetched from us-west-2, so it is not quick: treat the
-viewer as a look, not an analysis.
+Every map is one whole 29 MB level fetched from us-west-2, so it is not quick. Be patient.
 
 ## How to open it
 
