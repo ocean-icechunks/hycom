@@ -39,24 +39,9 @@ viewer needs the workaround described below.
 **Required:** Python ≥ 3.12, icechunk ≥ 2.2. No credentials are needed. On older Python,
 `pip install icechunk` quietly installs icechunk 1.x, which will not work.
 
-```python
-import icechunk, xarray as xr, zarr
-
-zarr.config.set({"async.concurrency": 64})    # the default of 10 badly under-uses object storage
-
-url = "https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis"
-repo = icechunk.Repository.open(icechunk.http_storage(url))
-# Each virtual chunk container has to be explicitly authorized
-auth = {p: icechunk.credentials.HttpAccess for p in repo.config.virtual_chunk_containers}
-store = repo.reopen(authorize_virtual_chunk_access=auth).readonly_session("main").store
-ds = xr.open_zarr(store, consolidated=False, chunks=None)
-```
-
-**Select first, then chunk.** The reanalysis has
-2.57 million chunks per 4-D variable. Handing dask the whole dataset with `chunks={}`
-costs seconds and about a gigabyte on every operation. `chunks=None` is still lazy. Select
-the times and region you want, then call `.chunk({"time": 1})` on that selection so dask
-works only with the smaller dataset.
+| Dataset | Code to Open |
+|---|---|
+| GOFS 3.1 Global Ocean Reanalysis | [Open in Python](https://github.com/ocean-icechunks/hycom/blob/main/hycom-gofs-3pt1-reanalysis/README.md#how-to-open-it) |
 
 ## About the data
 
@@ -122,3 +107,9 @@ asks for. For HYCOM data, hycom.org
   [VirtualiZarr](https://virtualizarr.readthedocs.io) and [Xarray](https://xarray.dev),
   hosted on [Source Cooperative](https://source.coop/ocean-icechunks/hycom); the original
   file bytes remain with the provider.
+- **Viewer:** [gridlook](https://github.com/d70-t/gridlook), a WebGL visualizer for
+  cloud-hosted Zarr and Icechunk stores, developed by Andrej Fast, Tobi Kölling, Fabian
+  Wachsmann and contributors at Deutsches Klimarechenzentrum (DKRZ) and the Max Planck
+  Institute for Meteorology. The copy published alongside the data, at
+  [`hycom/viewer/`](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html), is
+  built from a fork, [eeholmes/gridlook](https://github.com/eeholmes/gridlook).
