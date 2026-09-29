@@ -10,8 +10,8 @@ is unfinished, not a task list. **Eli's own to-do list, written as they signed o
 Eli wrote it for a Colab demo and called it "perfect. Short and clear and compelling", so use
 it as the model for future demo notebooks. It maps Bering Sea `water_temp_bottom` and
 plots mid-July bottom temperature and cold-pool (< 2 °C) fraction, 1994–2015, over the
-snow crab box 57–61°N, 165–173°W. It takes about 10 s in us-west-2 and has not yet been
-tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001–05 and 2014–15.
+snow crab box 57–61°N, 165–173°W. It takes about 10 s in us-west-2, and Eli confirmed it
+works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm ones are 2001–05 and 2014–15.
 
 - **READMEs:** Eli's shorter collection and GOFS READMEs, plus the `### Example notebook`
   link, were merged in PR #12 on 2026-09-29 and mirrored to Source Cooperative the same
@@ -26,7 +26,7 @@ tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001�
   the oxygen-niche depth instead (first level with O₂ < 60 µmol kg⁻¹), weekly for
   1993–2025, over the Aleutian Basin. The niche is about 70 m shallower since 2016. The
   notebook runs in 67 s from the hub.
-- **Neither demo notebook has been run on Colab yet.**
+- **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
