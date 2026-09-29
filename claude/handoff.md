@@ -19,11 +19,13 @@ tried on Colab. The cold years are 1999 and 2007–2012; the warm ones are 2001�
   (`RUN_MIRROR = True` in the build notebook).
 - **Pitfall:** `xr.concat` on this lazy store (`chunks=None`) reads everything. It OOM'd
   the hub, so `.load()` each side of the dateline before joining them.
-- **Follow-on in another repo:** a GOBAI-O2 version of this notebook is
-  [nmfs-opensci/gobai-rfrom-icechunks#36](https://github.com/nmfs-opensci/gobai-rfrom-icechunks/issues/36).
-  GOBAI HR has **no data on the Bering shelf**, so it can't show bottom O₂ on the crab
-  grounds. The issue shows the oxygen-niche depth instead (first level with O₂ < 60 µmol
-  kg⁻¹) over the Aleutian Basin. The measurements and code are in the issue.
+- **The GOBAI-O2 version is finished:** `GOBAI-O2/gobai-o2-oxygen-niche-demo.ipynb` in
+  nmfs-opensci/gobai-rfrom-icechunks (issue #36, PR #37 merged 2026-09-29). GOBAI HR has
+  **no data on the Bering shelf**, so it can't show bottom O₂ on the crab grounds. It shows
+  the oxygen-niche depth instead (first level with O₂ < 60 µmol kg⁻¹), weekly for
+  1993–2025, over the Aleutian Basin. The niche is about 70 m shallower since 2016. The
+  notebook runs in 67 s from the hub.
+- **Neither demo notebook has been run on Colab yet.**
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
