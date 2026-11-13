@@ -169,4 +169,6 @@ The three facts most likely to be got wrong:
   the NetCDF-3 header parser is not shared; its audit reads offsets with h5py
   (`hycom-tsis-gom-reanalysis/audit/common.py`).
 - Lessons from this build that the skill does not have yet are written up in
-  `~/agent-skills/claude/notes/inbound-from-hycom-2026-09.md` (pushed there 2026-09-19).
+  `~/agent-skills/claude/notes/inbound-from-hycom-2026-09.md` (pushed there 2026-09-19). Since the
+  skill moved on 2026-11-13 it is `docs/design/inbound-from-hycom-2026-09.md` in
+  ocean-icechunks/ocean-icechunks-skills (`~/ocean-icechunks-skills`).

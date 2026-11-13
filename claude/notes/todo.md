@@ -35,12 +35,13 @@ Cross items off here as they are done.
       production → READMEs in the standard format → mirror from merged `main`. Add the store to
       `DATASETS` in `publish_viewer.py`; lift the generic parts of `hycom_virtual.py` (header
       parser, scan, `check_scan`) to the repo root once it is clear what is shared.
-- [ ] **A Learn pass on the `virtual-icechunk` skill** in `~/agent-skills`. The input is
-      written: `~/agent-skills/claude/notes/inbound-from-hycom-2026-09.md`. Two places where the
+- [ ] **A Learn pass on the `virtual-icechunk` skill**, now in
+      ocean-icechunks/ocean-icechunks-skills (`~/ocean-icechunks-skills`; moved from
+      nmfs-opensci/agent-skills on 2026-11-13). The input is written:
+      `docs/design/inbound-from-hycom-2026-09.md` there. Two places where the
       skill is wrong (`to_icechunk(encoding=…)` does not exist in VirtualiZarr 2.7.3; `chunks={}`
       breaks down at millions of chunks) and several new patterns. That repo wants an issue, a
-      branch, a PR and a squash merge. `~/agent-skills` itself is 2 commits behind origin —
-      another session had it open; pull there first.
+      branch and a PR.
 - [ ] **gridlook: take the default dataset from the first catalog entry** instead of the
       hard-coded OGS store (`DEFAULT_DATASET` in `HashGlobeView.vue`). It would retire the
       default-hash workaround in both `publish_viewer.py` copies. No issue filed; noted in
