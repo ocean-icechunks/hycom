@@ -85,7 +85,7 @@ rewrite 027/028 to layout A (#15), append those hours to it later.
   added, and about the 5 regenerated 2002 files (D5 in the review): leave them out until HYCOM answers.
 - **Group: `hourly`** (Eli, 2026-11-18). If layout B ends up as a separate group (#15), she may
   rename it, e.g. to `2001-04-2024`, so don't build anything that hard-codes the path more than it
-  has to. Renaming works: Groups can be renamed later:
+  has to. Renaming works:
   Icechunk 2.3.1 `repo.rearrange_session("main").move("/a", "/b")` is metadata-only (tested with a
   virtual array: new path reads, old snapshots keep the old path). An ordinary writable session
   refuses `move`. Renaming still breaks README code and links that use the old path.
