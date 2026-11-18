@@ -68,3 +68,29 @@ rectilinear chunk grids (zarr-python#3802 merged 2026-04; xarray#11592 read-only
 
 So D1 is still: rewrite 027 + 028, keep the second layout in its own store or group (a
 reader concatenates in xarray, and that can be replaced by one array if #288 lands).
+
+## Next: layout A store, starting with a 2022 test (Eli's answers, 2026-11-18)
+
+Eli's plan: **build layout A** (010, 023, 026; 2001-01-16 → 2024-04-28) now. If the team decides to
+rewrite 027/028 to layout A (#15), append those hours to it later.
+
+- **Test year: 2022** (complete on S3, experiment 023, layout A). It is used to pick the 3z
+  virtual chunking (10/5/2/1 depths per chunk) and to measure build cost (#11).
+- **Next work: the smoke test, then a test store on Source Cooperative under
+  `ocean-icechunks/test-repo/hycom/`** for the team to look at. It gets a viewer and README, as
+  every test-repo store does. Eli expects it to raise more questions.
+- **Time axis:** regular hourly from 2001-01-16 00Z. Gaps (empty 3z files, the 17 `_CORRUPTED` hours,
+  anything not yet copied) are left as NaN; HYCOM will probably fill them in later, as new commits.
+- **Full build waits** for the S3 copy. Eli is asking HYCOM when the 2001–2020 files will be
+  added, and about the 5 regenerated 2002 files (D5 in the review): leave them out until HYCOM answers.
+- **Group path:** not fixed yet, and it doesn't need to be. Groups can be renamed later:
+  Icechunk 2.3.1 `repo.rearrange_session("main").move("/a", "/b")` is metadata-only (tested with a
+  virtual array: new path reads, old snapshots keep the old path). An ordinary writable session
+  refuses `move`. Renaming still breaks README code and links that use the old path.
+- **Build machines (Eli offered several VMs):** Eli asked what is needed; the answer so far is an estimate to confirm on 2022.
+  Probably one VM in **us-west-2** (the bucket's region) is enough. GOFS wrote 10.45 M refs in
+  about 2 min and scanned 63 k headers in 75 s at 128 threads. Layout A needs about 1.45 M
+  header reads (1 per 2d file, 6 per 3z file), about 30 min at that rate. At 1 depth per chunk it
+  is about 28 M refs per year, so write in monthly batches to bound memory, with manifests split along time.
+  Parallel VMs are possible with Icechunk `session.fork()`/`merge()`, but probably not needed.
+  The 3.9 GB hub is too small to be sure of a full year in one batch.
