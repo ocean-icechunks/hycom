@@ -28,22 +28,32 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
-## GOMb0.01 is on S3: file review (2026-11-18)
+## GOMb0.01 is on S3: file review done; next is the layout A store (2026-11-18)
 
 GOM work is now a 2026 IOOS hackathon project,
 [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
-**Post every prompt Eli writes in this work to that issue, verbatim.** The bucket
-`hycom-tsis-gom-reanalysis` exists (public, us-west-2; the copy is still running). The review
-is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
-scripts. Headlines: 027 and a new experiment 028 (2024-09 to 2026-07) share a
-second chunk layout (#15); 028 lacks winds (#16); 2021–2023 are complete and could be #11's test year; 9 truncated
-028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
-[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
+**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–11 are
+there). Side questions stay out. Short "Notes:" comments summarise results for the team.
 
-**Next (Eli, 2026-11-18): build layout A (2001 → 2024-04), issue #17**, starting with a 2022 smoke test
-and a test store in `test-repo/hycom/` for the team. #17 lists the subtasks in the skill's order. Her answers (time axis, group renaming, VMs,
-waiting on HYCOM) are in the last section of that note. Eli planned to clear the session before
-this work started.
+**The S3 file review is merged** (PR #18, 2026-11-18; branch deleted):
+`hycom-tsis-gom-reanalysis/s3-review/report.md`, with scripts `01`–`05`. The bucket
+`hycom-tsis-gom-reanalysis` is public and in us-west-2. **The copy was still running**, with
+2001–2020 stalled partway through each year, so re-list before trusting counts. Headlines:
+- 027 and a new experiment 028 (2024-09 to 2026-07) share a second chunk layout ("layout B",
+  #15, open for team comment).
+- 028 has wind stress, not 10 m wind: the winds are missing, not renamed (#16, open).
+- 2021–2023 are complete.
+- 9 of the 028 files are truncated.
+
+**Reprocessing 027 was never decided.** It was Eli brainstorming, and HYCOM was not involved.
+The audit report, #11 and the notes are corrected. Don't reintroduce it.
+
+**Next task: #17, build the layout A store** (010/023/026, 2001-01-16 → 2024-04-28, group
+`hourly`). #17 lists the decisions and the subtasks in the skill's order. Step 1, the written
+plan for Eli to review, comes first. Test year 2022, then a scratch store in `test-repo/hycom/` for
+the team. The full build waits until HYCOM's copy is complete; Eli is asking them about it. #11
+(3z chunking) is closed in favour of #17; its options table is still the reference for step 3.
+Detail: [notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
@@ -142,9 +152,11 @@ The three facts most likely to be got wrong:
 
 - Follow the `virtual-icechunk` skill's order: plan → smoke test → production → docs. The
   plan is reviewed; the smoke test is next.
-- The kernel env is Python 3.11 and cannot install icechunk 2.x. Build a 3.12 venv in the
-  scratchpad with `/srv/conda/bin/python3.12 -m venv` and `pip install --no-cache-dir`
-  (`~` has a small quota; pip's cache fills it).
+- **Hub images differ; check which Python you have.** In September the kernel was Python 3.11,
+  and the venv was built with `/srv/conda/bin/python3.12 -m venv`. On 2026-11-18 the kernel env
+  was Python 3.13 with icechunk 2.3.1 already installed, and no `python3.12` existed, so the venv
+  was built with `/srv/conda/envs/notebook/bin/python3.13 -m venv`. Either way, build the venv in
+  the scratchpad and use `pip install --no-cache-dir` (`~` has a small quota; pip's cache fills it).
 - Conventions for README, `requirements.txt`, notebooks-as-build-log, mirroring and the
   gridlook viewer follow `~/icechunks` (its `CLAUDE.md` and `claude/notes/`).
 - **Source Cooperative login** goes through the hub proxy. Run
