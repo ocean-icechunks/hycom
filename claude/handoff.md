@@ -28,6 +28,18 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
+## GOMb0.01 is on S3: file review (2026-11-18)
+
+GOM work is now a 2026 IOOS hackathon project,
+[ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
+**Post every prompt Eli writes in this work to that issue, verbatim.** The bucket
+`hycom-tsis-gom-reanalysis` exists (public, us-west-2; the copy is still running). The review
+is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
+scripts. Headlines: 027 was not reprocessed; a new experiment 028 (2024-09 to 2026-07) has 027's
+layout and different 2d variables; 2021–2023 are complete and could be #11's test year; 9 truncated
+028 files. Four decisions (D1–D4) are open for Eli. Notes:
+[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
+
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
 **HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
