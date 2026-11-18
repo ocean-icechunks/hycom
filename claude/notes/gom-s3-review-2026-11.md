@@ -17,9 +17,10 @@ report does not: how the work is tracked, and what the next session must not get
 - The bucket exists, is public, and is in us-west-2. The copy, by the file team, was still in
   progress: 2001–2020 stalled partway through each year about 2026-11-16 18:16 UTC, and only 2025 was
   still moving. Re-list before trusting any count in the report.
-- **Open decisions for Eli, D1–D4 in the report.** The big one is D1: 027 was *not*
-  reprocessed, and the new experiment 028 (2024-09 to 2026-07, not on data.hycom.org) has 027's
-  layout. Do not assume the September "reprocess 027" plan still holds; ask.
+- **Open decisions for Eli, D1–D4 in the report.** The big one is D1 (#15): 027 and the new
+  experiment 028 (2024-09 to 2026-07, not on data.hycom.org) share a second chunk layout.
+  **There was never a plan to reprocess 027.** That was Eli brainstorming, and HYCOM was not
+  involved (Eli, 2026-11-18). Keep the September audit out of #15.
 
 ## Facts easy to get wrong
 
@@ -65,5 +66,5 @@ rectilinear chunk grids (zarr-python#3802 merged 2026-04; xarray#11592 read-only
   zarr-specs#288 (open since 2024), zarr-python#2536, VirtualiZarr#5. This is a proposal only; there is
   no implementation to use.
 
-So D1 is still: reprocess 027 + 028, or keep the second layout in its own store or group (a
+So D1 is still: rewrite 027 + 028, keep the second layout in its own store or group (a
 reader concatenates in xarray, and that can be replaced by one array if #288 lands).

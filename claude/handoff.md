@@ -35,8 +35,8 @@ GOM work is now a 2026 IOOS hackathon project,
 **Post every prompt Eli writes in this work to that issue, verbatim.** The bucket
 `hycom-tsis-gom-reanalysis` exists (public, us-west-2; the copy is still running). The review
 is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
-scripts. Headlines: 027 was not reprocessed; a new experiment 028 (2024-09 to 2026-07) has 027's
-layout and different 2d variables; 2021–2023 are complete and could be #11's test year; 9 truncated
+scripts. Headlines: 027 and a new experiment 028 (2024-09 to 2026-07) share a
+second chunk layout (#15); 028 lacks winds (#16); 2021–2023 are complete and could be #11's test year; 9 truncated
 028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
 [notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
@@ -44,8 +44,9 @@ layout and different 2d variables; 2021–2023 are complete and could be #11's t
 
 **HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
 Issue #8 asked whether its NetCDF-4 files need reprocessing first. The audit is merged (PR #10; #8 closed, branch deleted):
-`hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are, except
-experiment 027, which the file team will reprocess. 2d will use whole 12.9 MB maps. The 3z
+`hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are. 027 (and now 028) has a different chunk
+layout, and how to handle that is open (#15). Reprocessing 027 was never decided; it was
+brainstorming, and HYCOM was not involved (Eli, 2026-11-18). 2d will use whole 12.9 MB maps. The 3z
 chunking is open.
 
 **Next step for us: when one year of hourly files is on S3**, decide the 3z chunking and run

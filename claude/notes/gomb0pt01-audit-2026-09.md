@@ -19,9 +19,10 @@ that. #8 has a comment for the file team with the four points below.
 
 - **No reprocessing of the files, 3z included.** The store design works around the files'
   chunking. Do not propose rewriting 3z again: 539 TB, and Eli has ruled it out.
-- **Experiment 027 is the exception, and is to be reprocessed** to the others' chunking
-  (`MT/1,Latitude/1537,Longitude/2101` for 2d, `MT/1,Depth/10,Latitude/385,Longitude/526` for
-  3z). That is the file team's job; the report says why.
+- **CORRECTION (Eli, 2026-11-18): reprocessing 027 was never a decision.** HYCOM was not
+  involved; it was Eli brainstorming. The audit report's "for the file team" wording overstates
+  it. How to handle 027's (and now 028's) different layout is open: ocean-icechunks/hycom#15.
+  Do not describe it as decided or as "the September plan".
 - **2d uses the whole 12.9 MB map as its virtual chunk.** It is not cut into 53-row bands.
   Eli's view is that 12 MB is a good chunk size. Point time series cost about 7 min per variable
   per year from S3 as a result, which is accepted.

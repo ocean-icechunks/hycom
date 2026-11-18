@@ -23,9 +23,9 @@ and 2026-11-18 02:00 UTC. Every number below is as of the listing taken 2026-11-
 3. **The archive is longer than in September.** A new experiment, **028**, runs from 2024-09-01
    19Z to 2026-07-09 (hourly) and 2026-08-31 (daily). It is not on data.hycom.org, so it came
    from another HYCOM source.
-4. **Experiment 027 was not reprocessed, and 028 shares its layout.** Both have different
+4. **Experiments 027 and 028 share a second chunk layout.** Both have different
    chunking from 010–026 (see [Two layouts](#two-layouts)). That makes about 19,900 hours (and
-   growing) in the second layout, not 3,672. **The store design needs a decision from Eli on this
+   growing) in the second layout. **The store design needs a decision from Eli on this
    (D1).**
 5. **028 has no 10 m winds.** Its 2d files carry `surface_e_stress`/`surface_n_stress`
    instead. These are wind stress in Pa, a different variable, not the winds renamed (see
@@ -161,11 +161,10 @@ different quantity**, not the wind under a new name (`05_wind_vs_stress.py`,
 
 ## Decisions for Eli
 
-- **D1. Two layouts** (discussion: #15). In September the plan was to reprocess 027. 028 now has the same
-  layout and is 4–5 times larger. The options: reprocess 027 + 028 (about 54 TB of 3z, plus
-  future 028 output); keep a second store, or a second group, for 2024-04 onward; or build
-  010–026 only for now. The September decisions (no reprocessing of 010–026, 2d as whole maps)
-  are not affected.
+- **D1. Two layouts** (discussion: #15). The second layout can't share arrays with
+  the first. The options: rewrite 027 + 028 to layout A (about 54 TB of 3z, plus future 028
+  output, and HYCOM would need to agree); keep a second store, or a second group, for 2024-04
+  onward; or build 010–026 only for now.
 - **D2. Winds in 028** (discussion: #16). 028 lacks the 10 m winds; it has wind stress, a different variable (see
   [Wind](#wind-missing-from-028-not-renamed)). Options: ask HYCOM to add the winds to 028 as
   they did for 027 (likely, since their page lists winds as an output). Or build `wnd_*` as
