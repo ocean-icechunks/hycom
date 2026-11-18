@@ -44,3 +44,25 @@ report does not: how the work is tracked, and what the next session must not get
   Memory cap 3.9 GB.
 - The `topo/*.nc` files are NetCDF-3 and need `scipy` (or netCDF4) to open with xarray. That is
   not in requirements.txt, because no script reads them yet.
+
+## Does VirtualiZarr's variable-chunk work solve D1? (checked 2026-11-18)
+
+Eli asked. **No, not as it stands, and not within the next releases.** What is being built:
+rectilinear chunk grids (zarr-python#3802 merged 2026-04; xarray#11592 read-only, merged
+2026-09; VirtualiZarr#954 still open, tests not written; tracking issue VirtualiZarr#12).
+
+- A rectilinear grid gives each *axis* its own list of chunk lengths. The grid is still a
+  Cartesian product, so lat/lon boundaries are the same at every time step. Our problem is
+  that the spatial tiling changes at 2024-04 (4 × 4 tiles of 385 × 526 → 5 × 5 of 308 × 421,
+  depth groups of 10 → 7). A per-axis grid cannot say "different tiles after time T".
+- A common refinement of both tilings would be a valid rectilinear grid. But it needs splits
+  in longitude inside a tile, and a tile's column window is not one contiguous byte range. The
+  proposed `records` codec (VirtualiZarr#1147) could express a strided range. Codecs are per
+  array, though, and the two layouts need different strides (526 vs 421 floats per row).
+- The padded edge tiles add a further block (VirtualiZarr#1111, zarr-extensions#74).
+- What would solve it is an array defined as a concatenation of differently chunked arrays:
+  zarr-specs#288 (open since 2024), zarr-python#2536, VirtualiZarr#5. This is a proposal only; there is
+  no implementation to use.
+
+So D1 is still: reprocess 027 + 028, or keep the second layout in its own store or group (a
+reader concatenates in xarray, and that can be replaced by one array if #288 lands).
