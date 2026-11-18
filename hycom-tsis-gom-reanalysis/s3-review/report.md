@@ -161,12 +161,12 @@ different quantity**, not the wind under a new name (`05_wind_vs_stress.py`,
 
 ## Decisions for Eli
 
-- **D1. Two layouts.** In September the plan was to reprocess 027. 028 now has the same
+- **D1. Two layouts** (discussion: #15). In September the plan was to reprocess 027. 028 now has the same
   layout and is 4–5 times larger. The options: reprocess 027 + 028 (about 54 TB of 3z, plus
   future 028 output); keep a second store, or a second group, for 2024-04 onward; or build
   010–026 only for now. The September decisions (no reprocessing of 010–026, 2d as whole maps)
   are not affected.
-- **D2. Winds in 028.** 028 lacks the 10 m winds; it has wind stress, a different variable (see
+- **D2. Winds in 028** (discussion: #16). 028 lacks the 10 m winds; it has wind stress, a different variable (see
   [Wind](#wind-missing-from-028-not-renamed)). Options: ask HYCOM to add the winds to 028 as
   they did for 027 (likely, since their page lists winds as an output). Or build `wnd_*` as
   NaN for 028 hours. Or also carry `surface_*_stress`, NaN before 028. Never present the stress

@@ -37,7 +37,7 @@ GOM work is now a 2026 IOOS hackathon project,
 is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
 scripts. Headlines: 027 was not reprocessed; a new experiment 028 (2024-09 to 2026-07) has 027's
 layout and different 2d variables; 2021–2023 are complete and could be #11's test year; 9 truncated
-028 files. Four decisions (D1–D4) are open for Eli. Notes:
+028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
 [notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
