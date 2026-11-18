@@ -40,8 +40,8 @@ second chunk layout (#15); 028 lacks winds (#16); 2021–2023 are complete and c
 028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
 [notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
-**Next (Eli, 2026-11-18): build layout A (2001 → 2024-04) starting with a 2022 smoke test and a
-test store in `test-repo/hycom/` for the team.** Her answers (time axis, group renaming, VMs,
+**Next (Eli, 2026-11-18): build layout A (2001 → 2024-04), issue #17**, starting with a 2022 smoke test
+and a test store in `test-repo/hycom/` for the team. #17 lists the subtasks in the skill's order. Her answers (time axis, group renaming, VMs,
 waiting on HYCOM) are in the last section of that note. Eli planned to clear the session before
 this work started.
 
