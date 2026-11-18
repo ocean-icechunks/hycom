@@ -27,7 +27,9 @@ and 2026-11-18 02:00 UTC. Every number below is as of the listing taken 2026-11-
    chunking from 010–026 (see [Two layouts](#two-layouts)). That makes about 19,900 hours (and
    growing) in the second layout, not 3,672. **The store design needs a decision from Eli on this
    (D1).**
-5. **028's 2d files have a different variable set:** wind stress instead of 10 m wind (D2).
+5. **028 has no 10 m winds.** Its 2d files carry `surface_e_stress`/`surface_n_stress`
+   instead. These are wind stress in Pa, a different variable, not the winds renamed (see
+   [Wind](#wind-missing-from-028-not-renamed); D2).
 6. **Years 2021, 2022 and 2023 are complete on S3**, all experiment 023, which has the 010
    layout. Any of them can be the "one full year" issue #11 waits for (D3). 2010, the year the
    audit suggested, is only copied to 2010-08-07.
@@ -95,9 +97,36 @@ is roughly 54 TB (19,900 × 2.72 GB).
 | 010, 023, 026, 027 | `ssh`, `mixed_layer_thickness`, `u_barotropic_velocity`, `v_barotropic_velocity`, `wnd_ewd`, `wnd_nwd` |
 | 028 | `ssh`, `mixed_layer_thickness`, `u_barotropic_velocity`, `v_barotropic_velocity`, `surface_e_stress`, `surface_n_stress` |
 
-027's `history` attribute shows how it got winds: HYCOM appended `wnd_ewd`/`wnd_nwd` from a
-separate `wind.nc` with NCO and dropped `surface_e_stress`/`surface_n_stress` (September 2025).
-028 has not had that step. The 3z variables are the same five throughout.
+The 3z variables are the same five throughout.
+
+### Wind: missing from 028, not renamed
+
+**028 has no 10 m wind. Its `surface_e_stress`/`surface_n_stress` are wind stress, a
+different quantity**, not the wind under a new name (`05_wind_vs_stress.py`,
+`out/wind-vs-stress.txt`, one hour from each experiment):
+
+| | `wnd_ewd`, `wnd_nwd` (010, 023, 026, 027) | `surface_e_stress`, `surface_n_stress` (028) |
+|---|---|---|
+| What it is | 10 m wind from the atmospheric forcing (CFSR to 2011, CFSv2 from 2012), interpolated to 1/100° | Surface wind stress, model output |
+| Units | m/s | Pa |
+| Typical magnitude | 2–6 m/s mean absolute, up to ~11 m/s | 0.03–0.06 Pa mean absolute, up to ~0.26 Pa |
+| Where defined | Every grid point, land too (3,229,237) | Ocean points only (2,282,148) |
+| `long_name` | `Eward 10m wind`, `Nward 10m wind` | `surf. e-stress`, `surf. n-stress` |
+
+- HYCOM's own [GOMb0.01 reanalysis page](https://www.hycom.org/data/gomb0pt01/gom-reanalysis) lists the
+  outputs, and its only wind entry is "Wind (CFSR/CFSv2): `wnd_ewd`, `wnd_nwd`, hourly,
+  interpolated to 1/100º, Sea Surface (2d.nc)". It does not list the stress fields. The page
+  covers 2001-01-01 to 2024-08-31 and the experiment sequence 01.0 → 02.3 → 02.6, so it does
+  not yet describe 028 (02.8).
+- **The winds are not model output; HYCOM adds them to the files afterwards.** In 027, the
+  `history` attributes show the step (September 2025): the CFSv2 forcing file was converted with
+  HYCOM's `force2nc`. Its variable `tau_ewd` was renamed `wnd_ewd` (the forcing variable keeps
+  HYCOM's `tau` name although the values are m/s winds) and appended to the file with NCO, and
+  `surface_e_stress`/`surface_n_stress` were removed. 028 has not had this step. 010–026 came
+  out of the conversion with winds already in place (`history` = `python`).
+- The magnitudes agree with the bulk formula: the mean wind speed for these hours (4–8 m/s)
+  gives |τ| ≈ 0.03–0.12 Pa. So the stress is consistent with the wind, but it is a different
+  variable, and neither can stand in for the other.
 
 ## Things HYCOM changed since September
 
@@ -137,8 +166,11 @@ separate `wind.nc` with NCO and dropped `surface_e_stress`/`surface_n_stress` (S
   future 028 output); keep a second store, or a second group, for 2024-04 onward; or build
   010–026 only for now. The September decisions (no reprocessing of 010–026, 2d as whole maps)
   are not affected.
-- **D2. 2d variables in 028.** Wind stress instead of 10 m wind. Wait for HYCOM to add winds
-  as for 027, or carry both sets with NaN where absent?
+- **D2. Winds in 028.** 028 lacks the 10 m winds; it has wind stress, a different variable (see
+  [Wind](#wind-missing-from-028-not-renamed)). Options: ask HYCOM to add the winds to 028 as
+  they did for 027 (likely, since their page lists winds as an output). Or build `wnd_*` as
+  NaN for 028 hours. Or also carry `surface_*_stress`, NaN before 028. Never present the stress
+  as `wnd_*`.
 - **D3. Test year for issue #11.** 2021, 2022 or 2023: each complete, experiment 023, same layout
   as 010. 2010 will not be complete until the stalled copy restarts.
 - **D4. Static fields.** `topo/` has bathymetry and the land mask on the model grid, and could go
@@ -155,6 +187,7 @@ Run from this directory with a Python ≥ 3.12 venv: `pip install -r requirement
 | `02_sample_layouts.py` | HDF5 layout of 68 sample files on S3 and on HYCOM, compared | `out/sample-layouts.tsv` |
 | `03_compare.py` | S3 vs HYCOM by key; HYCOM now vs September; exact sizes of odd files | `out/compare.txt`, `out/s3-vs-hycom.csv.gz` |
 | `04_spot_bytes.py` | MD5 of three 1 MiB ranges, S3 vs HYCOM vs `_CORRUPTED` | `out/spot-bytes.txt` |
+| `05_wind_vs_stress.py` | Attributes, 027 history and value statistics of the wind and stress variables, one hour per experiment | `out/wind-vs-stress.txt` |
 
 The HYCOM listing in `out/` was taken by a first version of `01_inventories.py` that fetched every
 directory twice. It was deduplicated afterwards: the two copies of each key were identical.

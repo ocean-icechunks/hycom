@@ -28,7 +28,8 @@ report does not: how the work is tracked, and what the next session must not get
   experiment-028 files exist only on S3 (and on whatever HYCOM source the file team used).
 - **027 + 028 share one layout, down to identical 3z chunk offsets**, but the build must still
   read each file's header.
-- **028 2d has wind stress, not 10 m wind.** 027 got its winds by an NCO post-processing step
+- **028 2d has wind stress (Pa, ocean points only), not 10 m wind (m/s, every point): missing, not
+  renamed** (checked against hycom.org's variable list and by values). 027 got its winds from an NCO post-processing step
   (see its `history` attribute).
 - **The `_CORRUPTED` spot check is inconclusive**: at three 1 MiB ranges per file, old, new and the S3
   copy were identical. Do not report the S3 copies of those 5 files as verified.
