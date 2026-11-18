@@ -1,0 +1,5 @@
+# The GOMb0.01 S3 file review (ocean-icechunks/2026-ioos-hackathon#22). Python >= 3.12.
+# Tested 2026-11-18 in a clean Python 3.13 venv with the versions in brackets.
+-r ../audit/requirements.txt
+boto3>=1.35          # anonymous S3 listing
+s3fs>=2025.1         # h5py over S3 for header reads

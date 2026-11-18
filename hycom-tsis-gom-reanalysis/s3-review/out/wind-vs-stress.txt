@@ -1,0 +1,30 @@
+== 010: 2010/010_archv.2010_032_12_2d.nc
+  wnd_ewd           units=b'm/s' long_name=b'  Eward 10m wind'
+                    n= 3229237 mean= -5.1306 |mean|=  5.6367 p1= -9.9751 p99= +5.9250
+  wnd_nwd           units=b'm/s' long_name=b'  Nward 10m wind'
+                    n= 3229237 mean= -2.1517 |mean|=  2.8929 p1= -7.9524 p99= +4.5999
+  wind speed: mean=6.61 m/s; bulk stress 1.2*1.3e-3*|U|*U would be |tau| ~ 0.0736 Pa
+== 023: 2022/023_archv.2022_032_12_2d.nc
+  wnd_ewd           units=b'm/s' long_name=b'  Eward 10m wind'
+                    n= 3229237 mean= -5.2175 |mean|=  6.2928 p1=-11.4602 p99= +7.4330
+  wnd_nwd           units=b'm/s' long_name=b'  Nward 10m wind'
+                    n= 3229237 mean= +2.4101 |mean|=  4.1116 p1= -6.1677 p99=+11.1797
+  wind speed: mean=8.09 m/s; bulk stress 1.2*1.3e-3*|U|*U would be |tau| ~ 0.1156 Pa
+== 027: 2024/027_archv.2024_200_12_2d.nc
+  history: Fri Sep 19 18:28:46 2025: ncks -x -v surface_e_stress,surface_n_stress orig.nc 027_archv.2024_200_12_2d.nc | Fri Sep 19 18:28:46 2025: ncks -A -v wnd_nwd,wnd_ewd wind.nc orig.nc | archv2ncdf2d
+  appended: Fri Sep 19 18:28:46 2025: Appended file wind.nc had following "history" attribute: | Fri Sep 19 18:28:45 2025: ncks -A -v wnd_nwd test_nwd1.nc wind.nc | Fri Sep 19 18:28:45 2025: ncrename -v tau_ewd,wnd_ewd test_ewd.nc test_ewd1.nc | Fri Sep 19 18:28:45 2025: ncks -d MT,420,420 wndewd_124g.nc test_ewd.nc | force2nc | 
+  wnd_ewd           units=b'm/s' long_name=b'  Eward 10m wind'
+                    n= 3229237 mean= -1.6400 |mean|=  3.2619 p1= -7.7787 p99= +4.8530
+  wnd_nwd           units=b'm/s' long_name=b'  Nward 10m wind'
+                    n= 3229237 mean= +1.6835 |mean|=  2.3293 p1= -3.3527 p99= +5.9819
+  wind speed: mean=4.36 m/s; bulk stress 1.2*1.3e-3*|U|*U would be |tau| ~ 0.0338 Pa
+== 028 (2024): 2024/028_archv.2024_300_12_2d.nc
+  surface_e_stress  units=b'Pa' long_name=b'  surf. e-stress   [02.8H]'
+                    n= 2282148 mean= -0.0541 |mean|=  0.0563 p1= -0.1948 p99= +0.0332
+  surface_n_stress  units=b'Pa' long_name=b'  surf. n-stress   [02.8H]'
+                    n= 2282148 mean= -0.0274 |mean|=  0.0293 p1= -0.1218 p99= +0.0150
+== 028 (2025): 2025/028_archv.2025_032_12_2d.nc
+  surface_e_stress  units=b'Pa' long_name=b'  surf. e-stress   [02.8H]'
+                    n= 2282148 mean= -0.0137 |mean|=  0.0405 p1= -0.0960 p99= +0.2610
+  surface_n_stress  units=b'Pa' long_name=b'  surf. n-stress   [02.8H]'
+                    n= 2282148 mean= -0.0441 |mean|=  0.0522 p1= -0.2514 p99= +0.0839

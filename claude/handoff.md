@@ -28,12 +28,30 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
+## GOMb0.01 is on S3: file review (2026-11-18)
+
+GOM work is now a 2026 IOOS hackathon project,
+[ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
+**Post every prompt Eli writes in this work to that issue, verbatim.** The bucket
+`hycom-tsis-gom-reanalysis` exists (public, us-west-2; the copy is still running). The review
+is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
+scripts. Headlines: 027 and a new experiment 028 (2024-09 to 2026-07) share a
+second chunk layout (#15); 028 lacks winds (#16); 2021–2023 are complete and could be #11's test year; 9 truncated
+028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
+[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
+
+**Next (Eli, 2026-11-18): build layout A (2001 → 2024-04), issue #17**, starting with a 2022 smoke test
+and a test store in `test-repo/hycom/` for the team. #17 lists the subtasks in the skill's order. Her answers (time axis, group renaming, VMs,
+waiting on HYCOM) are in the last section of that note. Eli planned to clear the session before
+this work started.
+
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
 **HYCOM-TSIS GOMb0.01, the 1/100° Gulf of Mexico hourly reanalysis**, is the second store.
 Issue #8 asked whether its NetCDF-4 files need reprocessing first. The audit is merged (PR #10; #8 closed, branch deleted):
-`hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are, except
-experiment 027, which the file team will reprocess. 2d will use whole 12.9 MB maps. The 3z
+`hycom-tsis-gom-reanalysis/audit/report.md`. In short: the files are good as they are. 027 (and now 028) has a different chunk
+layout, and how to handle that is open (#15). Reprocessing 027 was never decided; it was
+brainstorming, and HYCOM was not involved (Eli, 2026-11-18). 2d will use whole 12.9 MB maps. The 3z
 chunking is open.
 
 **Next step for us: when one year of hourly files is on S3**, decide the 3z chunking and run
@@ -130,8 +148,10 @@ The three facts most likely to be got wrong:
 - Conventions for README, `requirements.txt`, notebooks-as-build-log, mirroring and the
   gridlook viewer follow `~/icechunks` (its `CLAUDE.md` and `claude/notes/`).
 - **Source Cooperative login** goes through the hub proxy. Run
-  `~/.cargo/bin/source-coop login --duration 1d --port 8400`, then open
-  `https://nmfs-openscapes.2i2c.cloud/user/eeholmes/proxy/8400/` in a browser. The hub's
+  `source-coop login --duration 1d --port 8400`, then open
+  `https://nmfs-openscapes.2i2c.cloud/user/eeholmes/proxy/8400/` in a browser. The CLI is
+  0.3.0, at `~/.local/bin/source-coop` on this hub. After login, `source-coop creds` renews the
+  keys itself, so multi-day runs work (see notes/gom-s3-review-2026-11.md). The hub's
   hostname is in no environment variable; it was inferred from the scratch bucket name
   (`nmfs-openscapes-scratch`) and confirmed by Eli using it.
 - No browser on the hub: verify transport (status, content type, CORS) here, and ask Eli

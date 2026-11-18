@@ -1,0 +1,5 @@
+2002/010_archv.2002_046_12_3z.nc  s3=['fb702f49', '263de900', '030bd710']  hycom=['fb702f49', '263de900', '030bd710']  hycom_CORRUPTED=['fb702f49', '263de900', '030bd710']  s3==hycom:True  s3==corrupted:True
+2002/010_archv.2002_046_16_3z.nc  s3=['8bcbfa4e', '2c51a11a', '918f7751']  hycom=['8bcbfa4e', '2c51a11a', '918f7751']  hycom_CORRUPTED=['8bcbfa4e', '2c51a11a', '918f7751']  s3==hycom:True  s3==corrupted:True
+2002/010_archv.2002_051_06_3z.nc  s3=['6ea0b4e6', '6219e93b', 'fdbb5028']  hycom=['6ea0b4e6', '6219e93b', 'fdbb5028']  hycom_CORRUPTED=['6ea0b4e6', '6219e93b', 'fdbb5028']  s3==hycom:True  s3==corrupted:True
+2002/010_archv.2002_051_07_3z.nc  s3=['ddbf0a26', '257d3574', '02fbfd69']  hycom=['ddbf0a26', '257d3574', '02fbfd69']  hycom_CORRUPTED=['ddbf0a26', '257d3574', '02fbfd69']  s3==hycom:True  s3==corrupted:True
+2002/010_archv.2002_051_09_3z.nc  s3=['d38a9dad', '909fc625', 'a42e1618']  hycom=['d38a9dad', '909fc625', 'a42e1618']  hycom_CORRUPTED=['d38a9dad', '909fc625', 'a42e1618']  s3==hycom:True  s3==corrupted:True
