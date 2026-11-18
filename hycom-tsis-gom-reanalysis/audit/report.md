@@ -11,13 +11,10 @@ report answers is whether they need **reprocessing** on the way there.
 1. **The files are good as they are.** Experiments 010, 023 and 026 (2001-01-16 to
    2024-04-28) need no reprocessing. That includes the 3z files: their chunking will be handled
    by how the Icechunk stores are structured, not by rewriting data.
-2. **Experiment 027 needs reprocessing** (2024-04-01 19Z to 2024-09-01 18Z, 3,672 hours, hourly
-   and daily). It was written with a different chunk layout from the rest, and a variable cannot
-   change chunk layout partway through a virtualized store. Rewrite it to the others' chunking, uncompressed:
-   - 2d: `MT/1,Latitude/1537,Longitude/2101`
-   - 3z: `MT/1,Depth/10,Latitude/385,Longitude/526`
-
-   See [Why experiment 027 must be reprocessed](#why-experiment-027-must-be-reprocessed).
+2. **Experiment 027 has a different chunk layout** (2024-04-01 19Z to 2024-09-01 18Z, 3,672
+   hours, hourly and daily), and a variable cannot change chunk layout partway through a
+   virtualized store. **How to handle that is an open question, not a request to reprocess.**
+   See [Experiment 027's chunk layout](#experiment-027s-chunk-layout).
 3. **Put one year on S3 first.** One complete year of hourly 2d and 3z files, from experiment
    010 (for example 2010: 8,760 hours, about 0.7 TB of 2d and 23 TB of 3z), is enough to test
    the store designs below against the real bucket. The rest of the archive can follow while
@@ -125,7 +122,7 @@ the icechunk chunking above.
   variable at {1 × 1537 × 2101} and a 3z variable at {1 × 1 × 385 × 526} sit side by side on one
   lat, lon and time axis. This was tested with two hours, reading back correctly
   (`08_one_group.py`). The constraint is per variable: one variable needs one chunk grid
-  through the whole record. That is the problem with experiment 027, not the difference between
+  through the whole record. That is the issue with experiment 027, not the difference between
   2d and 3z.
 - **Offsets must come from each file's own header.** Most files share identical byte offsets,
   but not all (F4), as in the GOFS 3.1 build. On S3 that scan is cheap: 1 read per 2d file and 6
@@ -133,12 +130,18 @@ the icechunk chunking above.
 - **The time axis should come from the filenames**, not from `MT` (F11).
 - **Pin checksums at build time** (F8).
 
-### Why experiment 027 must be reprocessed
+### Experiment 027's chunk layout
+
+> **Correction, 2026-11-18.** An earlier version of this report said 027 "must be reprocessed"
+> and asked the file team to do it. That was never decided. It was a brainstormed option, and
+> the HYCOM team was not involved. The S3 review in November also found a newer experiment, 028,
+> with 027's layout. The question is open for discussion in ocean-icechunks/hycom#15.
 
 Experiment 027 (`experiment = "02.3"`) has the same grid, variables and 40 depths as the rest,
-but it was written with a different chunk grid. When creating a virtualized Zarr store (or Icechunk), the 
-variables must share the chunk layout. This constraint may be solved in later versions of VirtualiZarr, but if 
-there are no technical reasons to have changed the chunk layout, it is best to return to the 2001-2023 layout. In anycase, for S3 now, the 027 files will need to be reprocessed to have the same chunk layout.
+but it was written with a different chunk grid. In a virtualized Zarr store (or Icechunk), one
+variable must keep one chunk layout through the whole record. So 027 can't go into the same
+arrays as the other experiments as it is. Options include rewriting it to the 2001–2023 layout,
+or keeping it in a separate store or group; #15 has the full list.
 
 | | 010 / 023 / 026 | 027 |
 |---|---|---|
@@ -146,8 +149,11 @@ there are no technical reasons to have changed the chunk layout, it is best to r
 | 3z chunk | {1 × 10 × 385 × 526} | {1 × 7 × 308 × 421} |
 
 
-Reprocessing involves about 0.3 TB of 2d files and 10 TB of 3z files. Rewrite scripts should be straight-forward. For example `nccopy -c "<chunks>"` with no `-d`. The 027 2d files were also assembled with NCO (`ncks -A` of the winds, `_nc3_strict`), so check
-that the variable order and attributes come out consistent.
+If 027 were rewritten, that would be about 0.3 TB of 2d files and 10 TB of 3z files, with
+`nccopy -c "<chunks>"` and no `-d`. The target chunking would be `MT/1,Latitude/1537,Longitude/2101`
+(2d) and `MT/1,Depth/10,Latitude/385,Longitude/526` (3z). The 027 2d files were also assembled
+with NCO (`ncks -A` of the winds, `_nc3_strict`), so a rewrite would need checks that the variable
+order and attributes come out consistent.
 
 ## Findings
 
@@ -308,7 +314,7 @@ made with `ncra` from the hourly files (weights 0.92 on the two end hours). They
 hourly files' layout; the 2024 files have experiment 027's chunk grid. With 24 times fewer time
 steps, a daily store would make long point time series about 24 times cheaper. It would also
 have far fewer references: about 28 M for 3z at one depth per chunk. It is worth considering as a
-second store, and the same 027 reprocessing applies to it.
+second store, and the same 027 layout question (#15) applies to it.
 
 The audit only reads: no file was changed.
 
