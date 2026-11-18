@@ -83,7 +83,9 @@ rewrite 027/028 to layout A (#15), append those hours to it later.
   anything not yet copied) are left as NaN; HYCOM will probably fill them in later, as new commits.
 - **Full build waits** for the S3 copy. Eli is asking HYCOM when the 2001–2020 files will be
   added, and about the 5 regenerated 2002 files (D5 in the review): leave them out until HYCOM answers.
-- **Group path:** not fixed yet, and it doesn't need to be. Groups can be renamed later:
+- **Group: `hourly`** (Eli, 2026-11-18). If layout B ends up as a separate group (#15), she may
+  rename it, e.g. to `2001-04-2024`, so don't build anything that hard-codes the path more than it
+  has to. Renaming works: Groups can be renamed later:
   Icechunk 2.3.1 `repo.rearrange_session("main").move("/a", "/b")` is metadata-only (tested with a
   virtual array: new path reads, old snapshots keep the old path). An ordinary writable session
   refuses `move`. Renaming still breaks README code and links that use the old path.
@@ -94,3 +96,11 @@ rewrite 027/028 to layout A (#15), append those hours to it later.
   is about 28 M refs per year, so write in monthly batches to bound memory, with manifests split along time.
   Parallel VMs are possible with Icechunk `session.fork()`/`merge()`, but probably not needed.
   The 3.9 GB hub is too small to be sure of a full year in one batch.
+
+- **Source Cooperative credentials renew themselves** (Eli, 2026-11-18; she runs multi-day jobs
+  this way in ~/pacioos). source-coop CLI **0.3.0**, at `~/.local/bin/source-coop` on this hub
+  (not `~/.cargo/bin` as older notes say), logs in with `offline_access` by default. After that,
+  `source-coop creds` refreshes expired keys without a browser. `icechunk_utils.get_source_credentials()`
+  calls `source-coop creds`, so a long build just reopens the repo, or refreshes its credentials,
+  per batch. For rclone/AWS tools: a profile with `credential_process = source-coop creds`
+  (see ~/pacioos/upload/upload_to_source_coop.sh).
