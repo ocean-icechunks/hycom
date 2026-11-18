@@ -20,9 +20,6 @@ and 2026-11-18 02:00 UTC. Every number below is as of the listing taken 2026-11-
    same size (to HYCOM's listing precision). Of 68 sampled files, all 47 that exist on both sides have identical exact sizes and
    identical HDF5 chunk offsets on both sides. No file on HYCOM was modified after it was
    copied.
-3. **The archive is longer than in September.** A new experiment, **028**, runs from 2024-09-01
-   19Z to 2026-07-09 (hourly) and 2026-08-31 (daily). It is not on data.hycom.org, so it came
-   from another HYCOM source.
 4. **Experiments 027 and 028 share a second chunk layout.** Both have different
    chunking from 010–026 (see [Two layouts](#two-layouts)). That makes about 19,900 hours (and
    growing) in the second layout. **The store design needs a decision from Eli on this
