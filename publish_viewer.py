@@ -102,6 +102,13 @@ TEST_ONLY = {
         "view": "dimIndices_MT=0::dimIndices_Depth=0",
         "variables": ("water_temp", "salinity", "ssh", "u", "v"),
     },
+    # The same build never filled, so the viewer can show gaps. Opens at MT 30 (2022-01-02 06Z), a 3z-only gap.
+    "gapfill-test-with-gaps": {
+        "path": "gapfill-test/with-gaps/hourly",
+        "title": "HYCOM-TSIS GOMb0.01, gap-fill test with gaps left in (#22)",
+        "view": "dimIndices_MT=30::dimIndices_Depth=0",
+        "variables": ("water_temp", "salinity", "ssh", "u", "v"),
+    },
 }
 
 

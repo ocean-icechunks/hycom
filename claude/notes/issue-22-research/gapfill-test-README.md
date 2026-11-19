@@ -46,7 +46,12 @@ print(old.cell_methods_3z.values[48:54], ds.cell_methods_3z.values[48:54])   # 2
 | 2d and 3z | 2022-01-02 18Z | commit 3 |
 | 3z, six consecutive hours | 2022-01-03 00–05Z | commit 4 |
 
-After the fills the store has no gaps. `fill-log.json` beside this README has each fill's gate results (the
+After the fills the store has no gaps.
+
+**To see the gaps in the viewer**, open `test-repo/hycom/gapfill-test/with-gaps`. It is built the same way and
+never filled, because the viewer opens only `main` and cannot show an earlier snapshot. MT index 30 (2022-01-02 06Z)
+has `ssh` and no 3z fields, 36 (12Z) the reverse, 42 (18Z) neither, and 48–53 (2022-01-03 00–05Z) no 3z fields.
+[water_temp at the 3z gap](https://data.source.coop/ocean-icechunks/test-repo/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/test-repo/hycom/gapfill-test/with-gaps/hourly::varname=water_temp::dimIndices_MT=30::dimIndices_Depth=0). `fill-log.json` beside this README has each fill's gate results (the
 checks passed, the files' Last-Modified, the pin) and the commits.
 
 - **Land and gaps read as NaN.** The store declares the fill value that is actually on land (2**100).

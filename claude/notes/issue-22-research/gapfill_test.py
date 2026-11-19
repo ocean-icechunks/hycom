@@ -11,6 +11,7 @@ The stores, the deliberate gaps and what each check means are in claude/notes/ga
 import datetime as dt
 import gc
 import json
+import os
 import resource
 import sys
 import time
@@ -433,7 +434,11 @@ def bulk(out):
 
 # ------------------------------------------------------------------ test 7 (Source Cooperative)
 
-BUCKET, PREFIX = "ocean-icechunks", "test-repo/hycom/gapfill-test/store"
+# GAPFILL_PREFIX lets `remote build` make a second store that is never filled, so the viewer
+# (which only opens main) can show what a gap looks like. It must stay under gapfill-test/.
+BUCKET = "ocean-icechunks"
+PREFIX = os.environ.get("GAPFILL_PREFIX", "test-repo/hycom/gapfill-test/store")
+assert PREFIX.startswith("test-repo/hycom/gapfill-test/"), PREFIX
 PUBLIC = f"https://data.source.coop/{BUCKET}/{PREFIX}"
 R_TIMES = gv.hourly_axis(pd.Timestamp("2022-01-01"), pd.Timestamp("2022-01-03 23:00"))
 R_GAPS = {"3z only": [(pd.Timestamp("2022-01-02 06:00"), "3z")],
