@@ -191,3 +191,8 @@ run before the Source Cooperative token is fetched; the fill re-checks the branc
 > and 24 s to write (4.0 M references, 2 commits), peaking at 2.1 GB with the #21 fix. The same small test ran on Source Cooperative
 > (`test-repo/hycom/gapfill-test/`) and read back anonymously. The README's gaps table is generated from the
 > store (`store_gaps`).
+
+## Viewer check (2026-11-19)
+
+`test-repo/hycom/gapfill-test/with-gaps` is the same build never filled, in the test viewer catalog, because gridlook
+opens only `main`. **Eli checked it in a browser: "viewer shows time steps w no data as I expect"** (2026-11-19).
