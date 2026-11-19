@@ -39,7 +39,7 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
 
 What Eli needs to raise with HYCOM, with the file names. Everything here was checked against
 HYCOM's listing (`s3-review/out/hycom-listing.csv.gz`, 2026-11-18) and the S3 listing (2026-11-18/19).
-Items 1–5 affect this store (layout A). Items 6–7 are about layout B.
+Items 1–7 affect this store (layout A). Items 8–9 are about layout B.
 
 1. **When will the rest of 2001–2020 be on S3?** The copy of every year from 2001 to 2020 stopped
    partway through the year about 2026-11-16 18:16 UTC. For example, 2001 stops at day 266 and 2010 at day 219.
@@ -66,18 +66,18 @@ Items 1–5 affect this store (layout A). Items 6–7 are about layout B.
    Items 3–5 are all of layout A's 3z gaps: **41 hours, all experiment 010**. No other hour
    has a 2d file without a 3z file, and the 2d record has no gaps. With item 2 that makes 46 hours
    of 3z that read as NaN at first build.
-8. **`2004/010_archv.2004_153_19_2d.nc` (2004-06-01 19Z) is chunked like layout B**: 2d
+6. **`2004/010_archv.2004_153_19_2d.nc` (2004-06-01 19Z) is chunked like layout B**: 2d
    chunks of 769 × 1051 instead of whole maps, though it is experiment 010. It is also 102 kB larger
    than the other 2d files. Was it regenerated? Could it be rewritten with the usual chunking? Until
    then the store skips it, so that hour is a 2d gap (found by the smoke test, 2026-11-19).
-9. **The `_FillValue` attribute does not match the land values.** In every layout A file sampled
+7. **The `_FillValue` attribute does not match the land values.** In every layout A file sampled
    (2001–2024, all three experiments, every variable), `_FillValue` is float32(1.267651e30), but land
    is written as 2**100 = 1.2676506e30, 3 ulps away. Readers that mask by `_FillValue` (xarray,
    netCDF4, CF tools) leave every land point at 1.27e30 when they open these files. HYCOM may want to
    know. The store works around it (R21, proposed).
-6. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
+8. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
    HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027?
-7. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
+9. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
    missing on S3: 2025-08-02 01Z, 05–09Z and 11Z, and 2026-02-05 08Z, 03-13 07Z, 04-10 22Z and 04-20 12Z.
    Also remove `2012/010_archv.2012_138_00_3z.nc_COPY` from the bucket. Full detail is in
    `s3-review/report.md`, "For the file team".
@@ -340,7 +340,7 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 ## Still open
 
 - **R21 (fill value): Eli's decision.** The smoke test runs with it.
-- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–5 and 8–9. Not blocking the 2022 work.
+- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–7. Not blocking the 2022 work.
 
 ## Smoke test result (2026-11-19)
 
@@ -357,7 +357,7 @@ every 3 steps. Then it reopened them in fresh read-only sessions:
 - Every repair checked by assertion. **`cf:1.11` "All tests passed!"** on an export from the store, gap hours
   included.
 - **Transition sample** (16 hours, 32 files, both experiment boundaries and every file size): this found
-  HYCOM items 8 and 9, the 3z `Longitude` difference, and the 2005 `ncra` stand-in's distinct attribute
+  HYCOM items 6 and 7, the 3z `Longitude` difference, and the 2005 `ncra` stand-in's distinct attribute
   fingerprint.
 - Two library details are in the code comments. xarray 2026.9 reads a float `_FillValue` in Zarr v3 only in its
   base64 form, so `gom_virtual.py` encodes it as xarray would. xarray's own datetime encoding would
