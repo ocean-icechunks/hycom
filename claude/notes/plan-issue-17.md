@@ -481,7 +481,9 @@ here) in every case.
   read. Icechunk passed it straight to the reader. A retry succeeded. The README should tell readers to retry long
   reads. `year_test.py` now retries and records each retry (`run1-s3-500.log`).
 - **Build memory grew steadily across monthly batches**: 2.8 → 6.0 GB over 12 months at d = 1, about 0.3 GB per month.
-  For the full record, use a fresh process (or reopened repository) per year, or find the leak.
+  For the full record, use a fresh process (or reopened repository) per year, or find the leak. **Under investigation in
+  #21**, which lists the hypotheses and experiments and the lessons from fish-pace/point-collocation's xarray memory fixes.
+  The number is `ru_maxrss`, a peak, so #21 starts by measuring current RSS.
 - Manifests were about 11 B per reference for the year against 6 B for January alone. The 730-hour manifest splits
   do not line up with the monthly commits, which may explain it. Check before production.
 - **Not measured yet:** opening and reading from Source Cooperative, where manifests come over the network. At
