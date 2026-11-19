@@ -36,7 +36,7 @@ TY, TX, SRC_DZ = 385, 526, 10          # 3z source chunk: 10 depths of a 385 x 5
 NTY, NTX = -(-NY // TY), -(-NX // TX)  # 4 x 4 tiles; the edge tiles are stored padded to full size
 LEVEL_BYTES = TY * TX * 4              # one depth of one tile, contiguous: 810,040 bytes
 CHUNK_BYTES = {"2d": NY * NX * 4, "3z": SRC_DZ * LEVEL_BYTES}
-# Fill values (R21, PROPOSED 2026-11-19, awaiting Eli). In every layout A file sampled, every
+# Fill values (R21, decided by Eli 2026-11-19). In every layout A file sampled, every
 # variable's `_FillValue` attribute is float32(1.267651e30) (bits 1904214019), but land is written
 # as 2**100 = 1.2676506e30 (bits 1904214016), 3 ulps away. CF readers mask by exact equality, so
 # xarray on a source file leaves all 945,478 land points at 1.27e30. The store declares the value

@@ -34,6 +34,9 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
 - **R13: `bathy` gets `standard_name = "sea_floor_depth_below_geoid"`. R7: drop `valid_range`.
   R14: `mask` as int8 with flags** (Eli, 2026-11-19). With these, every repair R1–R20 is settled.
   R19 and R20 came out of the CF check below; R19 is GOFS's repair, and R20 is mechanical.
+- **R21: the store declares 2**100 as `_FillValue` and Zarr `fill_value`** (Eli, 2026-11-19). That is the value
+  HYCOM actually wrote on land, not the attribute's 1.267651e30, so land and gap hours both read as missing.
+  Metadata only. Found in the smoke test; see the R21 row and HYCOM item 7.
 
 ## For the HYCOM team
 
@@ -63,9 +66,9 @@ Items 1–7 affect this store (layout A). Items 8–9 are about layout B.
 5. **6 3z hours have no file at all**: 2011 day 148 (28 May) 00–05Z. Their 2d files exist. Lost or
    recoverable?
 
-   Items 3–5 are all of layout A's 3z gaps: **41 hours, all experiment 010**. No other hour
-   has a 2d file without a 3z file, and the 2d record has no gaps. With item 2 that makes 46 hours
-   of 3z that read as NaN at first build.
+   Items 3–5 are all of layout A's 3z gaps on HYCOM's server: **41 hours, all experiment 010**.
+   No other hour has a 2d file without a 3z file. All gaps at first build are in the table under
+   [Known gaps at first build](#known-gaps-at-first-build).
 6. **`2004/010_archv.2004_153_19_2d.nc` (2004-06-01 19Z) is chunked like layout B**: 2d
    chunks of 769 × 1051 instead of whole maps, though it is experiment 010. It is also 102 kB larger
    than the other 2d files. Was it regenerated? Could it be rewritten with the usual chunking? Until
@@ -74,13 +77,30 @@ Items 1–7 affect this store (layout A). Items 8–9 are about layout B.
    (2001–2024, all three experiments, every variable), `_FillValue` is float32(1.267651e30), but land
    is written as 2**100 = 1.2676506e30, 3 ulps away. Readers that mask by `_FillValue` (xarray,
    netCDF4, CF tools) leave every land point at 1.27e30 when they open these files. HYCOM may want to
-   know. The store works around it (R21, proposed).
+   know. The store works around it (R21, decided).
 8. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
    HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027?
 9. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
    missing on S3: 2025-08-02 01Z, 05–09Z and 11Z, and 2026-02-05 08Z, 03-13 07Z, 04-10 22Z and 04-20 12Z.
    Also remove `2012/010_archv.2012_138_00_3z.nc_COPY` from the bucket. Full detail is in
    `s3-review/report.md`, "For the file team".
+
+### Known gaps at first build
+
+Hours on the time axis with no reference, so they read as missing. The 2001–2020 hours not yet copied to S3
+are left out of this table (HYCOM item 1). They are gaps only until the copy finishes.
+
+| Kind | Hours | Which | Why | HYCOM item |
+|---|---|---|---|---|
+| 3z | 17 | 2002 day 139 (18, 20, 21, 23Z); 2004 day 083 (12, 16, 18, 21Z); 2006 day 210 (00, 01, 03, 04, 05Z); 2006 day 268 (01, 02, 04, 05Z) | renamed `_CORRUPTED` by HYCOM, no replacement | 3 |
+| 3z | 18 | 2002 day 347 00–05Z; 2006 day 177 18–23Z; 2014 day 335 12–17Z | empty files (zero time steps) | 4 |
+| 3z | 6 | 2011 day 148 00–05Z | no file | 5 |
+| 3z | 5 | 2002 day 046 12, 16Z; day 051 06, 07, 09Z | held back: regenerated 2026-11-10, waiting for HYCOM | 2 |
+| **2d** | **1** | **2004 day 153 19Z** (2004-06-01) | **chunked like layout B; found by the smoke-test scan** | 6 |
+
+That is 46 3z hours and 1 2d hour, of 204,096. The 2d gap is the only one in the 2d record, and its 3z file is
+fine. Only 33 of the 2001–2020 files have been scanned so far, so the full scan may find more files like
+2004_153_19. This table is updated from each build's skip list. The store README will carry it.
 
 Optional, not needed for the build: the 653 hours where 026 and 027 overlap (2024-04-01 19Z →
 04-28 23Z). Which run does HYCOM consider authoritative? This store uses 026 because of the layout.
@@ -268,7 +288,7 @@ bathymetry is a fixed field, the depth of the sea floor below the model's restin
 
 | # | What | Source | Proposed | Why | Kind |
 |---|---|---|---|---|---|
-| R21 | `_FillValue` and the Zarr `fill_value` of the 11 science variables | attribute float32(1.267651e30) (bits 1904214019); **land written as 2**100** (bits 1904214016), 3 ulps away, in every file and variable sampled | **PROPOSED, awaiting Eli:** declare 2**100, the value actually on land. `source_FillValue` could keep the original if wanted | CF readers mask by exact equality. With the source attribute, xarray leaves all 945,478 land points at 1.27e30 (measured on a source file), and the store's gap hours would not match land. With R21, `ssh` is defined at exactly the 2,283,759 sea points (`mask == 1`), and gaps read as NaN. Metadata only; no data change | GOM-specific; nothing like it in GOFS |
+| R21 | `_FillValue` and the Zarr `fill_value` of the 11 science variables | attribute float32(1.267651e30) (bits 1904214019); **land written as 2**100** (bits 1904214016), 3 ulps away, in every file and variable sampled | **Decided (Eli, 2026-11-19):** declare 2**100, the value actually on land | CF readers mask by exact equality. With the source attribute, xarray leaves all 945,478 land points at 1.27e30 (measured on a source file), and the store's gap hours would not match land. With R21, `ssh` is defined at exactly the 2,283,759 sea points (`mask == 1`), and gaps read as NaN. Metadata only; no data change | GOM-specific; nothing like it in GOFS |
 | — | coordinate source | the 3z `Longitude` of 023/026 files differs from the 2d one by up to 3.05e-5° (1,848 of 2,101 points); the 2d one is identical in every file and to `topo/` | `Latitude`/`Longitude` from a 2d file, `Depth` from a 3z file | the 2d grid is the one `topo/` and every 2d file share | implementation |
 | R7+ | coordinate `valid_range` | some 3z files (2023-365 on) put `valid_range` on `Depth`/`Latitude`/`Longitude` | dropped, as R7 drops it on the data | same reason as R7 | GOM-specific |
 
@@ -339,7 +359,6 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **R21 (fill value): Eli's decision.** The smoke test runs with it.
 - Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–7. Not blocking the 2022 work.
 
 ## Smoke test result (2026-11-19)
