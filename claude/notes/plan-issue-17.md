@@ -66,6 +66,15 @@ Items 1–5 affect this store (layout A). Items 6–7 are about layout B.
    Items 3–5 are all of layout A's 3z gaps: **41 hours, all experiment 010**. No other hour
    has a 2d file without a 3z file, and the 2d record has no gaps. With item 2 that makes 46 hours
    of 3z that read as NaN at first build.
+8. **`2004/010_archv.2004_153_19_2d.nc` (2004-06-01 19Z) is chunked like layout B**: 2d
+   chunks of 769 × 1051 instead of whole maps, though it is experiment 010. It is also 102 kB larger
+   than the other 2d files. Was it regenerated? Could it be rewritten with the usual chunking? Until
+   then the store skips it, so that hour is a 2d gap (found by the smoke test, 2026-11-19).
+9. **The `_FillValue` attribute does not match the land values.** In every layout A file sampled
+   (2001–2024, all three experiments, every variable), `_FillValue` is float32(1.267651e30), but land
+   is written as 2**100 = 1.2676506e30, 3 ulps away. Readers that mask by `_FillValue` (xarray,
+   netCDF4, CF tools) leave every land point at 1.27e30 when they open these files. HYCOM may want to
+   know. The store works around it (R21, proposed).
 6. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
    HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027?
 7. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
@@ -125,7 +134,12 @@ If not, the viewer gets the same "needs a CORS extension" caveat as GOFS 3.1.
 
 ## Parser and reference scheme
 
-Decided: (a), timed against (b).
+Decided: (a), timed against (b), keeping the faster. **Outcome (smoke test, 2026-11-19): (b) h5py.** The two
+gave byte-identical offsets for all 31 sample files both accepted. h5py was 2–3× faster (32 files: 4.6 s
+against 7.7 s, 16 processes). The scan runs in **processes, not threads**. h5py serialises every call on one
+global lock, and the reads happen inside those calls, so threads give no parallelism: 8 files took as
+long on 8 threads as 4 files serially. `HDFParser` uses h5py too. On this 4-core hub, h5py reaches about
+17 files/s at 16 processes: about 17 min for 2022, about 5 h for all 296,585 files. A bigger VM should do better; step 3 measures it.
 
 - **(a) `HDFParser` + manifest split.** `open_virtual_dataset` per file. For 3z, each 10-depth
   reference is split into `10/d` references at `offset + k·d·810,040`, length `d·810,040`. The
@@ -142,9 +156,15 @@ Either way, a month's references go into pre-allocated numpy arrays (`paths`, `o
 - One S3 listing of `data/` (31 s). Keep keys matching
   `^(010|023|026)_archv\.\d{4}_\d{3}_\d{2}_(2d|3z)\.nc$`. That drops `_COPY` and `_CORRUPTED` keys and
   the `u.y2016_*` strays. 027/028 are dropped by experiment number, and there is a cut at 2024-04-28 23Z.
-- **Size check:** the file must be within ±70 kB of 77.57 MB (2d) or 2.592 GB (3z), or it is skipped
-  and listed. That catches the six empty 2006 day 177 files on S3 and any truncated copy. A file
-  that is the right size but will not open as HDF5 is also skipped and listed.
+- **Size check, changed in the smoke test:** a floor only (77.0 MB 2d, 2.590 GB 3z), which catches the
+  six empty 2006 day 177 files on S3. The ±70 kB band would have rejected a file for its size alone
+  (2004_153_19_2d is 102 kB larger). **Truncation is caught by the scan instead:** every chunk must end
+  inside the file.
+- **Per-file layout check in the scan:** shape, chunk shape, dtype, no compression, chunk sizes, and
+  `_FillValue`. A file that fails is skipped and listed with its reason. That is how 2004_153_19_2d (layout B
+  chunking) was found. Attribute fingerprints (without `valid_range`) and coordinate checksums are
+  reported but not fatal. They pick out HYCOM's `ncra` stand-ins (`cell_methods = "MT: mean"`, an NCO
+  `history`) and the 3z `Longitude` difference below.
 - **Exclusion by name:** the 5 regenerated 2002 3z files (HYCOM item 2).
 - Each build writes its skip list (key, reason) beside its log. Hours with no file read as NaN.
 - **Checksum pin:** `last_updated_at` = build time (`audit/07_checksum_pin.py`).
@@ -244,6 +264,14 @@ bathymetry is a fixed field, the depth of the sea floor below the model's restin
 | R17 | `_NCProperties` | varies by file | drop | per-file library versions |
 | R18 | new: `references`, `source_data`, `comment` | — | product page and bucket; "virtual Icechunk, data read from the source files; hours with no file read as missing and `experiment` = 0 there" | GOFS |
 
+**Found in the smoke test (2026-11-19)**
+
+| # | What | Source | Proposed | Why | Kind |
+|---|---|---|---|---|---|
+| R21 | `_FillValue` and the Zarr `fill_value` of the 11 science variables | attribute float32(1.267651e30) (bits 1904214019); **land written as 2**100** (bits 1904214016), 3 ulps away, in every file and variable sampled | **PROPOSED, awaiting Eli:** declare 2**100, the value actually on land. `source_FillValue` could keep the original if wanted | CF readers mask by exact equality. With the source attribute, xarray leaves all 945,478 land points at 1.27e30 (measured on a source file), and the store's gap hours would not match land. With R21, `ssh` is defined at exactly the 2,283,759 sea points (`mask == 1`), and gaps read as NaN. Metadata only; no data change | GOM-specific; nothing like it in GOFS |
+| — | coordinate source | the 3z `Longitude` of 023/026 files differs from the 2d one by up to 3.05e-5° (1,848 of 2,101 points); the 2d one is identical in every file and to `topo/` | `Latitude`/`Longitude` from a 2d file, `Depth` from a 3z file | the 2d grid is the one `topo/` and every 2d file share | implementation |
+| R7+ | coordinate `valid_range` | some 3z files (2023-365 on) put `valid_range` on `Depth`/`Latitude`/`Longitude` | dropped, as R7 drops it on the data | same reason as R7 | GOM-specific |
+
 ### CF check of these repairs (run 2026-11-19)
 
 IOOS compliance-checker 6.1.0, `cf:1.11`, criteria `normal`, on two NetCDF corners (2 hours, 2
@@ -311,7 +339,26 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- Nothing in the plan. Every repair, R1–R20, is decided or covered by Eli's rule (follow GOFS unless the GOM
-  files give a reason not to). Next is the smoke test.
-- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–5. Not blocking the smoke
-  test or the 2022 work.
+- **R21 (fill value): Eli's decision.** The smoke test runs with it.
+- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–5 and 8–9. Not blocking the 2022 work.
+
+## Smoke test result (2026-11-19)
+
+`hycom-tsis-gom-reanalysis/gom-smoke-test-local.ipynb`, code in `gom_virtual.py`. Run in a clean venv from
+`hycom-tsis-gom-reanalysis/requirements.txt` (Python 3.13.18, pandas 3.1.1), 0 errors, about 75 s. It built 6 hours
+of 2022 at d = 10 and d = 1 in local repositories: a skeleton commit, then two region writes, with manifests split
+every 3 steps. Then it reopened them in fresh read-only sessions:
+
+- **Every value identical to h5py**: a 2d map, a 3z one-depth map, a 40-depth profile, a 200 × 200 box over
+  four tiles, and a 6-hour point series, at both chunkings.
+- **Gaps behave as designed:** 13Z (3z left out) has `ssh` and no 3z data. 14Z (both left out) has
+  neither. `experiment` is `[23, 23, 23, 23, 0, 23]`.
+- `MT` stored equals the 2d file's `MT` bit for bit (`44295.416666666664`), with the units string verbatim.
+- Every repair checked by assertion. **`cf:1.11` "All tests passed!"** on an export from the store, gap hours
+  included.
+- **Transition sample** (16 hours, 32 files, both experiment boundaries and every file size): this found
+  HYCOM items 8 and 9, the 3z `Longitude` difference, and the 2005 `ncra` stand-in's distinct attribute
+  fingerprint.
+- Two library details are in the code comments. xarray 2026.9 reads a float `_FillValue` in Zarr v3 only in its
+  base64 form, so `gom_virtual.py` encodes it as xarray would. xarray's own datetime encoding would
+  shorten the `MT` units string, so `MT` is written as plain float days.
