@@ -229,8 +229,12 @@ the `026` group also holds 010 and 023, since it is all of layout A. Eli's conce
 group names may not fit. **An idea of hers for then (an option, not decided):** a group like `best` holding the whole
 product, and a `026` group holding only the superseded 026 overlap hours.
 
-Not yet decided: where the layout A group ends: at 2024-04-01 18Z, so that the overlap hours are only in the 027 group (027 is authoritative; the
-agent's recommendation), or at 2024-04-28 23Z, so that they are in both.
+**Releases (Eli, 2026-11-19):**
+- **`v1`**: the `026` group only (010, 023, 026), **2001-01-16 00Z → 2024-04-28 23Z**, 204,096 hours, the current scope
+  and the current `END` in `gom_virtual.py`. So the 653 overlap hours are in `026` (the agent had recommended ending at
+  04-01 18Z; Eli chose 04-28).
+- **`v2`**: adds the `027` group, 2024-04-01 19Z → 09-01 18Z (3,672 hours). From `v2` on, the overlap hours are in both
+  groups, and the README must say that **027 is authoritative for them** (HYCOM, 2026-11-19).
 
 The analysis below explains why groups are needed, and the options it lists for 027.
 
@@ -258,8 +262,8 @@ Ways to unblock it (agent's list for Eli; none decided):
 | (d) keep 026 for the overlap, end 2024-04-28 23Z | — | No change | Against HYCOM's authority |
 | **(e) two groups: layout A and 027. Chosen for now (Eli, 2026-11-19)** | A second group holding 027 on layout B's grid | Us | The whole product, fully virtual, built now | Readers join two groups for 2024. Revisited after HYCOM answers item 13 |
 
-If the layout A group ends at 2024-04-01 18Z, it has 203,443 hours (204,096 − 653), and that is what the skeleton,
-`END` in `gom_virtual.py` and the README follow. The 027 group is 3,672 hours (2024-04-01 19Z → 09-01 18Z), on layout
+With (e) as decided, the `026` group keeps the current scope, 204,096 hours to 2024-04-28 23Z, so the skeleton and
+`END` in `gom_virtual.py` do not change. The 027 group is 3,672 hours (2024-04-01 19Z → 09-01 18Z), on layout
 B's grid. The 2022 scratch store is unaffected in every case.
 
 **GOMe0.01 (028) has no layout blocker**: all of it is layout B, one grid. What it needs before a build:
@@ -522,8 +526,8 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **GOMb0.01 groups (decided: `026` for layout A and `027`, Eli 2026-11-19).** Open: whether the `026` group
-  ends at 2024-04-01 18Z (recommended) or 04-28 23Z. Revisit after HYCOM answers item 13 (reprocessing 027).
+- **GOMb0.01 groups and releases (decided, Eli 2026-11-19):** `v1` = group `026` to 2024-04-28 23Z; `v2` adds group
+  `027`. Revisit after HYCOM answers item 13 (reprocessing 027).
 - **GOMe0.01:** its bathymetry and mask from HYCOM (item 12), and when to start it.
 - Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
