@@ -7,6 +7,7 @@ means run on 2026-11-18/19. *Predicted* is arithmetic from the audit's throughpu
 decisions made earlier are in #17 ("Decided"). This round's are under [Decisions](#decisions-eli-2026-11-19).
 
 Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-the-hycom-team) ·
+[For the team (FYI)](#for-the-team-fyi) · [Known gaps](#known-gaps-at-first-build) ·
 [Scope](#scope) · [Source and destination](#source-and-destination-two-separate-configurations) ·
 [Source facts](#source-facts-measured) · [Parser](#parser-and-reference-scheme) ·
 [Discovery and bad files](#discovery-and-bad-file-handling) · [Store layout](#store-layout) ·
@@ -37,12 +38,21 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
 - **R21: the store declares 2**100 as `_FillValue` and Zarr `fill_value`** (Eli, 2026-11-19). That is the value
   HYCOM actually wrote on land, not the attribute's 1.267651e30, so land and gap hours both read as missing.
   Metadata only. Found in the smoke test; see the R21 row and HYCOM item 7.
+- **R22: a per-hour `cell_methods` flag** (Eli, 2026-11-19). Some hours are not model output: HYCOM
+  rebuilt them as the mean of the neighbouring hours with `ncra`, and those files say so in their own
+  `cell_methods = "MT: mean"` attribute (audit F5; the 2005-03-20 04Z 3z file in the smoke test). A
+  per-hour attribute cannot go on a variable, so the store carries it as a flag variable along `MT`,
+  **taken from the files' attributes, not invented**. Proposed shape in the R22 row, for the team.
+- **2004-06-01 19Z 2d is a gap** (Eli, 2026-11-19): the file is chunked like layout B, so it is skipped. It is
+  in the gaps table and on the HYCOM list (item 6).
+- **The 3z `Longitude` drift goes to HYCOM** (item 8), and with the fill-value mismatch it is an FYI for the
+  team ([For the team](#for-the-team-fyi)).
 
 ## For the HYCOM team
 
 What Eli needs to raise with HYCOM, with the file names. Everything here was checked against
 HYCOM's listing (`s3-review/out/hycom-listing.csv.gz`, 2026-11-18) and the S3 listing (2026-11-18/19).
-Items 1–7 affect this store (layout A). Items 8–9 are about layout B.
+Items 1–8 affect this store (layout A). Items 9–10 are about layout B.
 
 1. **When will the rest of 2001–2020 be on S3?** The copy of every year from 2001 to 2020 stopped
    partway through the year about 2026-11-16 18:16 UTC. For example, 2001 stops at day 266 and 2010 at day 219.
@@ -78,14 +88,37 @@ Items 1–7 affect this store (layout A). Items 8–9 are about layout B.
    is written as 2**100 = 1.2676506e30, 3 ulps away. Readers that mask by `_FillValue` (xarray,
    netCDF4, CF tools) leave every land point at 1.27e30 when they open these files. HYCOM may want to
    know. The store works around it (R21, decided).
-8. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
+8. **The 3z files' `Longitude` drifts from the 2d files' from 2021 on.** In 3z files from 2021-01-01 00Z
+   onward (023 and 026), 1,848 of the 2,101 longitudes differ from the 2d files' by up to 3.4e-5°. The 3z
+   files up to 2020-10-18 11Z (the last 2020 file on S3) match the 2d ones. The 2d values are right, equal to
+   float32(−98 + 0.01·i) within 3.7e-6. The 3z values drift along the axis (−97.98999, −97.97998,
+   −97.96997, …), as if the longitude were built by adding 0.01 repeatedly in float32. Latitude is the same in
+   both. Questions: which 3z files are affected (we see 2021-01-01 on; Oct–Dec 2020 is not on S3 yet), what changed in
+   the processing, and is anything else in those 3z files different? The data are on the same grid. The
+   store uses the 2d longitudes. (Found 2026-11-19.)
+9. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
    HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027?
-9. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
+10. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
    missing on S3: 2025-08-02 01Z, 05–09Z and 11Z, and 2026-02-05 08Z, 03-13 07Z, 04-10 22Z and 04-20 12Z.
    Also remove `2012/010_archv.2012_138_00_3z.nc_COPY` from the bucket. Full detail is in
    `s3-review/report.md`, "For the file team".
 
-### Known gaps at first build
+## For the team (FYI)
+
+Two inconsistencies in the source files that do not change the store's data, but do affect anyone who reads the
+files directly (on S3, data.hycom.org or THREDDS). Both are on the HYCOM list.
+
+- **Land is not masked when the files are opened directly** (HYCOM item 7). The `_FillValue` attribute
+  (1.267651e30) is not the value written on land (2**100), and CF readers need an exact match. xarray on a
+  source file returns 945,478 land points per map as 1.27e30, which breaks means and colour scales unless the
+  user masks it. The store fixes this with R21. A script that reads the files must mask `> 1e29` itself.
+- **The 3z longitudes drift from 2021 on** (HYCOM item 8): up to 3.4e-5° (about 3.5 m), growing along the axis.
+  It is the same grid, and the store uses the 2d longitudes. Code that matches 2d and 3z source files by exact
+  longitude, or that takes the grid from a 2021+ 3z file, will see different coordinates.
+- Also worth knowing: the hours HYCOM rebuilt as means of their neighbours are flagged in the store (R22), and
+  the 2004-06-01 19Z 2d file is a gap (layout B chunking).
+
+## Known gaps at first build
 
 Hours on the time axis with no reference, so they read as missing. The 2001–2020 hours not yet copied to S3
 are left out of this table (HYCOM item 1). They are gaps only until the copy finishes.
@@ -200,6 +233,7 @@ Group `hourly`. The names are the source's.
 | `Depth` | Depth | loaded | 40 depths, 0–5000 m |
 | `Latitude`, `Longitude` | Latitude / Longitude | loaded | identical in 2d, 3z and `topo/` |
 | `experiment` | MT | loaded, one chunk | new: int16 10/23/26, 0 where no file (as GOFS 3.1 has; R12) |
+| `cell_methods_2d`, `cell_methods_3z` | MT | loaded, one chunk | new: int8 flags from each file's `cell_methods` (R22) |
 | `ssh`, `mixed_layer_thickness`, `u_barotropic_velocity`, `v_barotropic_velocity`, `wnd_ewd`, `wnd_nwd` | MT, Latitude, Longitude | virtual | chunk {1, 1537, 2101} |
 | `u`, `v`, `w_velocity`, `water_temp`, `salinity` | MT, Depth, Latitude, Longitude | virtual | chunk {1, d, 385, 526}, d chosen on 2022 |
 | `bathy`, `mask` | Latitude, Longitude | loaded | from `topo/`, the names as there (R13, R14) |
@@ -290,6 +324,7 @@ bathymetry is a fixed field, the depth of the sea floor below the model's restin
 |---|---|---|---|---|---|
 | R21 | `_FillValue` and the Zarr `fill_value` of the 11 science variables | attribute float32(1.267651e30) (bits 1904214019); **land written as 2**100** (bits 1904214016), 3 ulps away, in every file and variable sampled | **Decided (Eli, 2026-11-19):** declare 2**100, the value actually on land | CF readers mask by exact equality. With the source attribute, xarray leaves all 945,478 land points at 1.27e30 (measured on a source file), and the store's gap hours would not match land. With R21, `ssh` is defined at exactly the 2,283,759 sea points (`mask == 1`), and gaps read as NaN. Metadata only; no data change | GOM-specific; nothing like it in GOFS |
 | — | coordinate source | the 3z `Longitude` of 023/026 files differs from the 2d one by up to 3.05e-5° (1,848 of 2,101 points); the 2d one is identical in every file and to `topo/` | `Latitude`/`Longitude` from a 2d file, `Depth` from a 3z file | the 2d grid is the one `topo/` and every 2d file share | implementation |
+| R22 | per-hour `cell_methods` flag (decided, Eli 2026-11-19) | `cell_methods = "MT: mean"` on the variables of files HYCOM rebuilt with `ncra` from the neighbouring hours (with an NCO `history`); absent on model output | **Proposed shape, for the team:** two int8 auxiliary coordinates along `MT`, `cell_methods_2d` and `cell_methods_3z`. `flag_values 0 1 2`, `flag_meanings "none MT_mean no_source_file"`, and `comment` quoting the source attribute. Each science variable names its kind's flag in `ancillary_variables`. Values come from each file's attributes during the scan. Any other `cell_methods` value the scan finds stops the build until it is reviewed | A per-hour attribute cannot go on a variable that spans all hours. It is the files' own metadata, not an invented flag. How many hours are affected is unknown; the audit saw 627 3z files rewritten in Mar–Jun 2026, but not how many are means | GOM-specific |
 | R7+ | coordinate `valid_range` | some 3z files (2023-365 on) put `valid_range` on `Depth`/`Latitude`/`Longitude` | dropped, as R7 drops it on the data | same reason as R7 | GOM-specific |
 
 ### CF check of these repairs (run 2026-11-19)
@@ -359,7 +394,9 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–7. Not blocking the 2022 work.
+- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–8. Not blocking the 2022 work.
+- **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
+  [FYI items](#for-the-team-fyi).
 
 ## Smoke test result (2026-11-19)
 
