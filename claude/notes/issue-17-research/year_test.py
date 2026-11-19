@@ -91,9 +91,22 @@ def reads(out: Path, d: int, store, check_key: str, check_time) -> dict:
     }
     if d == 1:                       # 2d is whole maps at every d; time it once
         tests["ssh point, year"] = lambda: ds.ssh.isel(Latitude=row, Longitude=col).values
-    R["reads_s"], R["reads_nan"] = {}, {}
+    R["reads_s"], R["reads_nan"], R["read_retries"] = {}, {}, []
     for name, f in tests.items():
-        t = T(); v = f(); R["reads_s"][name] = round(T() - t, 1); R["reads_nan"][name] = int(np.isnan(v).sum())
+        # S3 now and then answers one of thousands of ranged GETs with a 500 InternalError ("Please
+        # try again"), and Icechunk hands it straight to the reader (seen 2026-11-19, 35,040-chunk
+        # read). Retry the whole read and record it, so the timing is honest about it.
+        for attempt in range(1, 4):
+            t = T()
+            try:
+                v = f(); break
+            except Exception as e:  # noqa: BLE001
+                R["read_retries"].append({"read": name, "attempt": attempt, "after_s": round(T() - t, 1),
+                                          "error": f"{type(e).__name__}: {str(e)[:200]}"})
+                log(f"d={d} read {name}: attempt {attempt} failed after {T() - t:.1f}s: {type(e).__name__}")
+                if attempt == 3:
+                    raise
+        R["reads_s"][name] = round(T() - t, 1); R["reads_nan"][name] = int(np.isnan(v).sum())
         log(f"d={d} read {name}: {R['reads_s'][name]}s")
     with h5py.File(BlockStoreReader(store, "data/" + check_key)) as f:
         want = f["water_temp"][0, 0, row, col]
@@ -141,7 +154,12 @@ def main():
         if (out / f"results-d{d}.json").exists():
             log(f"d={d} already done"); continue
         t = T()
-        R = build(out / f"d{d}", d, year, files, scans, grid, topo, src_attrs, gattrs)
+        built = out / f"build-d{d}.json"
+        if built.exists():           # built before, reads failed: reuse the build
+            R = json.loads(built.read_text()); log(f"d={d} build reused")
+        else:
+            R = build(out / f"d{d}", d, year, files, scans, grid, topo, src_attrs, gattrs)
+            built.write_text(json.dumps(R, indent=1))
         R.update(reads(out / f"d{d}", d, store, check_key, check_time))
         R["total_s"] = round(T() - t, 1)
         (out / f"results-d{d}.json").write_text(json.dumps(R, indent=1))

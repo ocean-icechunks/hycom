@@ -446,3 +446,47 @@ every 3 steps. Then it reopened them in fresh read-only sessions:
 arrays for every chunk on the time axis: 0.84 GB for one year at d = 1, so about 20 GB for 204,096 hours. The full
 build must create the empty science arrays without a manifest (for example with zarr directly: same metadata,
 attributes and fill value, no chunks), then region-write the months. That is not needed for the 2022 test.
+
+## 2022 test year: results for choosing the 3z chunking (2026-11-19)
+
+`claude/notes/issue-17-research/year_test.py`. Raw results are in `year2022-results/`. Clean venv, this hub (4 cores, 31
+GB), local repositories, in-region, `async.concurrency` 128. One scan, then for each d a skeleton and 12 monthly
+commits. All 8,760 hours were present (experiment 023). No `cell_methods` and no scan errors in 2022. Value checks
+against h5py were identical at every d.
+
+**Scan:** 17,520 files in 626 s, 28 files/s, 0 errors. That predicts about 3 h for all 296,585 layout A files on this hub.
+
+| | d = 1 | d = 2 | d = 10 |
+|---|---|---|---|
+| References, 2022 | 28.1 M | 14.1 M | 2.9 M |
+| Build: 12 monthly batches | 194 s | 94 s | 20 s |
+| Manifests, 2022 | 316 MB | 160 MB | 34 MB |
+| Open, fresh session (local) | 0.03 s | 0.03 s | 0.03 s |
+| `water_temp` 1-depth map, 1 hour | 0.5 s | 0.3 s | 0.3 s |
+| `salinity` 40-depth profile, 1 hour | 0.5 s | 0.2 s | 0.2 s |
+| **`water_temp` point, 1 depth, year** | **17 s** | 27 s | 117 s |
+| **200 × 200 box inside 1 tile, year** | **16 s** | 28 s | 114 s |
+| **200 × 200 box over 4 tiles, year** | **58 s** | 112 s | 448 s |
+| `ssh` point, year (2d, whole maps; any d) | 157 s | — | — |
+
+**Predicted for the full layout A record (×23.3, arithmetic):** d = 1: 653 M references, about 7.4 GB of manifests,
+about 75 min of batches. d = 2: 327 M, 3.7 GB, about 37 min. d = 10: 66 M, 0.8 GB, about 8 min. Add the scan (about 3 h
+here) in every case.
+
+**Measured reads were at or below the audit's predictions.** For example, the point series was predicted at about 20 s
+(d = 1) and about 3.5 min (d = 10), and the 4-tile box at about 1.5 min and about 14 min.
+
+**Findings from the run:**
+- **S3 returned one HTTP 500 InternalError** ("Please try again") on one of the 35,040 GETs of the first 4-tile box
+  read. Icechunk passed it straight to the reader. A retry succeeded. The README should tell readers to retry long
+  reads. `year_test.py` now retries and records each retry (`run1-s3-500.log`).
+- **Build memory grew steadily across monthly batches**: 2.8 → 6.0 GB over 12 months at d = 1, about 0.3 GB per month.
+  For the full record, use a fresh process (or reopened repository) per year, or find the leak.
+- Manifests were about 11 B per reference for the year against 6 B for January alone. The 730-hour manifest splits
+  do not line up with the monthly commits, which may explain it. Check before production.
+- **Not measured yet:** opening and reading from Source Cooperative, where manifests come over the network. At
+  d = 1 a month of one 3z variable is about 5 MB of manifest. The scratch store (step 4) will show this.
+
+**Choice for Eli:** the d for 3z. Maps and profiles are fast at every d. Time series and boxes are 2–8 times faster at
+d = 1 than at d = 10, and about 2 times faster than at d = 2. d = 1 costs 10 times the references and manifests of d = 10.
+
