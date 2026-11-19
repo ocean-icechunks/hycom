@@ -30,8 +30,10 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
   the values as the 2d files hold them. That 1/24 of a day is not exact in binary comes from how
   HYCOM wrote its files, and the store keeps it as they did. No switch to integer hours.
 - **Repairs R4, R8 and R10 follow what the GOFS 3.1 store did** (Eli, 2026-11-19); see the
-  table for what that means for each. R13 (`bathy` standard name): GOFS 3.1 had no bathymetry,
-  so the choices are set out under R13 for Eli.
+  table for what that means for each.
+- **R13: `bathy` gets `standard_name = "sea_floor_depth_below_geoid"`. R7: drop `valid_range`.
+  R14: `mask` as int8 with flags** (Eli, 2026-11-19). With these, every repair R1–R20 is settled.
+  R19 and R20 came out of the CF check below; R19 is GOFS's repair, and R20 is mechanical.
 
 ## For the HYCOM team
 
@@ -193,6 +195,7 @@ every source standard name is in the table except `sea_surface_elevation`, which
 |---|---|---|---|---|---|
 | R1 | `MT` values | from each file; float32-rounded in 3z | computed from the filename | audit F8 | GOM-specific (GOFS also used filename times) |
 | R2 | `MT` attributes | `long_name time`, `units`, `calendar standard`, `axis T` | keep; add `standard_name = "time"` | CF: identifies the time axis without relying on `axis` | GOFS |
+| R19 | `MT` `units_metadata` | none | add `"leap_seconds: unknown"` | CF-1.11 §4.4 recommends it with `calendar = standard`; the only recommendation left after R1–R18 in the CF check | GOFS (same on `time`) |
 | R3 | `Date` values | float, in 3z float32-rounded (20100410.042) | computed from the filename, `YYYYMMDD + hour/24`, as the 2d files hold it | same as R1 | GOM-specific |
 | R4 | `Date` units | `"day as %Y%m%d.%f"` | **Decided: as GOFS.** GOFS replaced `tau`'s non-UDUNITS units (`hours since analysis`) with a valid one and moved the meaning into `long_name`, and it kept a source unit it changed as `source_units` (salinity). For `Date` no valid unit exists, so: remove `units`, keep `source_units = "day as %Y%m%d.%f"`, and set `long_name = "date (YYYYMMDD.fraction of day)"` | not a UDUNITS unit; CF checkers flag it, and a reader could try to decode it as a time | GOFS (same pattern as `tau`, salinity) |
 | R5 | `Latitude`, `Longitude`, `Depth`: `_FillValue` | HDF5 default fill (9.97e36) | none | CF 2.5.1: coordinate variables must not have one | GOFS |
@@ -207,7 +210,7 @@ every source standard name is in the table except `sea_surface_elevation`, which
 | R9 | `ssh` `standard_name` | `sea_surface_elevation` | `sea_surface_height_above_geoid` | only an alias in the CF table | GOFS (same repair on `surf_el`) |
 | R10 | `salinity` | `units psu`, `long_name "salinity [01.0H]"` | **Decided: as GOFS.** `units = "1e-3"`, `source_units = "psu"`, `standard_name = "sea_water_salinity"` (unchanged), `long_name = "Sea Water Salinity"` | `psu` is not UDUNITS; `1e-3` is the table's canonical unit | GOFS (`sea_water_practical_salinity`, units `1`, was the alternative; not taken) |
 | R11 | `water_temp` | `units degC` | add `units_metadata = "temperature: on_scale"` | CF 1.11 §3.1.2 | GOFS |
-| — | `coordinates = "Date"` | on every variable | keep | source convention; `Date` stays an auxiliary coordinate | — |
+| R20 | `coordinates` | `"Date"` on every variable | not copied as an attribute. xarray writes it from the dataset's coordinates, giving `"Date experiment"` | copied verbatim, it overrode xarray's and left `experiment` unattached (seen in the CF check). `Date` stays an auxiliary coordinate, as in the source | mechanical |
 | — | `_FillValue` | 1.267651e+30 | keep, as the Zarr fill value too | the CF attribute is the same in every layout A file (audit F7) | — |
 | — | HDF5 internals | `_Netcdf4Coordinates`, `_Netcdf4Dimid`, `CLASS`, `NAME`, `DIMENSION_LIST`, `REFERENCE_LIST` | not carried | HDF5/netCDF-4 bookkeeping, not metadata | — |
 
@@ -216,7 +219,7 @@ every source standard name is in the table except `sea_surface_elevation`, which
 | # | What | Proposed | Why | Kind |
 |---|---|---|---|---|
 | R12 | `experiment(MT)` | int16, `flag_values 0 10 23 26`, `flag_meanings "no_source_file expt_01.0_010 …"` (exact wording in the smoke test) | which run each hour came from; the files' global `experiment` is "01.0" in all three, so it can't tell | GOFS |
-| R13 | `bathy` | values unchanged, `units = "m"`, `positive = "down"`, `standard_name` (choices below), `long_name` kept, `comment` "0 on land" | the file has no units. Land left as 0, not NaN, so no values change | GOM-specific: **GOFS 3.1 had no bathymetry**, so there is nothing to follow. Standard name **open for Eli**, recommendation below |
+| R13 | `bathy` | values unchanged, `units = "m"`, `positive = "down"`, **`standard_name = "sea_floor_depth_below_geoid"`** (decided, Eli 2026-11-19), `long_name` kept, `comment` "0 on land" | the file has no units. Land left as 0, not NaN, so no values change | GOM-specific: GOFS 3.1 had no bathymetry, so there was nothing to follow. The choices considered are below |
 | R14 | `mask` | int8 (source float32 0/1), `flag_values 0 1`, `flag_meanings "land sea"`, `standard_name = "sea_binary_mask"` | 1 = sea, which the comparison with `ssh` confirms; CF flags want an integer type | GOM-specific |
 | — | `plon`, `plat` | not added | identical to `Longitude`/`Latitude` | — |
 | — | `pscx`, `pscy` (grid spacing, m) | **not proposed**; available if anyone wants cell areas | Eli asked for bathymetry and mask | — |
@@ -241,8 +244,24 @@ bathymetry is a fixed field, the depth of the sea floor below the model's restin
 | R17 | `_NCProperties` | varies by file | drop | per-file library versions |
 | R18 | new: `references`, `source_data`, `comment` | — | product page and bucket; "virtual Icechunk, data read from the source files; hours with no file read as missing and `experiment` = 0 there" | GOFS |
 
-The CF checker runs on the 2022 test store before step 4. Any further repair it calls for is added
-here and reviewed.
+### CF check of these repairs (run 2026-11-19)
+
+IOOS compliance-checker 6.1.0, `cf:1.11`, criteria `normal`, on two NetCDF corners (2 hours, 2
+depths, 4 × 4 points) of real 2022 data, 2022-04-10 12–13Z, plus `topo/`. The script is
+`claude/notes/issue-17-research/cf_corner.py`. As in the GOFS smoke test, the checker reads NetCDF, not Zarr,
+so it checks an export.
+
+- **The source, as HYCOM wrote it: 4 kinds of issue.** `Date` units not UDUNITS (fixed by R4).
+  `valid_range` float64 on float32 variables, 11 variables (R7). `Conventions` not CF-1.11 (R15).
+  `water_temp` without `units_metadata` (R11).
+- **With R1–R18: one recommendation**, `MT` without `units_metadata`. Added as R19. Also, the copied
+  `coordinates` attribute left `experiment` out, which led to R20.
+- **With R1–R20: "All tests passed!"** at both the `normal` and `lenient` criteria.
+- **What the checker does not catch**, and why R9 and R10 stay: it passed `sea_surface_elevation` (only
+  an alias in the table) and `psu` (not a UDUNITS unit) in the source. GOFS repaired both anyway.
+  The table was checked directly (v95, above).
+- **Not checked yet:** the real store. The smoke test re-runs this on an export from the Icechunk store
+  itself (whole axes, the gap hour, every variable), as the GOFS smoke test did.
 
 ## Manifests and batches
 
@@ -292,7 +311,7 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **R13:** `bathy` standard name. Recommended: `sea_floor_depth_below_geoid`.
-- The other repairs (R1–R3, R5–R7, R9, R11, R12, R14–R18) are proposed and not separately
-  confirmed. Eli's rule covers them: follow GOFS unless the GOM files give a reason not to. R7
-  (drop the per-hour `valid_range`) and R14 (`mask` as int8 with flags) are the two that go beyond GOFS.
+- Nothing in the plan. Every repair, R1–R20, is decided or covered by Eli's rule (follow GOFS unless the GOM
+  files give a reason not to). Next is the smoke test.
+- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–5. Not blocking the smoke
+  test or the 2022 work.
