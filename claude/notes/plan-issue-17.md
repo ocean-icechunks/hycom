@@ -503,6 +503,8 @@ here) in every case.
   `Repository.open(storage, gv.build_config_override())`, never a zero cache in `create`, which would persist it for
   readers. With both, memory was flat at 2.5 GB for all 12 months (against 6.0 GB). A fresh process per year is not
   needed; 23 years in one process is predicted, not measured.
+  **Confirmed in `year_test.py` itself (2026-11-19, re-run at d = 1):** peak 2.15 → 2.69 GB by May, then flat at 2.69 GB
+  through December, against 6.04 GB before. Batch and read times unchanged (`year2022-results/fix-rerun-d1.txt`).
 - Manifests were about 11 B per reference for the year against 6 B for January alone. The 730-hour manifest splits
   do not line up with the monthly commits, which may explain it. Check before production.
 - **Not measured yet:** opening and reading from Source Cooperative, where manifests come over the network. At

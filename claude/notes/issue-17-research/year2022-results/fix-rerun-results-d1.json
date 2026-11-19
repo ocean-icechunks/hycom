@@ -1,0 +1,101 @@
+{
+ "d": 1,
+ "skeleton_s": 9.2,
+ "months": [
+  {
+   "month": "2022-01",
+   "refs": 2385264,
+   "s": 13.4
+  },
+  {
+   "month": "2022-02",
+   "refs": 2154432,
+   "s": 11.4
+  },
+  {
+   "month": "2022-03",
+   "refs": 2385264,
+   "s": 17.3
+  },
+  {
+   "month": "2022-04",
+   "refs": 2308320,
+   "s": 17.1
+  },
+  {
+   "month": "2022-05",
+   "refs": 2385264,
+   "s": 17.5
+  },
+  {
+   "month": "2022-06",
+   "refs": 2308320,
+   "s": 17.0
+  },
+  {
+   "month": "2022-07",
+   "refs": 2385264,
+   "s": 17.3
+  },
+  {
+   "month": "2022-08",
+   "refs": 2385264,
+   "s": 17.2
+  },
+  {
+   "month": "2022-09",
+   "refs": 2308320,
+   "s": 16.8
+  },
+  {
+   "month": "2022-10",
+   "refs": 2385264,
+   "s": 17.1
+  },
+  {
+   "month": "2022-11",
+   "refs": 2308320,
+   "s": 16.7
+  },
+  {
+   "month": "2022-12",
+   "refs": 2385264,
+   "s": 17.3
+  }
+ ],
+ "batches_s": 196.2,
+ "refs": 28084560,
+ "rss_after_build_gb": 2.69,
+ "repo_mb": 428.3,
+ "manifest_mb": 315.4,
+ "open_s": 0.03,
+ "reads_s": {
+  "water_temp map, 1 depth, 1 hour": 0.5,
+  "salinity profile, 40 depths, 1 hour": 0.5,
+  "water_temp point, 1 depth, year": 17.5,
+  "water_temp 200x200 box in 1 tile, year": 16.5,
+  "water_temp 200x200 box over 4 tiles, year": 57.6,
+  "ssh point, year": 149.7
+ },
+ "reads_nan": {
+  "water_temp map, 1 depth, 1 hour": 945478,
+  "salinity profile, 40 depths, 1 hour": 26,
+  "water_temp point, 1 depth, year": 0,
+  "water_temp 200x200 box in 1 tile, year": 0,
+  "water_temp 200x200 box over 4 tiles, year": 0,
+  "ssh point, year": 0
+ },
+ "read_retries": [],
+ "value_check": true,
+ "cell_methods_3z_counts": {
+  "0": 8760
+ },
+ "cell_methods_2d_counts": {
+  "0": 8760
+ },
+ "experiment_counts": {
+  "23": 8760
+ },
+ "rss_after_reads_gb": 7.38,
+ "total_s": 449.3
+}
