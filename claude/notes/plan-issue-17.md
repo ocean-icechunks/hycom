@@ -479,7 +479,7 @@ here) in every case.
 **Findings from the run:**
 - **S3 returned one HTTP 500 InternalError** ("Please try again") on one of the 35,040 GETs of the first 4-tile box
   read. Icechunk passed it straight to the reader. A retry succeeded. The README should tell readers to retry long
-  reads. `year_test.py` now retries and records each retry (`run1-s3-500.log`).
+  reads. `year_test.py` now retries and records each retry (`run1-s3-500.txt`).
 - **Build memory grew steadily across monthly batches**: 2.8 → 6.0 GB over 12 months at d = 1, about 0.3 GB per month.
   For the full record, use a fresh process (or reopened repository) per year, or find the leak. **Under investigation in
   #21**, which lists the hypotheses and experiments and the lessons from fish-pace/point-collocation's xarray memory fixes.
