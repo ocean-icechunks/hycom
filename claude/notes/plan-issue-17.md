@@ -422,3 +422,27 @@ every 3 steps. Then it reopened them in fresh read-only sessions:
 - Two library details are in the code comments. xarray 2026.9 reads a float `_FillValue` in Zarr v3 only in its
   base64 form, so `gom_virtual.py` encodes it as xarray would. xarray's own datetime encoding would
   shorten the `MT` units string, so `MT` is written as plain float days.
+
+## One-month check (2026-11-19)
+
+`claude/notes/issue-17-research/month_check.py`, clean venv, January 2022 at d = 1, local repository, in-region,
+`async.concurrency` 128. Skeleton over all of 2022, then January as one region-write batch.
+
+| | Measured |
+|---|---|
+| Scan, 1,488 files, 16 processes | 53 s, **28 files/s**, 0 errors; 2 fingerprints (2d, 3z); no `cell_methods` in January |
+| Skeleton for the year (8,760 hours) | 8.5 s build, 2.9 s write; 0.84 GB |
+| January batch, 2,385,264 references | 6.0 s build, 11.8 s write and commit; 2.2 GB |
+| Manifests for the month | 14.9 MB (about 6 B per reference) |
+| Open, fresh session | 0.03 s |
+| `water_temp` 1-depth map, 1 hour / 40-depth profile | 0.44 s / 0.48 s |
+| `water_temp` point, 1 depth, month | 1.6 s |
+| 200 × 200 box, month: inside 1 tile / over 4 tiles | 1.6 s / 5.2 s |
+| `ssh` point, month (whole 12.9 MB maps) | 14.8 s |
+| Peak memory (during the reads) | 4.1 GB |
+| Value against h5py | identical |
+
+**For production: the skeleton does not scale to the full record.** It allocates empty path, offset and length
+arrays for every chunk on the time axis: 0.84 GB for one year at d = 1, so about 20 GB for 204,096 hours. The full
+build must create the empty science arrays without a manifest (for example with zarr directly: same metadata,
+attributes and fill value, no chunks), then region-write the months. That is not needed for the 2022 test.
