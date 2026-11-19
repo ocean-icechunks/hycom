@@ -398,7 +398,9 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 - Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–8. Not blocking the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
   [FYI items](#for-the-team-fyi).
-- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team).** HYCOM may
+- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team). Being tested
+  in #22**, by a separate session: a gate that checks each fill file, then fills tested locally and in
+  `test-repo/hycom/gapfill-test/`. HYCOM may
   regenerate missing hours, and the rest of 2001–2020 is still to be copied. Later files must be able to go into
   the store as new commits. What that involves, to be designed and tested, not yet decided:
   - A region write of just the affected hours (`region={"MT": slice(i, i + 1)}`) for the virtual variables. The
@@ -534,7 +536,7 @@ d = 1 than at d = 10, and about 2 times faster than at d = 2. d = 1 costs 10 tim
 - **CORS on both hosts (curl, 2026-11-19):** Source Cooperative returns `Access-Control-Allow-Origin: *` on ranged GETs
   of `repo` and a manifest, and the preflight returns 204, allowing all headers. The source bucket returns
   `Access-Control-Allow-Origin: *` on a ranged GET, and the preflight allows `range`. So, unlike GOFS 3.1, no CORS
-  extension should be needed. **Rendering is for Eli to check in a browser.**
+  extension should be needed. **Eli checked it in a browser: "The viewer looks good" (2026-11-19).**
 - **Viewer:** the store is a catalog entry in the one test viewer, `test-repo/hycom/viewer/` (rebuilt from
   `eeholmes/gridlook` 3cca0cc, Node 24). `publish_viewer.py` has a `TEST_ONLY` table, so only the test viewer
   lists it. The entry opens `…/hycom-tsis-gom-reanalysis/hourly` (gridlook walks up the URL to the repository root
