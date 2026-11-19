@@ -494,9 +494,13 @@ here) in every case.
   read. Icechunk passed it straight to the reader. A retry succeeded. The README should tell readers to retry long
   reads. `year_test.py` now retries and records each retry (`run1-s3-500.txt`).
 - **Build memory grew steadily across monthly batches**: 2.8 → 6.0 GB over 12 months at d = 1, about 0.3 GB per month.
-  For the full record, use a fresh process (or reopened repository) per year, or find the leak. **Under investigation in
-  #21**, which lists the hypotheses and experiments and the lessons from fish-pace/point-collocation's xarray memory fixes.
-  The number is `ru_maxrss`, a peak, so #21 starts by measuring current RSS.
+  **Cause found and fixed (#21, 2026-11-19; [findings](issue-21-research/findings.md)).** Two causes. (1) `batch.vz`
+  leaves each month's Dataset in a reference cycle (xarray caches the accessor on the Dataset, and the accessor holds
+  the Dataset), so `del` freed nothing until the cyclic GC ran. (2) Icechunk's chunk-reference cache (default 15 M
+  references) held about 1.2 GB that the build never reads. Fix: `gc.collect()` after every batch, and build through
+  `Repository.open(storage, gv.build_config_override())`, never a zero cache in `create`, which would persist it for
+  readers. With both, memory was flat at 2.5 GB for all 12 months (against 6.0 GB). A fresh process per year is not
+  needed; 23 years in one process is predicted, not measured.
 - Manifests were about 11 B per reference for the year against 6 B for January alone. The 730-hour manifest splits
   do not line up with the monthly commits, which may explain it. Check before production.
 - **Not measured yet:** opening and reading from Source Cooperative, where manifests come over the network. At

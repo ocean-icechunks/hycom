@@ -8,6 +8,7 @@ same as the local test, and checks the Source Cooperative token before every bat
 what a reader does: anonymous HTTPS for the repository, anonymous HTTPS for the source bytes.
 Each prints one JSON line of results at the end.
 """
+import gc
 import json
 import pickle
 import resource
@@ -56,14 +57,16 @@ def build(scan_file: str, d: int):
     grid = gv.read_grid(store, k2, k3); topo = gv.read_topo(store, grid)
     src_attrs = {**scans[k2]["attrs"], **scans[k3]["attrs"]}
 
-    def repo_now():
-        repo, _s, _c, left = open_source_icechunk_repo(BUCKET, PREFIX, config=gv.repository_config(),
+    def repo_now(config):
+        repo, _s, _c, left = open_source_icechunk_repo(BUCKET, PREFIX, config=config,
                                                        min_minutes_left=30, verbose=False)
         assert repo is not None, "Source Cooperative token too close to expiry; run source-coop login"
         return repo
 
-    repo = repo_now()
+    repo = repo_now(gv.repository_config())
     repo.save_config()                       # so an anonymous reader finds the virtual container
+    # #21: build through a handle with no chunk-reference cache; the saved config keeps the default
+    repo = repo_now(gv.build_config_override())
     t = T()
     skeleton = xr.merge([gv.loaded_variables(year, files, grid, topo, scans),
                          gv.virtual_variables(year, files.iloc[:0], {}, d, src_attrs)])
@@ -71,19 +74,21 @@ def build(scan_file: str, d: int):
     s = repo.writable_session("main"); skeleton.vz.to_icechunk(s.store, group=gv.GROUP, mode="w")
     s.commit("skeleton: coordinates, flags, bathy, mask and empty science arrays (2022 scratch copy)")
     del skeleton
+    gc.collect()                             # #21: `.vz` leaves the Dataset in a reference cycle
     R["skeleton_s"] = round(T() - t, 1); log(f"skeleton {R['skeleton_s']}s")
     R["months"] = []
     for month in pd.period_range(year[0], year[-1], freq="M"):
         where = np.flatnonzero((year >= month.start_time) & (year <= month.end_time))
         a, b = int(where[0]), int(where[-1]) + 1
         t = T()
-        repo = repo_now()                    # fresh credentials per batch (they renew themselves)
+        repo = repo_now(gv.build_config_override())   # fresh credentials per batch (they renew themselves)
         batch = gv.virtual_variables(year[a:b], files, scans, d, src_attrs)
         n = int(sum((batch[v].data.manifest._paths != "").sum() for v in batch))
         s = repo.writable_session("main")
         batch.vz.to_icechunk(s.store, group=gv.GROUP, region={"MT": slice(a, b)})
         s.commit(f"references for {month}: {n:,} chunks")
         del batch, s
+        gc.collect()                         # #21: frees the batch; `del` alone does not
         R["months"].append({"month": str(month), "refs": n, "s": round(T() - t, 1)})
         log(f"{month} {n:,} refs {T() - t:.1f}s rss {rss_gb()} GB")
     R["refs"] = sum(m["refs"] for m in R["months"])
