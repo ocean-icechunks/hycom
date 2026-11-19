@@ -99,8 +99,8 @@ are left out of this table (HYCOM item 1). They are gaps only until the copy fin
 | **2d** | **1** | **2004 day 153 19Z** (2004-06-01) | **chunked like layout B; found by the smoke-test scan** | 6 |
 
 That is 46 3z hours and 1 2d hour, of 204,096. The 2d gap is the only one in the 2d record, and its 3z file is
-fine. Only 33 of the 2001–2020 files have been scanned so far, so the full scan may find more files like
-2004_153_19. This table is updated from each build's skip list. The store README will carry it.
+fine. So far only the 32-file transition sample and 9 files of 2022 have been scanned, so the full scan may find
+more files like 2004_153_19. This table is updated from each build's skip list. The store README will carry it.
 
 Optional, not needed for the build: the 653 hours where 026 and 027 overlap (2024-04-01 19Z →
 04-28 23Z). Which run does HYCOM consider authoritative? This store uses 026 because of the layout.
