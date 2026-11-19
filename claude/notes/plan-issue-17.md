@@ -398,6 +398,19 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 - Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–8. Not blocking the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
   [FYI items](#for-the-team-fyi).
+- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team).** HYCOM may
+  regenerate missing hours, and the rest of 2001–2020 is still to be copied. Later files must be able to go into
+  the store as new commits. What that involves, to be designed and tested, not yet decided:
+  - A region write of just the affected hours (`region={"MT": slice(i, i + 1)}`) for the virtual variables. The
+    loaded per-hour variables `experiment`, `cell_methods_2d` and `cell_methods_3z` must be rewritten for those hours
+    too, because they say "no source file" there now.
+  - A file that *replaces* one already referenced (for example the 5 held-back 2002 files, if HYCOM confirms the new
+    copies) needs its references rewritten. The checksum pin (`last_updated_at`) then has to be the time of that new
+    commit, or reads fail on the changed object.
+  - Every fill re-runs the scan checks on the new files (layout, `_FillValue`, `cell_methods`, coordinates) and
+    updates the known-gaps table and the README.
+  - A test before production: on a local copy of the 2022 store, remove some hours, then fill them back with
+    commits, and check values, flags and the snapshot history.
 
 ## Smoke test result (2026-11-19)
 
