@@ -1,7 +1,8 @@
 # Plan: GOMb0.01 layout A virtual Icechunk store (issue #17)
 
 Written 2026-11-18 and revised 2026-11-19 with Eli's answers. This is step 1 of #17, the
-`virtual-icechunk` skill's "research and plan" deliverable. **No build code exists yet.** *Measured*
+`virtual-icechunk` skill's "research and plan" deliverable. **Step 2, the local smoke test, is done**
+([result](#smoke-test-result-2026-11-19)), and its findings are folded in below. *Measured*
 means run on 2026-11-18/19. *Predicted* is arithmetic from the audit's throughput tests
 (`audit/report.md`, "Expected performance from S3"), not yet measured on this bucket. The
 decisions made earlier are in #17 ("Decided"). This round's are under [Decisions](#decisions-eli-2026-11-19).
