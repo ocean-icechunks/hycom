@@ -94,6 +94,14 @@ TEST_ONLY = {
         "view": "dimIndices_MT=0::dimIndices_Depth=0",
         "variables": ("water_temp", "salinity", "ssh", "u", "v"),
     },
+    # #22's gap-fill test: 72 hours of 2022 built with gaps, then filled by commits. main shows the
+    # filled store; the gaps are only in its earlier snapshots, which gridlook does not open.
+    "gapfill-test": {
+        "path": "gapfill-test/store/hourly",
+        "title": "HYCOM-TSIS GOMb0.01, gap-fill test (#22, 72 hours of 2022)",
+        "view": "dimIndices_MT=0::dimIndices_Depth=0",
+        "variables": ("water_temp", "salinity", "ssh", "u", "v"),
+    },
 }
 
 
