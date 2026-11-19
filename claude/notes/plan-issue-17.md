@@ -222,8 +222,14 @@ hours come from 026, because 027 is layout B. 027/028 are out of scope (#15).
 **Decided (Eli, 2026-11-19, later the same day): GOMb0.01 has two groups for now**, one for layout A (010/023/026) and
 one for 027 (layout B), because nothing else gets the whole product in without HYCOM acting. Eli would rather have no
 per-run groups, so she will ask HYCOM what they want to do about reprocessing 027 (HYCOM item 13). If 027 is rechunked
-to layout A, it moves into the main group and the 027 group goes. Not yet decided: the group names, and where the
-layout A group ends: at 2024-04-01 18Z, so that the overlap hours are only in the 027 group (027 is authoritative; the
+to layout A, it moves into the main group and the 027 group goes.
+
+**Names (Eli, 2026-11-19): the stores are GOMb0.01 and GOMe0.01; the groups in GOMb0.01 are `026` and `027`.** Note that
+the `026` group also holds 010 and 023, since it is all of layout A. Eli's concern: after a reprocessing of 027, the
+group names may not fit. **An idea of hers for then (an option, not decided):** a group like `best` holding the whole
+product, and a `026` group holding only the superseded 026 overlap hours.
+
+Not yet decided: where the layout A group ends: at 2024-04-01 18Z, so that the overlap hours are only in the 027 group (027 is authoritative; the
 agent's recommendation), or at 2024-04-28 23Z, so that they are in both.
 
 The analysis below explains why groups are needed, and the options it lists for 027.
@@ -516,7 +522,7 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **GOMb0.01 groups (decided: layout A and 027, Eli 2026-11-19).** Open: group names, and whether the layout A group
+- **GOMb0.01 groups (decided: `026` for layout A and `027`, Eli 2026-11-19).** Open: whether the `026` group
   ends at 2024-04-01 18Z (recommended) or 04-28 23Z. Revisit after HYCOM answers item 13 (reprocessing 027).
 - **GOMe0.01:** its bathymetry and mask from HYCOM (item 12), and when to start it.
 - Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
