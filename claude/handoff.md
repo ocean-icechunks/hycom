@@ -28,37 +28,45 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
-## GOMb0.01 layout A store (#17): phase 1 (smoke tests) done; phase 2 is HYCOM's answers (2026-11-19)
+## GOMb0.01 / GOMe0.01 (#17): phase 1 done, gap filling (#22) done; phase 2 waiting on HYCOM (2026-11-19)
 
 GOM work is a 2026 IOOS hackathon project,
 [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
-**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–29 are
+**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–51 are
 there; find the last N from the comments). Side questions stay out. "Notes:" comments summarise results for the
-team (the last one, 2026-11-19, summarises phase 1).
+team (the last one, 2026-11-19, summarises phase 1). Don't confuse it with ocean-icechunks/hycom#22 (gap filling).
 
-**Phase 1 is done and merged** (PR #23, 2026-11-19; branches `gom-layout-a-plan`, `gom-memory-21` and
-`handoff-2026-11-18` deleted, #19 closed as superseded). Read first:
-[notes/plan-issue-17.md](notes/plan-issue-17.md). It has every decision, repairs R1–R22, the "For the HYCOM team"
-list (items 1–8, which Eli sends), the team FYI, the known-gaps table, and the measured results of each step.
-- Steps 1–4 of #17 are done (boxes ticked). Code: `hycom-tsis-gom-reanalysis/gom_virtual.py`. Smoke test:
-  `gom-smoke-test-local.ipynb` (clean venv from that directory's `requirements.txt`). Test scripts and results:
-  `notes/issue-17-research/`.
-- **The 2022 scratch store is up for the team:** `test-repo/hycom/hycom-tsis-gom-reanalysis`, group `hourly`, at d = 1
-  (one depth of a 385 × 526 tile per 3z chunk; **Eli chose d = 1 for the test store**, not yet for production). It is
-  in the test viewer through `publish_viewer.py` `TEST_ONLY`, and **Eli confirmed it renders**. Its README is
-  `test-repo/hycom/README.md`, whose source is now `test-repo-README.md` at the repo root. It opens anonymously in
-  about 1 s.
-- **#21 (build memory) is fixed and confirmed:** `gc.collect()` per batch, plus `gv.build_config_override()` (no
-  chunk-reference cache) **at open, never in `create`**. That gives 2.7 GB flat over a year, against 6.0 GB. Detail:
-  [notes/issue-21-research/findings.md](notes/issue-21-research/findings.md).
-- Skill lessons: ocean-icechunks/ocean-icechunks-skills#20. Its file links point at the deleted `gom-layout-a-plan`
-  branch; switch them to `main`.
-- **PR #13 (Renovate onboarding) is open and undecided.** The agent suggested closing it, or narrowing it to
-  security updates, because the `requirements.txt` files are deliberately tested lower bounds. Eli decides.
+**Where it stands: waiting on HYCOM's reply.** Eli emailed them the two chunk layouts on 2026-11-19 and will come back
+when they answer. Read first: [notes/plan-issue-17.md](notes/plan-issue-17.md), "HYCOM's answers" and "For the
+HYCOM team" (a status per item, 1–13), then "Scope".
 
-**Next (Eli, 2026-11-19):** **phase 2** folds the HYCOM team's answers into the plan. Eli is asking them items 1–8.
-At the same time, **#22 (gap filling after the build, with a gate that checks each fill file)** runs in a separate
-session: locally first, then under `test-repo/hycom/gapfill-test/`, **never** in the team's 2022 store.
+- **Branch `gom-phase2-hycom-answers`** (pushed, **no PR yet**) holds all of phase 2: HYCOM's answers of 2026-11-19, the
+  decisions below, HYCOM items 12–13, and the gap-filling summary in the plan. When HYCOM replies, update the status
+  table (it does not record which of items 6–8, 12, 13 went in Eli's email; ask her), then PR.
+- **Decided (Eli, 2026-11-19):** two stores, **GOMb0.01** (010/023/026/027, to 2024-09-01 18Z) and **GOMe0.01** (028,
+  still running). GOMb0.01 has groups **`026`** (all of layout A, 010/023/026 included) and **`027`**. Tag **`v1`** = the
+  `026` group to 2024-04-28 23Z (the current `END`; the 653 overlap hours from 026); **`v2`** adds `027`. HYCOM says 027
+  is authoritative for the overlap, so the v2 README must say so. Groups are a workaround Eli dislikes: she asked HYCOM
+  about rechunking 027 to layout A (item 13). Her idea for afterwards, an option only: a `best` group plus a `026` group
+  of the superseded hours.
+- **HYCOM's answers (2026-11-19):** the five regenerated 2002 3z files are good (`HELD_BACK` in `gom_virtual.py` is
+  still to remove); the 41 missing 3z hours and the 028 truncated/missing files will be regenerated (slow: Navy archive
+  maintenance); no 10 m winds for 028 (#16 answered); item 1 and the 028 layout question go to Michael McDonald.
+- **Measured 2026-11-19:** the product change does not change the chunking (027 is already layout B, and 027 → 028 has
+  the same grid and chunks). 028 has 1,611 fewer sea points than `topo/`, which holds only GOMb0.01's topography
+  (item 12). No Zarr chunk grid fits both layouts (tile widths 526 vs 421), which is why 027 needs its own group.
+- **Not acted on, Eli's call:** 53-row latitude bands for 2d (virtual, no rewrite; ~15 s vs 157 s measured for a
+  one-year point series). It would reopen her September choice of whole maps.
+- **Gap filling (#22) is merged** (PR #25, issue closed, branch deleted): `check_fill_candidates` and `fill_hours` in
+  `gom_virtual.py`; [notes/gapfill-22.md](notes/gapfill-22.md). Test stores `test-repo/hycom/gapfill-test/store`
+  (filled) and `…/with-gaps` (never filled), both in the test viewer; **Eli confirmed gaps show as no data**. Open
+  for Eli: where reviewed fingerprints live; sign-off for replacement fills.
+- **Phase 1 (merged, PR #23):** code `hycom-tsis-gom-reanalysis/gom_virtual.py`, smoke test `gom-smoke-test-local.ipynb`,
+  scripts `notes/issue-17-research/`. The 2022 scratch store `test-repo/hycom/hycom-tsis-gom-reanalysis` (group
+  `hourly`, d = 1, Eli's choice for the test store only) is in the test viewer and is the team's: never write to it.
+  #21 (build memory) is fixed: `gc.collect()` per batch, `gv.build_config_override()` at open, never in `create`.
+- Skill lessons: ocean-icechunks/ocean-icechunks-skills#20 (its file links still point at a deleted branch; Eli wants to
+  be asked before they are fixed). **PR #13 (Renovate)** is open; Eli is looking at it, don't touch it.
 
 **Facts most likely to be got wrong:**
 - **The source `_FillValue` (1.267651e30) is not the land value (2**100).** The store declares 2**100 (R21). Never write
@@ -71,7 +79,7 @@ session: locally first, then under `test-repo/hycom/gapfill-test/`, **never** in
 - **A float `_FillValue` on a ManifestArray must be in xarray's base64 form**, or the store won't open (xarray 2026.9).
 - **The skeleton does not scale to the full record** (0.84 GB per year at d = 1). Production must create the empty
   arrays without manifests. Also check the final manifest size after snapshot expiry.
-- **Reprocessing 027 was never decided.** Layout B is #15, and the 028 winds are #16.
+- **Reprocessing 027 is a question to HYCOM (item 13), not a decision.** Layout B is #15; the 028 winds (#16) are answered: no.
 
 **Hub notes:** a `nohup … &` process started in one shell call is invisible to `ps` in later calls, and is killed when
 its call ends if the call waits. Use the tool's background mode, and don't wait with `pgrep -f <name>`, which matches
