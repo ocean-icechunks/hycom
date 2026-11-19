@@ -156,6 +156,9 @@ def main():
     p.add_argument("--malloc-trim", action="store_true")
     p.add_argument("--fresh-process", action="store_true")
     p.add_argument("--tracemalloc", action="store_true")
+    # The recommended form of H3: create and save the default config, then build through a handle
+    # opened with gv.build_config_override(), so the zero cache is never persisted for readers.
+    p.add_argument("--build-override", action="store_true")
     p.add_argument("--only-month", type=int, default=None, help=argparse.SUPPRESS)  # child of --fresh-process
     a = p.parse_args()
     work = Path(a.work); work.mkdir(parents=True, exist_ok=True)
@@ -175,6 +178,12 @@ def main():
     out = {"args": vars(a), "rss_after_inputs": round(rss(), 3), "months": []}
     log(a.run, f"inputs loaded, rss {rss():.2f} GB")
     repo = icechunk.Repository.create(icechunk.local_filesystem_storage(str(path)), config(a))
+    if a.build_override:
+        repo.save_config()
+        repo = icechunk.Repository.open(icechunk.local_filesystem_storage(str(path)), gv.build_config_override())
+        out["build_handle_num_chunk_refs"] = repo.config.caching.num_chunk_refs
+        out["persisted_caching"] = str(icechunk.Repository.open(
+            icechunk.local_filesystem_storage(str(path))).config.caching)
     skeleton = xr.merge([gv.loaded_variables(year, files, grid, topo, scans),
                          gv.virtual_variables(year, files.iloc[:0], {}, a.d, src_attrs)])
     skeleton.attrs = gattrs

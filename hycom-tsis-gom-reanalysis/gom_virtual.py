@@ -474,6 +474,20 @@ def repository_config(steps_per_manifest: int = 730):
     return config
 
 
+def build_config_override():
+    """What the BUILD passes to `Repository.open(storage, config=...)`: no chunk-reference cache.
+
+    Icechunk 2.3.1 caches up to 15,000,000 chunk references per Repository object by default
+    (CachingConfig docstring). The build never reads a reference back, so at d = 1 that cache only
+    held about 1.2 GB once full (#21, claude/notes/issue-21-research/findings.md).
+
+    Only an override at open, never in the config given to `Repository.create`: create persists
+    its config (checked 2026-11-19), so a zero cache there would reach every reader, and readers
+    need the cache. The persisted split and virtual chunk container still apply under this override."""
+    import icechunk
+    return icechunk.RepositoryConfig(caching=icechunk.CachingConfig(num_chunk_refs=0))
+
+
 def reader_authorization():
     """What a reader passes as `authorize_virtual_chunk_access`: anonymous HTTPS."""
     import icechunk
