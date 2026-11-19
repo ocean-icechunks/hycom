@@ -36,7 +36,8 @@ GOM work is a 2026 IOOS hackathon project,
 there; find the last N from the comments). Side questions stay out. "Notes:" comments summarise results for the
 team (the last one, 2026-11-19, summarises phase 1).
 
-**Phase 1 is done, and its PR is open from `gom-layout-a-plan`** (Eli tests and merges; do not merge). Read first:
+**Phase 1 is done and merged** (PR #23, 2026-11-19; branches `gom-layout-a-plan`, `gom-memory-21` and
+`handoff-2026-11-18` deleted, #19 closed as superseded). Read first:
 [notes/plan-issue-17.md](notes/plan-issue-17.md). It has every decision, repairs R1–R22, the "For the HYCOM team"
 list (items 1–8, which Eli sends), the team FYI, the known-gaps table, and the measured results of each step.
 - Steps 1–4 of #17 are done (boxes ticked). Code: `hycom-tsis-gom-reanalysis/gom_virtual.py`. Smoke test:
@@ -50,7 +51,10 @@ list (items 1–8, which Eli sends), the team FYI, the known-gaps table, and the
 - **#21 (build memory) is fixed and confirmed:** `gc.collect()` per batch, plus `gv.build_config_override()` (no
   chunk-reference cache) **at open, never in `create`**. That gives 2.7 GB flat over a year, against 6.0 GB. Detail:
   [notes/issue-21-research/findings.md](notes/issue-21-research/findings.md).
-- Skill lessons: ocean-icechunks/ocean-icechunks-skills#20.
+- Skill lessons: ocean-icechunks/ocean-icechunks-skills#20. Its file links point at the deleted `gom-layout-a-plan`
+  branch; switch them to `main`.
+- **PR #13 (Renovate onboarding) is open and undecided.** The agent suggested closing it, or narrowing it to
+  security updates, because the `requirements.txt` files are deliberately tested lower bounds. Eli decides.
 
 **Next (Eli, 2026-11-19):** **phase 2** folds the HYCOM team's answers into the plan. Eli is asking them items 1–8.
 At the same time, **#22 (gap filling after the build, with a gate that checks each fill file)** runs in a separate
