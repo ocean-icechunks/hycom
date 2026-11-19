@@ -206,18 +206,43 @@ hours come from 026, because 027 is layout B. 027/028 are out of scope (#15).
   wind stress instead of 10 m winds). It gets its own store, not a second layout in this one. That holds whatever
   is decided below. Under the collection layout it would be its own dataset directory and its own catalog entry.
 
-Options for GOMb0.01 (agent's list for Eli, not a plan):
+**Decided (Eli, 2026-11-19): two Icechunk stores, GOMb0.01 and GOMe0.01, and no groups within a product** that split
+it by run (no 026 group beside a 027 group). Each product is one set of arrays over its whole time range, with 027 as the
+authority for the overlap hours. What that needs is below; how to get there is open.
 
-| | What | For | Against |
-|---|---|---|---|
-| **(i) layout A to 2024-04-01 18Z; 027 as a second group** in the same repository (for example `hourly` and a group for 027, with its own chunk grid) | Follows HYCOM on authority and covers the whole product. The overlap problem disappears | The 2024 hours are in a second group, so a reader joins two pieces for a full time series. The 027 group is small (3,672 hours) |
-| (ii) layout A to 2024-04-01 18Z, 027 not included yet | Follows HYCOM on authority; the store stays one group | Leaves out the last five months of the product |
-| (iii) keep the current scope (026 for the overlap) | No change to the code | Uses the run HYCOM does not consider authoritative, and still leaves out May–Aug 2024 |
-| (iv) ask HYCOM again to rewrite 027 in layout A | One array for the whole product | Not answered in the reply. HYCOM called regenerating files "quite time-consuming" (on the winds). Needs HYCOM to agree |
+**What blocks GOMb0.01 as one array: only 027's chunk layout.** Checked on 2026-11-19 on the S3 files:
+- 027 has the same grid, depths and variables as 010/023/026 (including `wnd_ewd`/`wnd_nwd`), and land holds 2**100 as
+  in layout A. Its `_FillValue` attribute is actually 2**100 (1.2676506e30), so it agrees with R21. Fill value is not a
+  blocker.
+- **The chunks are the blocker, and no Zarr chunk grid fits both layouts.** A virtual chunk must be one contiguous byte
+  range in its file, and the array has one chunk grid for every hour. Depth and latitude could be matched: one depth
+  fits both the 10- and 7-depth groups, and 77 rows fits both tile heights (385 = 5 × 77, 308 = 4 × 77). **Longitude
+  cannot.** Inside an HDF5 tile, rows are stored one after another, so a block of several rows is contiguous only if it
+  is the tile's full width: 526 longitudes in layout A, 421 in layout B. No single chunk width is both. Narrower chunks must then be single row pieces, and to break at
+  every tile edge of both layouts their width must divide both 526 and 421, which share no factor (421 is prime). So
+  the only common grid is one grid point per chunk: useless. Zarr's rectilinear (variable)
+  chunk grids don't help, because the longitude boundaries are still the same at every hour.
+- Rewriting 010/023/026 to match layout B (about 203,000 hours) is not considered.
 
-In each of (i)–(iii) the layout A part ends at a different hour. With (i) or (ii) that is 203,443 hours
-(204,096 − 653). The skeleton, the `END` in `gom_virtual.py` and the test-store README follow from Eli's choice.
-The 2022 scratch store is unaffected.
+Ways to unblock it (agent's list for Eli; none decided):
+
+| | What | Who acts | For | Against |
+|---|---|---|---|---|
+| **(a) 027 rechunked to layout A** (`nccopy -c` or `h5repack`; values unchanged) | 7,344 files, about 0.3 TB 2d + 9.5 TB 3z, to new keys on the bucket | HYCOM, or Michael with HYCOM's agreement | Fully virtual; one array; the store design does not change | Needs HYCOM/Michael to agree. It is a rechunk, not the regeneration HYCOM called time-consuming (that was the winds, which need post-processing), so it may be easier to ask than it sounds. The rechunked files would need checking value for value against HYCOM's |
+| **(b) 027 copied into the store as native Icechunk chunks** on layout A's grid, beside the virtual chunks | Us | One array, no action by HYCOM | About 9.8 TB on Source Cooperative, **uncompressed**, because a Zarr array has one codec pipeline and the virtual chunks are raw bytes. No longer a purely virtual store. The copy is ours to keep in sync if HYCOM ever changes 027 |
+| (c) GOMb0.01 ends 2024-04-01 18Z for now, 027 added later by (a) or (b) | Us | Follows HYCOM on authority; build can start now; adding hours later is the #22 fill path | Leaves out the product's last five months until then |
+| (d) keep 026 for the overlap, end 2024-04-28 23Z | — | No change | Against HYCOM's authority. Ruled out by the decision above |
+
+With (c), layout A ends at 2024-04-01 18Z, 203,443 hours (204,096 − 653), and that is what the skeleton, `END` in
+`gom_virtual.py` and the README follow. The 2022 scratch store is unaffected in every case.
+
+**GOMe0.01 (028) has no layout blocker**: all of it is layout B, one grid. What it needs before a build:
+- **its own `mask` and `bathy`.** 028 has 1,611 fewer sea points than `topo/`, and `topo/` holds only GOMb0.01's. The
+  mask can be read off the data (where `ssh` is defined); the bathymetry has to come from HYCOM.
+- appends as 028 runs (Michael McDonald adds files), so the build must extend the time axis, not only fill gaps;
+- an answer from Michael McDonald on whether future 028 output keeps layout B;
+- its own variable list (wind stress, no 10 m winds) and a choice of d for its 7-depth chunks;
+- the 9 truncated copies and missing 3z hours, which HYCOM will redo (gaps until then).
 
 ## Source and destination: two separate configurations
 
@@ -471,8 +496,8 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **For Eli: the GOMb0.01 scope**, options (i)–(iv) under [Scope](#scope), after HYCOM's answers. Also whether to
-  start a GOMe0.01 (028) store, and when.
+- **For Eli: how to bring 027 into GOMb0.01**, options (a)–(c) under [Scope](#scope). Two stores and no groups within a
+  product are decided (Eli, 2026-11-19). For GOMe0.01: its bathymetry from HYCOM, and when to start it.
 - Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
