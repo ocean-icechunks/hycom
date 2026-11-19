@@ -1,0 +1,170 @@
+{
+ "gate": {
+  "files": 2496,
+  "s": 108.7,
+  "rejected": [],
+  "rss_gb": 0.19,
+  "children_peak_rss_gb": 0.11
+ },
+ "fill": [
+  {
+   "snapshot": "KGHDRAEM90MP3X9S9W3G",
+   "reason": "bulk",
+   "hours": 744,
+   "files": 1488,
+   "refs": 2385264,
+   "first": "2022-01-08 00:00:00",
+   "last": "2022-02-07 23:00:00",
+   "pinned_at": "2026-11-19T17:58:49+00:00",
+   "seconds": 14.6,
+   "peak_rss_gb": 2.08
+  },
+  {
+   "snapshot": "ZH1YA1NQDEFGXCCDHCP0",
+   "reason": "bulk",
+   "hours": 504,
+   "files": 1008,
+   "refs": 1615824,
+   "first": "2022-02-08 00:00:00",
+   "last": "2022-02-28 23:00:00",
+   "pinned_at": "2026-11-19T17:58:49+00:00",
+   "seconds": 9.5,
+   "peak_rss_gb": 2.08
+  }
+ ],
+ "fill_s": 24.1,
+ "peak_rss_gb": 2.08,
+ "read_retries": [
+  "StorageError: code: 503 Service Unavailable: context: 0: icechunk::store::get with key=\"hourly/salinity/c/1068/36/1/1\" byte_range=From(0) at icechunk/src/store.rs:183"
+ ],
+ "diff_chunks": {
+  "cell_methods_2d": 1,
+  "cell_methods_3z": 1,
+  "experiment": 1,
+  "mixed_layer_thickness": 1248,
+  "salinity": 798720,
+  "ssh": 1248,
+  "u": 798720,
+  "u_barotropic_velocity": 1248,
+  "v": 798720,
+  "v_barotropic_velocity": 1248,
+  "w_velocity": 798720,
+  "water_temp": 798720,
+  "wnd_ewd": 1248,
+  "wnd_nwd": 1248
+ },
+ "diff_hours_range": {
+  "cell_methods_2d": [
+   0,
+   0,
+   1
+  ],
+  "cell_methods_3z": [
+   0,
+   0,
+   1
+  ],
+  "experiment": [
+   0,
+   0,
+   1
+  ],
+  "mixed_layer_thickness": [
+   168,
+   1415,
+   1248
+  ],
+  "salinity": [
+   168,
+   1415,
+   1248
+  ],
+  "ssh": [
+   168,
+   1415,
+   1248
+  ],
+  "u": [
+   168,
+   1415,
+   1248
+  ],
+  "u_barotropic_velocity": [
+   168,
+   1415,
+   1248
+  ],
+  "v": [
+   168,
+   1415,
+   1248
+  ],
+  "v_barotropic_velocity": [
+   168,
+   1415,
+   1248
+  ],
+  "w_velocity": [
+   168,
+   1415,
+   1248
+  ],
+  "water_temp": [
+   168,
+   1415,
+   1248
+  ],
+  "wnd_ewd": [
+   168,
+   1415,
+   1248
+  ],
+  "wnd_nwd": [
+   168,
+   1415,
+   1248
+  ]
+ },
+ "values": {
+  "2022-02-14 12:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-20 03:00:00 2d": {
+   "ssh map": true,
+   "mixed_layer_thickness map": true,
+   "u_barotropic_velocity map": true,
+   "v_barotropic_velocity map": true,
+   "wnd_ewd map": true,
+   "wnd_nwd map": true
+  }
+ },
+ "flags": {
+  "experiment": {
+   "23": 1416
+  },
+  "cell_methods_2d": {
+   "0": 1416
+  },
+  "cell_methods_3z": {
+   "0": 1416
+  }
+ },
+ "store_gaps": "| Kind | First hour | Last hour | Hours |\n|---|---|---|---|",
+ "manifests_mb": 43.9
+}
