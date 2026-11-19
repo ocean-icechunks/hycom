@@ -9,6 +9,7 @@ It then reopens the repository read-only and times the reads in the plan's table
 
 Nothing is written outside <out_dir>. The one-month check (month_check.py) ran first; see the plan.
 """
+import gc
 import json
 import pickle
 import resource
@@ -42,6 +43,8 @@ def build(out: Path, d: int, year, files, scans, grid, topo, src_attrs, gattrs) 
     R = {"d": d}
     repo = icechunk.Repository.create(icechunk.local_filesystem_storage(str(out)), gv.repository_config())
     repo.save_config()
+    # #21: build through a handle with no chunk-reference cache (gv.build_config_override says why).
+    repo = icechunk.Repository.open(icechunk.local_filesystem_storage(str(out)), gv.build_config_override())
     t = T()
     skeleton = xr.merge([gv.loaded_variables(year, files, grid, topo, scans),
                          gv.virtual_variables(year, files.iloc[:0], {}, d, src_attrs)])
@@ -49,6 +52,7 @@ def build(out: Path, d: int, year, files, scans, grid, topo, src_attrs, gattrs) 
     s = repo.writable_session("main"); skeleton.vz.to_icechunk(s.store, group=gv.GROUP, mode="w")
     s.commit("skeleton: coordinates, flags, bathy, mask and empty science arrays")
     del skeleton
+    gc.collect()                     # #21: see the comment after `del batch`
     R["skeleton_s"] = round(T() - t, 1)
     R["months"], refs = [], 0
     t_all = T()
@@ -62,6 +66,11 @@ def build(out: Path, d: int, year, files, scans, grid, topo, src_attrs, gattrs) 
         batch.vz.to_icechunk(s.store, group=gv.GROUP, region={"MT": slice(a, b)})
         s.commit(f"references for {month}: {n:,} chunks")
         del batch
+        # #21: `batch.vz` puts the Dataset in a reference cycle (xarray caches the accessor on the
+        # Dataset, and the accessor holds the Dataset), so `del` alone frees none of its ~2.4 M
+        # references; only the cyclic GC does, and it seldom runs. Measured: 2.5 GB flat over 12
+        # months with this and the cache override, against 4.8 GB after 6 months without either.
+        gc.collect()
         refs += n
         R["months"].append({"month": str(month), "refs": n, "s": round(T() - t, 1)})
         log(f"d={d} {month} {n:,} refs {T() - t:.1f}s rss {rss_gb()} GB")
