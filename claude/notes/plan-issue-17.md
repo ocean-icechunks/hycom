@@ -533,11 +533,23 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
   [FYI items](#for-the-team-fyi).
-- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team). Being tested
-  in #22**, by a separate session: a gate that checks each fill file, then fills tested locally and in
-  `test-repo/hycom/gapfill-test/`. HYCOM may
-  regenerate missing hours, and the rest of 2001–2020 is still to be copied. Later files must be able to go into
-  the store as new commits. What that involves, to be designed and tested, not yet decided:
+- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team). Tested in #22
+  (PR #25, merged 2026-11-19; detail in [gapfill-22.md](gapfill-22.md)).** HYCOM will regenerate the 41 missing 3z
+  hours, and the rest of 2001–2020 is still to be copied, so later files go into the store as new commits, in two
+  steps. **The gate** (`check_fill_candidates`) checks every file against the store first. It checks the name, that the
+  hour is on the axis and is a gap (or an explicit replacement), the experiment against the neighbouring hours, the size,
+  layout and `_FillValue`, the file's `MT`, `cell_methods`, an attribute fingerprint against reviewed values, the
+  coordinates (plus the known 3z Longitude variant), and that land is 2**100. A rejected file is listed with its reasons,
+  and nothing is written. **The fill** (`fill_hours`) region-writes references for just those hours, rewrites
+  `experiment` and `cell_methods_*`, and commits with the files and the reason. References are pinned to the time the
+  gate first saw the files, so if HYCOM rewrites a file later, reads fail until it is gated and filled again as a
+  replacement. **Measured:** every filled hour was identical to h5py, no other hour changed, the earlier snapshot still
+  showed the gaps, and the ncra stand-in was flagged `MT_mean`. A bulk fill of 1,248 hours took 109 s to gate and 24 s to
+  write, with a 2.1 GB peak. It also ran on Source Cooperative (`test-repo/hycom/gapfill-test/`). Eli checked the gaps in
+  the viewer (`gapfill-test/with-gaps`). The README's gaps table is generated from the store (`store_gaps`). **Still
+  open:** where the reviewed fingerprints live, whether a replacement needs a person's sign-off, fills on the
+  manifest-less production skeleton, and why commits to Source Cooperative are slow (17–70 s). The design points it
+  settled, kept for reference:
   - A region write of just the affected hours (`region={"MT": slice(i, i + 1)}`) for the virtual variables. The
     loaded per-hour variables `experiment`, `cell_methods_2d` and `cell_methods_3z` must be rewritten for those hours
     too, because they say "no source file" there now.
