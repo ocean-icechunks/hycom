@@ -413,6 +413,9 @@ every 3 steps. Then it reopened them in fresh read-only sessions:
 - `MT` stored equals the 2d file's `MT` bit for bit (`44295.416666666664`), with the units string verbatim.
 - Every repair checked by assertion. **`cf:1.11` "All tests passed!"** on an export from the store, gap hours
   included.
+- **R22 added and re-run (2026-11-19, clean venv, 0 errors):** on the transition sample the 2005-03-20 04Z 3z
+  file is flagged 1 (`MT_mean`), the skipped 2004-06-01 19Z 2d file 2, every other hour 0. On the store,
+  `cell_methods_3z` = `[0,0,0,2,2,0]` and `cell_methods_2d` = `[0,0,0,0,2,0]`. `cf:1.11` still passes.
 - **Transition sample** (16 hours, 32 files, both experiment boundaries and every file size): this found
   HYCOM items 6 and 7, the 3z `Longitude` difference, and the 2005 `ncra` stand-in's distinct attribute
   fingerprint.

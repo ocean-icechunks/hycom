@@ -182,6 +182,7 @@ def scan_h5py(store, key: str, kind: str, size: int) -> dict:
             _check_extent(key, size, kind, offs)
             out["offsets"][name] = offs
             out["attrs"][name] = _clean_attrs(d.attrs)
+    out["cell_methods"] = _file_cell_methods(key, out["attrs"])
     return out
 
 
@@ -204,7 +205,17 @@ def scan_hdfparser(registry, key: str, kind: str, size: int) -> dict:
         _check_extent(key, size, kind, offs)
         out["offsets"][name] = offs
         out["attrs"][name] = {k: v for k, v in vds[name].attrs.items() if k != "_FillValue"}
+    out["cell_methods"] = _file_cell_methods(key, out["attrs"])
     return out
+
+
+def _file_cell_methods(key: str, attrs: dict) -> str | None:
+    """The file's `cell_methods` (R22). HYCOM writes it on every variable of a file it rebuilt with
+    ncra, so all variables must agree; None on model output."""
+    values = {a.get("cell_methods") for a in attrs.values()}
+    if len(values) != 1:
+        raise ValueError(f"{key}: variables disagree on cell_methods: {values}")
+    return values.pop()
 
 
 def fingerprint(scan: dict) -> str:
@@ -280,7 +291,9 @@ def split_depths(offsets: np.ndarray, d: int) -> np.ndarray:
 # ------------------------------------------------------------------ metadata (repairs R1-R20)
 
 def science_attrs(name: str, source: dict) -> dict:
-    a = {k: v for k, v in source.items() if k not in ("_FillValue", "valid_range", "coordinates")}
+    a = {k: v for k, v in source.items() if k not in ("_FillValue", "valid_range", "coordinates", "cell_methods")}
+    # R22: cell_methods is per hour, so it lives in the flag variable, linked here.
+    a["ancillary_variables"] = "cell_methods_3z" if name in VARS_3Z else "cell_methods_2d"
     # R7 valid_range dropped (per-hour min/max); R20 `coordinates` is written by xarray from the
     # dataset's coordinates. long_name kept verbatim, [01.0H] and spacing included (R8, as GOFS).
     if name == "ssh":
@@ -338,7 +351,29 @@ def read_topo(store, grid: dict) -> dict:
     return out
 
 
-def loaded_variables(times: pd.DatetimeIndex, files: pd.DataFrame, grid: dict, topo: dict) -> xr.Dataset:
+# R22 (decided by Eli, 2026-11-19): each hour's `cell_methods`, from the files' own attributes.
+CELL_METHODS_FLAGS = {None: 0, "MT: mean": 1}       # 2 = no source file (or the file was skipped)
+NO_FILE_FLAG = 2
+
+
+def cell_methods_flags(times: pd.DatetimeIndex, files: pd.DataFrame, scans: dict) -> dict:
+    """{kind: int8 array along times}. A value the scan finds that is not in CELL_METHODS_FLAGS
+    stops the build, so a new kind of HYCOM stand-in is reviewed before it is labelled."""
+    out = {}
+    for kind in VARS:
+        flags = np.full(len(times), NO_FILE_FLAG, "i1")
+        rows = files[(files.kind == kind) & files.key.isin(list(scans)) & files.time.isin(times)]
+        for t, key in zip(rows.time, rows.key):
+            cm = scans[key]["cell_methods"]
+            if cm not in CELL_METHODS_FLAGS:
+                raise ValueError(f"{key}: cell_methods {cm!r} has no flag yet; review it before building")
+            flags[times.get_loc(t)] = CELL_METHODS_FLAGS[cm]
+        out[kind] = flags
+    return out
+
+
+def loaded_variables(times: pd.DatetimeIndex, files: pd.DataFrame, grid: dict, topo: dict,
+                     scans: dict) -> xr.Dataset:
     """Everything written as real data: the coordinates, Date, experiment, bathy and mask."""
     nt = len(times)
     one = {"chunks": (nt,), "_FillValue": None}       # one chunk for the whole axis
@@ -354,8 +389,8 @@ def loaded_variables(times: pd.DatetimeIndex, files: pd.DataFrame, grid: dict, t
     Date = xr.Variable("MT", date, {                                    # R3, R4 (as GOFS did for tau)
         "long_name": "date (YYYYMMDD.fraction of day)", "source_units": "day as %Y%m%d.%f",
         "C_format": "%13.4f", "FORTRAN_format": "(f13.4)"}, encoding=dict(one))
-    expts = sorted(int(e) for e in files["experiment"].unique()) or [10, 23, 26]
-    present = files.drop_duplicates("time").set_index("time")["experiment"].reindex(times)
+    used = files[files.key.isin(list(scans))]        # a skipped file does not count as present
+    present = used.drop_duplicates("time").set_index("time")["experiment"].reindex(times)
     experiment = xr.Variable("MT", present.fillna(0).to_numpy("i2"), {     # R12
         "long_name": "experiment number in the source file names (0: no file for this hour)",
         "flag_values": np.array([0, 10, 23, 26], "i2"),
@@ -372,8 +407,17 @@ def loaded_variables(times: pd.DatetimeIndex, files: pd.DataFrame, grid: dict, t
     mask = xr.Variable(("Latitude", "Longitude"), mask_v.astype("i1"), {      # R14
         **mask_a, "standard_name": "sea_binary_mask", "flag_values": np.array([0, 1], "i1"),
         "flag_meanings": "land sea", "comment": "From topo/regional.mask.nc."}, encoding={"_FillValue": None})
+    flags = cell_methods_flags(times, files, scans)
+    cm = {f"cell_methods_{kind}": xr.Variable("MT", flags[kind], {             # R22
+        "long_name": f"cell_methods of this hour's {kind} source file",
+        "flag_values": np.array([0, 1, 2], "i1"),
+        "flag_meanings": "none MT_mean no_source_file",
+        "comment": f"From the `cell_methods` attribute of each {kind} file. HYCOM rebuilt some hours as the "
+                   "mean of the neighbouring hours with ncra and marked them cell_methods = \"MT: mean\"; "
+                   "those hours are not model output. 0: no cell_methods (model output); 2: no file, "
+                   "or the file was skipped."}, encoding=dict(one)) for kind in VARS}
     return xr.Dataset({"bathy": bathy, "mask": mask},
-                      coords={"MT": MT, **coords, "Date": Date, "experiment": experiment})
+                      coords={"MT": MT, **coords, "Date": Date, "experiment": experiment, **cm})
 
 
 def virtual_variables(times: pd.DatetimeIndex, files: pd.DataFrame, scans: dict, d: int,
