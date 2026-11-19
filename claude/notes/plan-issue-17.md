@@ -320,7 +320,7 @@ These use the audit's same-region raw rates. Icechunk's read path may take up to
 
 ## Steps 2–4 (what follows the review)
 
-1. **Smoke test** (`hycom-tsis-gom-reanalysis/smoke-test.ipynb`, local temporary repository): 6
+1. **Smoke test** (`hycom-tsis-gom-reanalysis/gom-smoke-test-local.ipynb`, local temporary repository; done, see below): 6
    hours of 2022, one of them deliberately left out to make a gap. All 11 variables plus `bathy`/`mask`,
    at d = 1 and d = 10, with every repair above. Reopen read-only, assert dims, coords and attrs,
    compare a map, a 40-depth profile and a 6-hour point series with h5py, and check that the gap is
