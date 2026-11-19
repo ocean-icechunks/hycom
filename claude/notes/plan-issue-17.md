@@ -7,7 +7,11 @@ means run on 2026-11-18/19. *Predicted* is arithmetic from the audit's throughpu
 (`audit/report.md`, "Expected performance from S3"), not yet measured on this bucket. The
 decisions made earlier are in #17 ("Decided"). This round's are under [Decisions](#decisions-eli-2026-11-19).
 
-Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-the-hycom-team) ·
+**Phase 2 (2026-11-19): HYCOM's answers** to Eli's email of 2026-11-18 are summarised in
+[HYCOM's answers](#hycoms-answers-2026-11-19), and the [For the HYCOM team](#for-the-hycom-team) list now gives
+each item's status. The answers change the scope: see [Scope](#scope).
+
+Contents: [HYCOM's answers](#hycoms-answers-2026-11-19) · [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-the-hycom-team) ·
 [For the team (FYI)](#for-the-team-fyi) · [Known gaps](#known-gaps-at-first-build) ·
 [Scope](#scope) · [Source and destination](#source-and-destination-two-separate-configurations) ·
 [Source facts](#source-facts-measured) · [Parser](#parser-and-reference-scheme) ·
@@ -15,6 +19,25 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
 [Time](#time-the-encoding-of-mt) · [Proposed repairs](#proposed-repairs-every-one) ·
 [Manifests](#manifests-and-batches) · [Performance](#predicted-read-performance-to-be-measured-on-2022) ·
 [Next steps](#steps-24-what-follows-the-review) · [Open questions](#still-open)
+
+## HYCOM's answers (2026-11-19)
+
+The HYCOM team answered Eli's email of 2026-11-18 on 2026-11-19 (the email and the reply are Prompt 33 on
+ocean-icechunks/2026-ioos-hackathon#22). Their words are summarised here. What follows from them for this store
+is either an option or an open decision for Eli, not a plan, unless it says "decided".
+
+| Question | HYCOM's answer | What it means here |
+|---|---|---|
+| Two chunk layouts: how should the store handle them? | **GOMb0.01 and GOMe0.01 are two products.** GOMb0.01 runs January 2001 → August 2024 with GOFS 3.1 boundary conditions. GOMe0.01 runs September 2024 → near present with ESPC-D-V02 boundary conditions. The bathymetry was also changed near the boundaries for a smooth transition | The product boundary is not the layout boundary. The S3 review's listing puts it exactly between experiments: 027 ends 2024-09-01 18Z, and 028 starts 2024-09-01 19Z. So **GOMb0.01 = 010, 023, 026, 027** and **GOMe0.01 = 028**. Layout B is then 027 (in GOMb0.01, 3,672 hours) plus all of GOMe0.01. GOMe0.01 is a separate store in any case. See [Scope](#scope) and #15 |
+| Is 028 still running, with layout B? | 028 is still running. Files will be added to AWS as it goes, but that and the Icechunk questions are for Michael McDonald | GOMe0.01 grows. Its store needs appends. Whether its future output keeps layout B is not answered; ask Michael McDonald |
+| Rewrite the layout B files in layout A? | Not answered directly. On the winds HYCOM said that regenerating files "would be quite time-consuming" | No rewrite should be assumed. Asking again is an option for Eli |
+| Add 10 m winds to 028 (#16)? | **No.** The 10 m winds were a post-processing step BOEM asked for, because BOEM paid for the reanalysis. HYCOM decided it was not needed when it carried on the project itself. Regenerating would be quite time-consuming | GOMe0.01 has wind stress and no 10 m winds, so its variables differ from GOMb0.01's. #16 is answered |
+| Item 1: when will the rest of 2001–2020 be on S3? | For Michael McDonald (the copy to AWS is his) | Still open, with Michael McDonald |
+| Item 2: are the five regenerated 2002 3z files right? | **Yes.** Michael found corrupted files during the transfer. HYCOM moved them to `_CORRUPTED` and recreated them, and the files without `_CORRUPTED` in the name should be fine | The five hours can go into the store. They are no longer held back (code still to change: `gom_virtual.py` line 60) |
+| Items 3–5: the 17 `_CORRUPTED` hours, 18 empty 3z files and 6 missing 3z files | **Will be regenerated.** Michael sent HYCOM the list. HYCOM must get them back from storage and post-process them like the others. "Might take a while", because the Navy archive server is in maintenance this week | All 41 hours are gaps at first build, filled later as commits (#22) |
+| Item 10: 9 truncated 028 copies, and missing 028 3z hours | **Will be redone**, "same thing as the other ones but these should be easier to get to" | For GOMe0.01; gaps until they arrive |
+| 026/027 overlap: which run is authoritative? | **027.** "We made a lot of changes starting 2024" | The layout A store currently takes the 653 overlap hours from 026. That now goes against HYCOM's own choice. See [Scope](#scope) |
+| Items 6, 7, 8 (the 2004-06-01 19Z 2d file, the `_FillValue` mismatch, the 3z longitude drift) | Not in the 2026-11-18 email, so not answered | Still to ask |
 
 ## Decisions (Eli, 2026-11-19)
 
@@ -51,20 +74,40 @@ Contents: [Decisions](#decisions-eli-2026-11-19) · [For the HYCOM team](#for-th
 
 ## For the HYCOM team
 
-What Eli needs to raise with HYCOM, with the file names. Everything here was checked against
+What Eli raises with HYCOM, with the file names. Everything here was checked against
 HYCOM's listing (`s3-review/out/hycom-listing.csv.gz`, 2026-11-18) and the S3 listing (2026-11-18/19).
-Items 1–8 affect this store (layout A). Items 9–10 are about layout B.
+Items 1–8 affect this store (layout A). Items 9–10 are about layout B. **Status after HYCOM's reply of 2026-11-19**
+(details in [HYCOM's answers](#hycoms-answers-2026-11-19)):
+
+| Item | Status |
+|---|---|
+| 1. Rest of 2001–2020 on S3 | **Redirected to Michael McDonald** (he runs the copy to AWS) |
+| 2. Five regenerated 2002 3z files | **Answered: the new files are correct.** Bring them into the store |
+| 3–5. 41 missing 3z hours | **Answered: HYCOM will regenerate them**, not soon (Navy archive maintenance this week). Gaps until then |
+| 6. 2004-06-01 19Z 2d chunked like layout B | **Not yet asked** |
+| 7. `_FillValue` ≠ land value | **Not yet asked** (FYI for HYCOM; the store's workaround R21 does not depend on it) |
+| 8. 3z `Longitude` drift from 2021 | **Not yet asked** |
+| 9. 10 m winds for 028 | **Answered: no.** Too time-consuming, and only BOEM needed them |
+| 10. 028 truncated copies and missing 3z hours | **Answered: HYCOM will redo them**, sooner than items 3–5. The `_COPY` file was not raised |
+| New: 026/027 overlap | **Answered: 027 is authoritative** |
+| New: will 028's future output keep layout B? | **Redirected to Michael McDonald** |
+
+Still to send: items 6–8, and to Michael McDonald items 1 and the 028 layout question. A rewrite of 027 (or 028) in layout A
+was asked about and not answered. Asking again is up to Eli.
 
 1. **When will the rest of 2001–2020 be on S3?** The copy of every year from 2001 to 2020 stopped
    partway through the year about 2026-11-16 18:16 UTC. For example, 2001 stops at day 266 and 2010 at day 219.
    About 111,600 hourly files are still to come, and the S3 listing had not moved on
-   2026-11-19. *(If the file team, not HYCOM, runs the copy, this question goes to them.)*
+   2026-11-19. **HYCOM (2026-11-19): a question for Michael McDonald.**
 2. **Five 2002 3z files were regenerated on 2026-11-10**, with the old ones kept as
    `_CORRUPTED`: `010_archv.2002_046_12_3z.nc`, `…_046_16_3z.nc`, `…_051_06_3z.nc`, `…_051_07_3z.nc`,
-   `…_051_09_3z.nc`. What was wrong with the old ones, and are the new ones final? Our spot check
-   (three 1 MiB ranges) found old and new identical, so we cannot tell from the bytes. **These are
-   left out of the store until HYCOM answers.**
+   `…_051_09_3z.nc`. Our spot check (three 1 MiB ranges) found old and new identical, so we could not tell
+   from the bytes. **HYCOM (2026-11-19): the old files were corrupted, and Michael noticed during the transfer.
+   The new files, without `_CORRUPTED` in the name, should be fine.** So they come into the store: drop the
+   exclusion by name in `gom_virtual.py`, and the 2022 scratch store is unaffected (these are 2002).
 3. **17 3z hours were renamed `_CORRUPTED` with no replacement.** Will they be regenerated?
+   **HYCOM (2026-11-19), for items 3–5: yes.** Michael sent HYCOM the list. HYCOM has to fetch the files from storage
+   and post-process them, which "might take a while", because the Navy archive server is in maintenance this week.
    - 2002 day 139 (19 May): 18, 20, 21, 23Z
    - 2004 day 083 (23 Mar): 12, 16, 18, 21Z
    - 2006 day 210 (29 Jul): 00, 01, 03, 04, 05Z
@@ -98,11 +141,17 @@ Items 1–8 affect this store (layout A). Items 9–10 are about layout B.
    the processing, and is anything else in those 3z files different? The data are on the same grid. The
    store uses the 2d longitudes. (Found 2026-11-19.)
 9. *(Layout B, #16, only if the team wants it)*: 028 has wind stress and no 10 m winds. Could
-   HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027?
+   HYCOM add `wnd_ewd`/`wnd_nwd` to 028, as was done for 027? **HYCOM (2026-11-19): no.** The 10 m winds
+   were a post-processing step requested by BOEM, which paid for the reanalysis, and HYCOM decided they were not
+   needed when it continued the project itself. Regenerating would be quite time-consuming. So GOMe0.01 (028)
+   has wind stress and GOMb0.01 has 10 m winds.
 10. *(Layout B, for the file team rather than HYCOM)*: 9 truncated 028 copies to redo. Also, 3z hours
    missing on S3: 2025-08-02 01Z, 05–09Z and 11Z, and 2026-02-05 08Z, 03-13 07Z, 04-10 22Z and 04-20 12Z.
    Also remove `2012/010_archv.2012_138_00_3z.nc_COPY` from the bucket. Full detail is in
-   `s3-review/report.md`, "For the file team".
+   `s3-review/report.md`, "For the file team". **HYCOM (2026-11-19): will redo these like items 3–5, and they
+   should be easier to get to.** The `_COPY` removal was not in the email.
+11. **026/027 overlap** (asked 2026-11-18): 2024-04-01 19Z → 04-28 23Z, 653 hours in both runs. Which is
+   authoritative? **HYCOM (2026-11-19): 027.** "We made a lot of changes starting 2024."
 
 ## For the team (FYI)
 
@@ -126,24 +175,48 @@ are left out of this table (HYCOM item 1). They are gaps only until the copy fin
 
 | Kind | Hours | Which | Why | HYCOM item |
 |---|---|---|---|---|
-| 3z | 17 | 2002 day 139 (18, 20, 21, 23Z); 2004 day 083 (12, 16, 18, 21Z); 2006 day 210 (00, 01, 03, 04, 05Z); 2006 day 268 (01, 02, 04, 05Z) | renamed `_CORRUPTED` by HYCOM, no replacement | 3 |
-| 3z | 18 | 2002 day 347 00–05Z; 2006 day 177 18–23Z; 2014 day 335 12–17Z | empty files (zero time steps) | 4 |
-| 3z | 6 | 2011 day 148 00–05Z | no file | 5 |
-| 3z | 5 | 2002 day 046 12, 16Z; day 051 06, 07, 09Z | held back: regenerated 2026-11-10, waiting for HYCOM | 2 |
-| **2d** | **1** | **2004 day 153 19Z** (2004-06-01) | **chunked like layout B; found by the smoke-test scan** | 6 |
+| 3z | 17 | 2002 day 139 (18, 20, 21, 23Z); 2004 day 083 (12, 16, 18, 21Z); 2006 day 210 (00, 01, 03, 04, 05Z); 2006 day 268 (01, 02, 04, 05Z) | renamed `_CORRUPTED` by HYCOM; **HYCOM will regenerate** (2026-11-19) | 3 |
+| 3z | 18 | 2002 day 347 00–05Z; 2006 day 177 18–23Z; 2014 day 335 12–17Z | empty files (zero time steps); **HYCOM will regenerate** | 4 |
+| 3z | 6 | 2011 day 148 00–05Z | no file; **HYCOM will regenerate** | 5 |
+| **2d** | **1** | **2004 day 153 19Z** (2004-06-01) | **chunked like layout B; found by the smoke-test scan**; not yet asked | 6 |
 
-That is 46 3z hours and 1 2d hour, of 204,096. The 2d gap is the only one in the 2d record, and its 3z file is
-fine. So far only the 32-file transition sample and 9 files of 2022 have been scanned, so the full scan may find
+That is 41 3z hours and 1 2d hour, of 204,096. The five regenerated 2002 3z hours (item 2) are no longer gaps: HYCOM
+confirmed the new files on 2026-11-19. The 41 3z hours are all to be filled later as commits, when HYCOM's regenerated
+files reach S3 (gap filling, #22). The 2d gap is the only one in the 2d record, and its 3z file is
+fine. So far only the 32-file transition sample and all of 2022 have been scanned, so the full scan may find
 more files like 2004_153_19. This table is updated from each build's skip list. The store README will carry it.
 
-Optional, not needed for the build: the 653 hours where 026 and 027 overlap (2024-04-01 19Z →
-04-28 23Z). Which run does HYCOM consider authoritative? This store uses 026 because of the layout.
+The 653 hours where 026 and 027 overlap (2024-04-01 19Z → 04-28 23Z): **HYCOM says 027 is authoritative**
+(2026-11-19). The current scope takes them from 026; see [Scope](#scope) for the options.
 
 ## Scope
 
 Experiments 010, 023 and 026, all chunk layout A, **2001-01-16 00Z → 2024-04-28 23Z, 204,096 hourly
 time steps**. One group, `hourly`, holds all 11 variables and the two static fields. The overlap
 hours come from 026, because 027 is layout B. 027/028 are out of scope (#15).
+
+**HYCOM's answers (2026-11-19) put this scope in question. Not decided; Eli decides, with #15.**
+
+- **The product is GOMb0.01, 2001-01 → 2024-08.** In the files that is 010, 023, 026 and 027, ending 2024-09-01 18Z.
+  This store covers it only up to 2024-04-28 23Z, so it leaves out 027's last 3,019 hours (2024-04-29 00Z →
+  09-01 18Z).
+- **027 is authoritative for the 653 overlap hours**, and the store currently takes them from 026.
+- **028 is a separate product, GOMe0.01** (different boundary conditions, bathymetry changed near the boundaries,
+  wind stress instead of 10 m winds). It gets its own store, not a second layout in this one. That holds whatever
+  is decided below. Under the collection layout it would be its own dataset directory and its own catalog entry.
+
+Options for GOMb0.01 (agent's list for Eli, not a plan):
+
+| | What | For | Against |
+|---|---|---|---|
+| **(i) layout A to 2024-04-01 18Z; 027 as a second group** in the same repository (for example `hourly` and a group for 027, with its own chunk grid) | Follows HYCOM on authority and covers the whole product. The overlap problem disappears | The 2024 hours are in a second group, so a reader joins two pieces for a full time series. The 027 group is small (3,672 hours) |
+| (ii) layout A to 2024-04-01 18Z, 027 not included yet | Follows HYCOM on authority; the store stays one group | Leaves out the last five months of the product |
+| (iii) keep the current scope (026 for the overlap) | No change to the code | Uses the run HYCOM does not consider authoritative, and still leaves out May–Aug 2024 |
+| (iv) ask HYCOM again to rewrite 027 in layout A | One array for the whole product | Not answered in the reply. HYCOM called regenerating files "quite time-consuming" (on the winds). Needs HYCOM to agree |
+
+In each of (i)–(iii) the layout A part ends at a different hour. With (i) or (ii) that is 203,443 hours
+(204,096 − 653). The skeleton, the `END` in `gom_virtual.py` and the test-store README follow from Eli's choice.
+The 2022 scratch store is unaffected.
 
 ## Source and destination: two separate configurations
 
@@ -219,7 +292,9 @@ Either way, a month's references go into pre-allocated numpy arrays (`paths`, `o
   chunking) was found. Attribute fingerprints (without `valid_range`) and coordinate checksums are
   reported but not fatal. They pick out HYCOM's `ncra` stand-ins (`cell_methods = "MT: mean"`, an NCO
   `history`) and the 3z `Longitude` difference below.
-- **Exclusion by name:** the 5 regenerated 2002 3z files (HYCOM item 2).
+- **Exclusion by name:** the 5 regenerated 2002 3z files (HYCOM item 2). **No longer needed: HYCOM confirmed the new
+  files on 2026-11-19.** Remove it from `gom_virtual.py` (the `_CORRUPTED` originals are already dropped by the key
+  pattern).
 - Each build writes its skip list (key, reason) beside its log. Hours with no file read as NaN.
 - **Checksum pin:** `last_updated_at` = build time (`audit/07_checksum_pin.py`).
 
@@ -395,7 +470,10 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- Waiting on HYCOM: [For the HYCOM team](#for-the-hycom-team), items 1–8. Not blocking the 2022 work.
+- **For Eli: the GOMb0.01 scope**, options (i)–(iv) under [Scope](#scope), after HYCOM's answers. Also whether to
+  start a GOMe0.01 (028) store, and when.
+- Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
+  and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
   [FYI items](#for-the-team-fyi).
 - **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team). Being tested
