@@ -492,3 +492,38 @@ here) in every case.
 **Choice for Eli:** the d for 3z. Maps and profiles are fast at every d. Time series and boxes are 2–8 times faster at
 d = 1 than at d = 10, and about 2 times faster than at d = 2. d = 1 costs 10 times the references and manifests of d = 10.
 
+## Step 4: the 2022 scratch store on Source Cooperative (2026-11-19)
+
+**Chunking for the test store: d = 1** (Eli, 2026-11-19, from the 2022 results above).
+
+- **Store:** `s3://ocean-icechunks/test-repo/hycom/hycom-tsis-gom-reanalysis`, group `hourly`, public at
+  `https://data.source.coop/ocean-icechunks/test-repo/hycom/hycom-tsis-gom-reanalysis`. Built by
+  `claude/notes/issue-17-research/scratch_store_2022.py build` from the 2022 scan: a skeleton and 12 monthly
+  commits, 28,084,560 references, 286 s of batches, peak 5.3 GB (memory grew again, see #21). Logs are in
+  `scratch2022-results/`.
+- **Read back anonymously from the public URL** (`scratch_store_2022.py read`, from this hub in us-west-2):
+
+  | | Source Cooperative | local (same build) |
+  |---|---|---|
+  | `Repository.open` + `open_zarr` | 0.48 s + 0.89 s | 0.03 s |
+  | `water_temp` map, 1 depth: cold / warm / another month cold | 0.60 / 0.27 / 0.63 s | 0.5 s |
+  | 40-depth profile | 0.62 s | 0.5 s |
+  | point time series, 1 year | 15.9 s | 17.2 s |
+  | 200 × 200 box, year: 1 tile / 4 tiles | 17.5 / 52.9 s | 15.9 / 58.1 s |
+
+  **The larger d = 1 manifests cost about 1.3 s at open and about 0.3 s the first time a month is touched.**
+  Year-long reads match local ones, because they are bound by the source reads. All 14 commits were present, the value
+  matched h5py, and no retries were needed. Not measured: readers outside us-west-2.
+- **CORS on both hosts (curl, 2026-11-19):** Source Cooperative returns `Access-Control-Allow-Origin: *` on ranged GETs
+  of `repo` and a manifest, and the preflight returns 204, allowing all headers. The source bucket returns
+  `Access-Control-Allow-Origin: *` on a ranged GET, and the preflight allows `range`. So, unlike GOFS 3.1, no CORS
+  extension should be needed. **Rendering is for Eli to check in a browser.**
+- **Viewer:** the store is a catalog entry in the one test viewer, `test-repo/hycom/viewer/` (rebuilt from
+  `eeholmes/gridlook` 3cca0cc, Node 24). `publish_viewer.py` has a `TEST_ONLY` table, so only the test viewer
+  lists it. The entry opens `…/hycom-tsis-gom-reanalysis/hourly` (gridlook walks up the URL to the repository root
+  and opens the rest as the group) at `dimIndices_MT=0::dimIndices_Depth=0`. The published `hycom/viewer/` was not
+  touched.
+- **README:** `test-repo/hycom/README.md` now covers both test stores. Its source moved to `test-repo-README.md` at
+  the repository root, and the GOFS section is unchanged. The GOM loading code was run as written in a clean venv
+  (`icechunk>=2.3 xarray>=2026.9 zarr>=3.4` only), and the served copy matches the file.
+

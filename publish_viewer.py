@@ -83,12 +83,30 @@ _VIEW = "dimIndices_time=0::dimIndices_depth=0"
 _VARIABLES = ("water_temp", "salinity", "surf_el", "water_u", "water_v")
 
 
-def _product(root: str, title: str) -> dict:
+# Stores that exist only under the scratch root, so only the test viewer lists them. Each entry
+# names its own path (a GOMb0.01 store keeps its arrays in the group `hourly`, which gridlook opens
+# from a URL ending in the group), its own dimension names (MT/Depth, the GOM files' names) and
+# its own variables. Move an entry into DATASETS when its store is published under `hycom/`.
+TEST_ONLY = {
+    "hycom-tsis-gom-reanalysis": {
+        "path": "hycom-tsis-gom-reanalysis/hourly",
+        "title": "HYCOM-TSIS GOMb0.01 Gulf of Mexico reanalysis, hourly (2022 test)",
+        "view": "dimIndices_MT=0::dimIndices_Depth=0",
+        "variables": ("water_temp", "salinity", "ssh", "u", "v"),
+    },
+}
+
+
+def _product(root: str, title: str, extra: dict | None = None) -> dict:
+    stores = {name: {"url": f"{PUBLIC}/ocean-icechunks/{root}/{name}", "title": label, "view": _VIEW}
+              for name, label in DATASETS.items()}
+    for name, e in (extra or {}).items():
+        stores[name] = {"url": f"{PUBLIC}/ocean-icechunks/{root}/{e['path']}", "title": e["title"],
+                        "view": e["view"], "variables": e["variables"]}
     return {
         "bucket": "ocean-icechunks",
         "viewer_prefix": f"{root}/viewer",
-        "stores": {name: {"url": f"{PUBLIC}/ocean-icechunks/{root}/{name}", "title": label, "view": _VIEW}
-                   for name, label in DATASETS.items()},
+        "stores": stores,
         "variables": _VARIABLES,
         # Without this the published viewer offers gridlook's 70 demo datasets.
         "catalog": {"path": "static/catalog-extended.json", "title": title},
@@ -98,7 +116,7 @@ def _product(root: str, title: str) -> dict:
 # `hycom-test` is the scratch area the smoke-test notebooks write to; `hycom` holds the
 # published stores. Same layout under each root.
 PRODUCTS = {
-    "hycom-test": _product("test-repo/hycom", "HYCOM - smoke tests"),
+    "hycom-test": _product("test-repo/hycom", "HYCOM - smoke tests", TEST_ONLY),
     "hycom": _product("hycom", "HYCOM virtual Icechunk stores"),
 }
 DEFAULT_DIST = Path("/tmp/gridlook-dist")
