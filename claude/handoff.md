@@ -28,32 +28,53 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
-## GOMb0.01 is on S3: file review done; next is the layout A store (2026-11-18)
+## GOMb0.01 layout A store (#17): plan reviewed, smoke test passed; 2022 test next (2026-11-19)
 
-GOM work is now a 2026 IOOS hackathon project,
+GOM work is a 2026 IOOS hackathon project,
 [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
-**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–11 are
-there). Side questions stay out. Short "Notes:" comments summarise results for the team.
+**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–21 are
+there; find the last N from the comments). Side questions stay out. Short "Notes:" comments summarise
+results for the team (last one 2026-11-19, on the plan).
 
-**The S3 file review is merged** (PR #18, 2026-11-18; branch deleted):
-`hycom-tsis-gom-reanalysis/s3-review/report.md`, with scripts `01`–`05`. The bucket
-`hycom-tsis-gom-reanalysis` is public and in us-west-2. **The copy was still running**, with
-2001–2020 stalled partway through each year, so re-list before trusting counts. Headlines:
-- 027 and a new experiment 028 (2024-09 to 2026-07) share a second chunk layout ("layout B",
-  #15, open for team comment).
-- 028 has wind stress, not 10 m wind: the winds are missing, not renamed (#16, open).
-- 2021–2023 are complete.
-- 9 of the 028 files are truncated.
+**Everything for #17 is on branch `gom-layout-a-plan`** (no PR yet; Eli reviews the plan with the team):
+- **The plan, read first:** [notes/plan-issue-17.md](notes/plan-issue-17.md). It has Eli's decisions,
+  the "For the HYCOM team" list (items 1–8, which Eli sends herself), a team FYI section, the known-gaps table,
+  and repairs R1–R22 with their reasons.
+- `hycom-tsis-gom-reanalysis/gom_virtual.py`: the build code, with repair numbers cited in comments.
+- `hycom-tsis-gom-reanalysis/gom-smoke-test-local.ipynb`: 6 hours of 2022 at 10 and 1 depths per chunk.
+  It passed in a clean venv from that directory's `requirements.txt`: values identical to h5py, and
+  `cf:1.11` passes.
+- The CF check of the repairs: `notes/issue-17-research/cf_corner.py`.
 
-**Reprocessing 027 was never decided.** It was Eli brainstorming, and HYCOM was not involved.
-The audit report, #11 and the notes are corrected. Don't reintroduce it.
+**Decided (Eli, 2026-11-18/19), all in the plan.** Names follow the GOM files (`MT`, `Depth`,
+`Latitude`, `Longitude`, `Date`), not GOFS 3.1's. `MT` keeps the source convention: float64
+`days since 1900-12-31 00:00:00`, the 2d files' values. Repairs follow GOFS 3.1 unless the GOM files give a
+reason not to. `long_name` stays verbatim, `[01.0H]` included. The 3z chunkings to test are 10, 2 and 1
+depths per chunk. `bathy` and `mask` come from `topo/`. **R21:** the fill value is 2**100. **R22:** a
+per-hour `cell_methods` flag from the files' attributes.
 
-**Next task: #17, build the layout A store** (010/023/026, 2001-01-16 → 2024-04-28, group
-`hourly`). #17 lists the decisions and the subtasks in the skill's order. Step 1, the written
-plan for Eli to review, comes first. Test year 2022, then a scratch store in `test-repo/hycom/` for
-the team. The full build waits until HYCOM's copy is complete; Eli is asking them about it. #11
-(3z chunking) is closed in favour of #17; its options table is still the reference for step 3.
-Detail: [notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
+**Facts most likely to be got wrong:**
+- **The source `_FillValue` (1.267651e30) is not the land value (2**100)**, 3 ulps apart, in every file and
+  variable sampled. Never write the fill as the decimal `1.267651e30`. Use `np.float32(2.0**100)`.
+- **The scan must use processes, not threads.** h5py holds a global lock, and `HDFParser` uses h5py too.
+  About 17 files/s at 16 processes on this 4-core hub.
+- **`Latitude`/`Longitude` come from a 2d file.** The 3z `Longitude` drifts by up to 3.4e-5° from 2021-01-01 on (HYCOM item 8).
+- **`2004/010_archv.2004_153_19_2d.nc` is chunked like layout B**, so it is skipped (a 2d gap).
+- **Two xarray 2026.9 details** are handled in `gom_virtual.py`. A float `_FillValue` on a ManifestArray
+  must be in xarray's base64 form, or the store will not open. `MT` is written as plain floats, because
+  xarray's datetime encoding shortens the units string.
+- **Reprocessing 027 was never decided** (Eli brainstorming; HYCOM not involved). Don't reintroduce it.
+  Layout B (027/028) is #15; the 028 winds are #16.
+
+**In progress (2026-11-19):** adding the R22 flags to the code and the smoke test, then the step 3 2022 test,
+starting with a one-month check of memory at 1 depth per chunk. Builds go to local temporary repositories only.
+The bucket was unchanged on 2026-11-19: 2021–2023 complete, 2001–2020 stalled. The full build waits for HYCOM's copy.
+
+**PR #19 (branch `handoff-2026-11-18`, yesterday's handoff) is superseded.** Its commit was cherry-picked onto
+`gom-layout-a-plan` on 2026-11-19. Suggest closing #19 rather than merging both.
+
+S3 file review, merged 2026-11-18 (PR #18): `hycom-tsis-gom-reanalysis/s3-review/report.md`, notes in
+[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
