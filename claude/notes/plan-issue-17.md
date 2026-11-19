@@ -95,7 +95,9 @@ Items 1–8 affect this store (layout A). Items 9–10 are about layout B. **Sta
 | 12. GOMe0.01 bathymetry and mask | **Not yet asked** (new 2026-11-19) |
 | 13. Reprocess 027 to layout A | **Not yet asked**; Eli will ask (2026-11-19) |
 
-Still to send: items 6–8, 12 and 13, and to Michael McDonald item 1 and the 028 layout question.
+**2026-11-19: Eli emailed the HYCOM team the two chunk layouts** (shapes, sizes, why they can't share one array). HYCOM
+will reply. Which of items 6–8, 12 and 13 went in that email is not recorded here; update the table when the reply
+comes. To Michael McDonald: item 1 and the 028 layout question.
 
 1. **When will the rest of 2001–2020 be on S3?** The copy of every year from 2001 to 2020 stopped
    partway through the year about 2026-11-16 18:16 UTC. For example, 2001 stops at day 266 and 2010 at day 219.
