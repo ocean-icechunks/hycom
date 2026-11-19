@@ -4,6 +4,9 @@ The plan, every decision and every metadata repair (R1-R20) are in
 `claude/notes/plan-issue-17.md`. The repair numbers are cited in comments below so a reviewer
 can check each one against the plan.
 
+Filling gaps after the build (the gate and `fill_hours`, #22) is the last section; its tests are in
+`claude/notes/gapfill-22.md`.
+
 Layout A means experiments 010, 023 and 026, 2001-01-16 00Z to 2024-04-28 23Z. Names follow the
 GOM files (`MT`, `Depth`, `Latitude`, `Longitude`, `Date`), not the GOFS 3.1 store's.
 """
@@ -166,6 +169,9 @@ def scan_h5py(store, key: str, kind: str, size: int) -> dict:
         import hashlib
         out["coords_md5"] = {n: hashlib.md5(f[n][:].tobytes()).hexdigest()[:8]
                              for n in ("Latitude", "Longitude", "Depth") if n in f}
+        # The file's own MT, for the gap-fill gate's time check (#22). 3z MT is float32-rounded
+        # (audit F8), so it is only compared with the filename to the hour, never used as the axis.
+        out["MT"] = float(np.ravel(f["MT"][:])[0]) if "MT" in f and f["MT"].size else None
         for name in VARS[kind]:
             d = f[name]
             if (d.shape, d.chunks, d.dtype.str, d.compression, d.shuffle) != (shape, chunks, "<f4", None, False):
@@ -421,7 +427,7 @@ def loaded_variables(times: pd.DatetimeIndex, files: pd.DataFrame, grid: dict, t
 
 
 def virtual_variables(times: pd.DatetimeIndex, files: pd.DataFrame, scans: dict, d: int,
-                      src_attrs: dict) -> xr.Dataset:
+                      src_attrs: dict | None) -> xr.Dataset:
     """The 11 science variables over `times`, referencing whichever scanned files fall in it.
     Hours with no scan get an empty path: no reference, so the chunk reads as the fill value."""
     from virtualizarr.manifests import ChunkManifest, ManifestArray
@@ -455,7 +461,11 @@ def virtual_variables(times: pd.DatetimeIndex, files: pd.DataFrame, scans: dict,
             # VirtualiZarr writes ManifestArray attributes as given, without xarray's encoding step,
             # and xarray (2026.9) reads a float _FillValue in Zarr v3 only in its own base64 form
             # (what HDFParser emits too). So encode it here as xarray would; a plain float fails to open.
-            attrs = {**science_attrs(name, src_attrs[name]), "_FillValue": _FILL_ATTR}
+            # src_attrs=None (gap fills, #22): no attributes, so the region write's attribute update
+            # is a no-op and the stored ones stay exactly as the build wrote them. Taking them from a
+            # fill file instead could carry an ncra stand-in's attributes onto the whole array.
+            attrs = ({} if src_attrs is None else
+                     {**science_attrs(name, src_attrs[name]), "_FillValue": _FILL_ATTR})
             out[name] = xr.Variable(dims, ManifestArray(metadata=metadata, chunkmanifest=manifest), attrs=attrs)
     return xr.Dataset(out)
 
@@ -492,3 +502,411 @@ def reader_authorization():
     """What a reader passes as `authorize_virtual_chunk_access`: anonymous HTTPS."""
     import icechunk
     return {URL_PREFIX: icechunk.credentials.HttpAccess}
+
+
+# ------------------------------------------------------------------ gap filling (#22)
+#
+# Hours that had no usable file at build time are on the axis with no reference. When HYCOM (or
+# the S3 copy) supplies a file later, it goes in as a new commit: `check_fill_candidates` (the
+# gate) checks each file against the store, then `fill_hours` region-writes the references and
+# updates the per-hour flags. Tests and results: claude/notes/gapfill-22.md.
+
+FILL_REASONS = ("new hour", "replacement", "bulk")
+
+# The gate's attribute fingerprint is `fingerprint` minus what legitimately differs between good
+# files: the per-hour `valid_range`, `cell_methods` (checked on its own, R22) and the global
+# `history`/`NCO` that ncra writes on HYCOM's stand-ins. With those out, the 2005 stand-in has
+# the same fingerprint as model output, so anything else that differs is a real difference.
+GATE_IGNORE_GLOBAL = frozenset({"_NCProperties", "history", "NCO"})
+GATE_IGNORE_VAR = frozenset({"valid_range", "cell_methods"})
+# Reviewed values, like CELL_METHODS_FLAGS: a new one is rejected until someone looks at it.
+# Measured 2026-11-19 on 010 (2001, 2005 incl. the ncra stand-in, 2010), 023 (2021, 2022) and 026
+# (2024) files: one per kind for all three experiments.
+GATE_FINGERPRINTS = {"2d": frozenset({"8f3485af1c"}), "3z": frozenset({"1cb0ede4c6"})}
+# The 3z Longitude of 023/026 files from 2021 on (HYCOM item 8): same grid, drifted float32 values.
+LON_3Z_VARIANTS = frozenset({"8edb2d05"})
+# Source global attributes the store keeps, and under which name (global_attrs, R15-R16).
+GATE_GLOBAL_KEYS = {"Conventions": "source_Conventions", "title": "source_title",
+                    "source": "source", "experiment": "experiment"}
+PROBE_ROWS = 8          # rows read by the land check: 67 kB of a 2d map, 17 kB of a 3z tile
+
+
+def gate_fingerprint(scan: dict) -> str:
+    import hashlib, json
+    doc = {"g": {k: v for k, v in scan["global_attrs"].items() if k not in GATE_IGNORE_GLOBAL},
+           "v": {n: {k: v for k, v in a.items() if k not in GATE_IGNORE_VAR} for n, a in scan["attrs"].items()}}
+    return hashlib.md5(json.dumps(doc, sort_keys=True, default=str).encode()).hexdigest()[:10]
+
+
+def _md5_8(a) -> str:
+    import hashlib
+    return hashlib.md5(np.ascontiguousarray(a).tobytes()).hexdigest()[:8]
+
+
+def _land_probe(mask: np.ndarray) -> dict:
+    """Where the land check reads: the PROBE_ROWS rows with the most even mix of land and sea, in a
+    whole 2d map and in the best 3z tile, so one small ranged GET sees both."""
+    land = (mask == 0).astype(int)
+    win = np.ones(PROBE_ROWS)
+    n = np.convolve(land.sum(1), win, "valid")
+    r2d = int(np.argmax(np.minimum(n, NX * PROBE_ROWS - n)))
+    best = (-1, 0, 0, 0)
+    for ty in range(NTY):
+        for tx in range(NTX):
+            t = land[ty * TY:(ty + 1) * TY, tx * TX:(tx + 1) * TX]
+            n = np.convolve(t.sum(1), win, "valid")
+            score = np.minimum(n, t.shape[1] * PROBE_ROWS - n)
+            r = int(np.argmax(score))
+            if score[r] > best[0]:
+                best = (score[r], ty, tx, r)
+    return {"2d": r2d, "3z": best[1:]}
+
+
+def gate_reference(session, group: str = GROUP) -> dict:
+    """What the gate compares candidates with, read from the store itself at one snapshot. Not from
+    the build's scan, so the gate works on a store built long ago, by anyone."""
+    import zarr
+    g = zarr.open_group(session.store, path=group, mode="r", zarr_format=3)
+    ref = dict(snapshot=session.snapshot_id, group=group, MT=g["MT"][:],
+               experiment=g["experiment"][:], flags={k: g[f"cell_methods_{k}"][:] for k in VARS},
+               coords={n: _md5_8(g[n][:].astype("f4")) for n in ("Latitude", "Longitude", "Depth")},
+               mask=g["mask"][:], global_attrs=dict(g.attrs), d=int(g["water_temp"].chunks[1]))
+    ref["land_probe"] = _land_probe(ref["mask"])
+    return ref
+
+
+def has_reference(session, kind: str, i: int, group: str = GROUP) -> bool:
+    """Whether hour i has a reference for this kind, from the manifest rather than the flags. The
+    first chunk of the first variable stands for the hour: a fill always writes all of them."""
+    import icechunk
+    coords = (i, 0, 0, 0) if kind == "3z" else (i, 0, 0)
+    # lower case in icechunk 2.3.1, though its .pyi documents `Uninitialized`
+    return session.chunk_type(f"/{group}/{VARS[kind][0]}", coords) != icechunk.ChunkType.uninitialized
+
+
+def _land_check(store, key: str, kind: str, scan: dict, ref: dict) -> str | None:
+    """R21 on the bytes: land holds 2**100 exactly and sea holds finite values, in one small range
+    of the file. Catches a file whose fill attribute is right but whose data are not."""
+    import obstore
+    mask = ref["mask"]
+    if kind == "2d":
+        name, r = "ssh", ref["land_probe"]["2d"]
+        start, width = int(scan["offsets"][name][0, 0, 0]) + r * NX * 4, NX
+        m = mask[r:r + PROBE_ROWS]
+    else:
+        name, (ty, tx, r) = "water_temp", ref["land_probe"]["3z"]
+        start, width = int(scan["offsets"][name][0, 0, ty, tx]) + r * TX * 4, TX   # depth 0 of the tile
+        m = mask[ty * TY + r:ty * TY + r + PROBE_ROWS, tx * TX:(tx + 1) * TX]
+    buf = obstore.get_range(store, "data/" + key, start=start, length=PROBE_ROWS * width * 4)
+    v = np.frombuffer(bytes(buf), "<f4").reshape(PROBE_ROWS, width)[:, :m.shape[1]]
+    is_fill = v.view("u4") == FILL.view("u4")
+    land_bad = int((~is_fill[m == 0]).sum())
+    sea_bad = int((is_fill[m == 1] | ~np.isfinite(v[m == 1])).sum())
+    if land_bad or sea_bad:
+        return (f"fill value: {name} probe ({PROBE_ROWS} rows): {land_bad} land points are not 2**100, "
+                f"{sea_bad} sea points are fill or not finite")
+    return None
+
+
+def check_fill_candidate(key: str, ref: dict, *, store=None, replacement: bool = False,
+                         allow_experiment: bool = False, check_land: bool = True, scan: dict | None = None,
+                         scan_error: str | None = None, size: int | None = None, modified=None,
+                         checked_at=None, reference_exists: bool | None = None) -> dict:
+    """The gate (#22): may `key` be used to fill its hour in the store described by `ref`
+    (`gate_reference`)? Returns a result with `ok` and every `reasons` it failed; `fill_hours` takes
+    only results with ok=True. Nothing is written here.
+
+    `replacement=True` allows (and requires) an hour that already has a reference of this kind.
+    `scan`/`scan_error`, `size`/`modified` and `reference_exists` let `check_fill_candidates` pass
+    in what it found in bulk; on their own they are looked up here. `checked_at` is when the
+    candidate was first looked at: `fill_hours` pins the references to it, so a file that changes
+    after the gate saw it fails to read instead of being served unchecked."""
+    import datetime as dt
+    import obstore
+    checked_at = checked_at or dt.datetime.now(dt.timezone.utc)
+    r = dict(key=key, ok=False, reasons=[], replacement=replacement, checked_at=checked_at, kind=None,
+             time=None, index=None, experiment=None, cell_methods=None, size=size, modified=modified,
+             fingerprint=None, scan=None, store_snapshot=ref["snapshot"])
+    why = r["reasons"].append
+
+    m = KEY_RE.match(key)
+    if not m:
+        what = ("a layout B experiment (027/028)" if re.search(r"/02[78]_archv\.", key)
+                else "a _CORRUPTED, _COPY or stray name" if re.search(r"_archv\..*\.nc.", key)
+                else "not one")
+        why(f"name: not a layout A hourly file name ({what})")
+        return r
+    kind, exp, t = m["kind"], int(m["exp"]), time_of(m["year"], m["day"], m["hour"])
+    r.update(kind=kind, time=t, experiment=exp)
+
+    mt = (t - EPOCH) / pd.Timedelta(days=1)
+    hit = np.flatnonzero(np.abs(ref["MT"] - mt) < 1e-6)
+    if not len(hit):
+        lo, hi = (EPOCH + pd.Timedelta(days=float(ref["MT"][j])) for j in (0, -1))
+        why(f"time: {t} is not on the store's MT axis ({lo.round('h')} to {hi.round('h')})")
+    else:
+        i = r["index"] = int(hit[0])
+        gap = ref["flags"][kind][i] == NO_FILE_FLAG
+        if reference_exists is not None and reference_exists == gap:
+            why(f"store: cell_methods_{kind} says {'no file' if gap else 'a file'} at {t}, but the manifest "
+                f"{'has' if reference_exists else 'has no'} reference there")
+        if replacement and gap:
+            why(f"replacement: {t} has no {kind} reference to replace; fill it as a new hour")
+        if not replacement and not gap:
+            why(f"not a gap: {t} already has a {kind} reference; a replacement must say so (replacement=True)")
+        e = ref["experiment"]
+        if e[i] and e[i] != exp:
+            why(f"experiment: {exp:03d}, but this hour's other file is {int(e[i]):03d}")
+        elif not e[i]:
+            before, after = e[:i][e[:i] != 0], e[i + 1:][e[i + 1:] != 0]
+            near = {int(x) for x in (before[-1:].tolist() + after[:1].tolist())}
+            if exp not in near and not allow_experiment:
+                why(f"experiment: {exp:03d}, neighbouring hours are {sorted(near) or 'none'} "
+                    "(allow_experiment=True if this is a real experiment boundary)")
+
+    store = store or source_store()
+    if size is None or modified is None:
+        try:
+            h = obstore.head(store, "data/" + key)
+        except FileNotFoundError:
+            why("object: not found in the source bucket")
+            return r
+        size, modified = int(h["size"]), h["last_modified"]
+        r.update(size=size, modified=modified)
+    if modified > checked_at + dt.timedelta(seconds=1):
+        why(f"object: Last-Modified {modified} is after the gate began ({checked_at}); run the gate again")
+    if size < MIN_SIZE[kind]:
+        why(f"empty: {size:,} bytes; a good {kind} file has at least {MIN_SIZE[kind]:,} (zero time steps)")
+        return r
+    if scan_error is not None:
+        why(f"layout: {scan_error}")
+        return r
+    if scan is None:
+        for attempt in range(3):     # an S3 dropped connection is not a verdict on the file
+            try:
+                scan = scan_h5py(store, key, kind, size)
+                break
+            except ValueError as e:  # scan_h5py's layout and _FillValue checks
+                why(f"layout: {e}")
+                return r
+            except Exception as e:  # noqa: BLE001
+                if attempt == 2:
+                    why(f"unreadable (not a layout verdict; try again): {type(e).__name__}: {e}")
+                    return r
+    r["scan"] = scan
+
+    if scan.get("MT") is None:
+        why("time: the file has no MT value")
+    elif round(scan["MT"] * 24) != round(mt * 24):
+        why(f"time: the file's MT {scan['MT']} is {EPOCH + pd.Timedelta(days=scan['MT'])}, "
+            f"not the filename's {t}")
+    cm = r["cell_methods"] = scan["cell_methods"]
+    if cm not in CELL_METHODS_FLAGS:
+        why(f"cell_methods: {cm!r} is not a known value {sorted(map(repr, CELL_METHODS_FLAGS))}; review it first")
+    fp = r["fingerprint"] = gate_fingerprint(scan)
+    if fp not in GATE_FINGERPRINTS[kind]:
+        why(f"attributes: fingerprint {fp} is not a reviewed {kind} fingerprint {sorted(GATE_FINGERPRINTS[kind])}")
+    for fk, sk in GATE_GLOBAL_KEYS.items():
+        if scan["global_attrs"].get(fk) != ref["global_attrs"].get(sk):
+            why(f"global attributes: {fk} = {scan['global_attrs'].get(fk)!r}, the store's sources have "
+                f"{ref['global_attrs'].get(sk)!r}")
+    allowed = {"Latitude": {ref["coords"]["Latitude"]}, "Longitude": {ref["coords"]["Longitude"]}}
+    if kind == "3z":
+        allowed["Depth"] = {ref["coords"]["Depth"]}
+        allowed["Longitude"] |= LON_3Z_VARIANTS
+    for n, ok in allowed.items():
+        got = scan["coords_md5"].get(n)
+        if got not in ok:
+            why(f"coordinates: {n} checksum {got} is not the store's or a known variant {sorted(ok)}")
+    if check_land and not r["reasons"]:
+        problem = _land_check(store, key, kind, scan, ref)
+        if problem:
+            why(problem)
+    r["ok"] = not r["reasons"]
+    return r
+
+
+def check_fill_candidates(keys, session, *, replacement: bool = False, allow_experiment: bool = False,
+                          check_land: bool = True, workers: int = 16, store=None, group: str = GROUP) -> list[dict]:
+    """The gate for many files: HEAD every key, scan the plausible ones in processes (`scan_files`,
+    h5py's lock), then gate each against one snapshot of the store. Two candidates for one hour
+    and kind are both rejected: which one is right is a person's call."""
+    import datetime as dt
+    from concurrent.futures import ThreadPoolExecutor
+    import obstore
+    checked_at = dt.datetime.now(dt.timezone.utc)
+    ref = gate_reference(session, group)
+    store = store or source_store()
+    keys = list(dict.fromkeys(keys))
+
+    def head(k):
+        try:
+            h = obstore.head(store, "data/" + k)
+            return k, int(h["size"]), h["last_modified"]
+        except FileNotFoundError:
+            return k, None, None
+    with ThreadPoolExecutor(32) as ex:
+        heads = {k: (s, mod) for k, s, mod in ex.map(head, keys)}
+    rows = []
+    for k in keys:
+        m, (size, _) = KEY_RE.match(k), heads[k]
+        if m and size is not None and size >= MIN_SIZE[m["kind"]]:
+            rows.append(dict(key=k, kind=m["kind"], size=size))
+    scans, report = scan_files(pd.DataFrame(rows, columns=["key", "kind", "size"]), "h5py", workers) \
+        if rows else ({}, pd.DataFrame(columns=["key", "error"]))
+    # pandas turns the other rows' None into NaN once any file has an error
+    errors = {k: e for k, e in zip(report.key, report.error) if isinstance(e, str)} if len(report) else {}
+    ref_exists = {}
+    for k in keys:
+        m = KEY_RE.match(k)
+        if m:
+            mt = (time_of(m["year"], m["day"], m["hour"]) - EPOCH) / pd.Timedelta(days=1)
+            hit = np.flatnonzero(np.abs(ref["MT"] - mt) < 1e-6)
+            if len(hit):
+                ref_exists[k] = has_reference(session, m["kind"], int(hit[0]), group)
+
+    def gate(k):
+        size, mod = heads[k]
+        err = errors.get(k)
+        if err and not err.startswith("ValueError: "):
+            err = f"unreadable (not a layout verdict; try again): {err}"
+        elif err:
+            err = err.removeprefix("ValueError: ")
+        return check_fill_candidate(k, ref, store=store, replacement=replacement,
+                                    allow_experiment=allow_experiment, check_land=check_land,
+                                    scan=scans.get(k), scan_error=err, size=size, modified=mod,
+                                    checked_at=checked_at, reference_exists=ref_exists.get(k))
+    with ThreadPoolExecutor(16) as ex:            # the land checks are small ranged GETs
+        results = list(ex.map(gate, keys))
+    seen = pd.Series([(r["kind"], r["index"]) for r in results])
+    for r, dup in zip(results, seen.duplicated(keep=False)):
+        if dup and r["index"] is not None:
+            r["reasons"].append(f"duplicate: another candidate is for the same hour and kind ({r['time']})")
+            r["ok"] = False
+    return results
+
+
+def _runs(idx) -> list[tuple[int, int]]:
+    """Sorted hour indices -> [(start, stop)] of consecutive runs, for one region write each."""
+    idx = sorted(idx)
+    out, a = [], idx[0]
+    for p, q in zip(idx, idx[1:] + [None]):
+        if q != p + 1:
+            out.append((a, p + 1))
+            a = q
+    return out
+
+
+def fill_hours(repo, accepted: list[dict], *, reason: str, branch: str = "main", group: str = GROUP,
+               hours_per_commit: int = 744, pin=None, log=print) -> list[dict]:
+    """Write gate-accepted files into their hours, one commit per batch of `hours_per_commit` hours.
+
+    Per batch: references for just those hours (one region write per run of consecutive hours,
+    only the kinds being filled), the hours' `experiment` and `cell_methods_*` flags, and a commit
+    whose message lists the files and whose metadata records them with the reason. Hours outside
+    the batch are not touched: VirtualiZarr skips empty paths, so a region write cannot erase.
+
+    Open `repo` with `build_config_override()` for a bulk fill (#21); this calls gc.collect() per
+    batch. `pin` overrides the checksum pin, for tests only: by default the references are pinned
+    to when the gate first looked at the files (`checked_at`), so an object rewritten after its
+    check fails to read rather than being served unchecked (audit/07_checksum_pin.py)."""
+    import datetime as dt
+    import gc
+    import resource
+    import zarr
+    if reason not in FILL_REASONS:
+        raise ValueError(f"reason must be one of {FILL_REASONS}")
+    if bad := [a["key"] for a in accepted if not a["ok"]]:
+        raise ValueError(f"not accepted by the gate: {bad[:5]}")
+    if any(a["replacement"] != (reason == "replacement") for a in accepted):
+        raise ValueError("a replacement fill takes only replacement=True results, and other fills none")
+    slots = pd.Series([(a["kind"], a["index"]) for a in accepted])
+    if slots.duplicated().any():
+        raise ValueError(f"two files for one hour and kind: {slots[slots.duplicated()].tolist()[:5]}")
+    if len({a["store_snapshot"] for a in accepted}) > 1:
+        log("note: candidates were gated against different snapshots; each is re-checked below")
+
+    hours = sorted({a["index"] for a in accepted})
+    out = []
+    for b0 in range(0, len(hours), hours_per_commit):
+        hb = set(hours[b0:b0 + hours_per_commit])
+        rows = sorted((a for a in accepted if a["index"] in hb), key=lambda a: (a["index"], a["kind"]))
+        t0 = time.perf_counter()
+        s = repo.writable_session(branch)
+        ref = gate_reference(s, group)       # the branch may have moved since the gate ran
+        for a in rows:
+            i, kind = a["index"], a["kind"]
+            if abs(ref["MT"][i] - (a["time"] - EPOCH) / pd.Timedelta(days=1)) > 1e-6:
+                raise RuntimeError(f"{a['key']}: hour {i} of the store is no longer {a['time']}")
+            if (ref["flags"][kind][i] == NO_FILE_FLAG) == a["replacement"] \
+                    or has_reference(s, kind, i, group) != a["replacement"]:
+                raise RuntimeError(f"{a['key']}: the store changed since the gate (hour {a['time']} "
+                                   f"{'lost' if a['replacement'] else 'gained'} its {kind} reference); gate again")
+        if pin is None:
+            # Icechunk keeps whole seconds; round up so an object modified in the same second reads
+            when = min(a["checked_at"] for a in rows).replace(microsecond=0) + dt.timedelta(seconds=1)
+            if late := [a["key"] for a in rows if a["modified"] > when]:
+                raise RuntimeError(f"modified after the gate saw them: {late[:5]}")
+        else:
+            when = pin
+        times = (EPOCH + pd.to_timedelta(ref["MT"], unit="D")).round("h")
+        files = pd.DataFrame([dict(key=a["key"], time=a["time"], kind=a["kind"]) for a in rows])
+        scans = {a["key"]: a["scan"] for a in rows}
+        n = 0
+        for a_, b_ in _runs(hb):
+            part = files[files.time.isin(times[a_:b_])]
+            ds = virtual_variables(times[a_:b_], part, scans, ref["d"], None)
+            ds = ds[[v for k in VARS if k in set(part.kind) for v in VARS[k]]]
+            n += int(sum((ds[v].data.manifest._paths != "").sum() for v in ds))
+            ds.vz.to_icechunk(s.store, group=group, region={"MT": slice(a_, b_)}, last_updated_at=when)
+            del ds
+        g = zarr.open_group(s.store, path=group, mode="r+", zarr_format=3)
+        exp, flags = ref["experiment"].copy(), {k: v.copy() for k, v in ref["flags"].items()}
+        for a in rows:
+            exp[a["index"]] = a["experiment"]
+            flags[a["kind"]][a["index"]] = CELL_METHODS_FLAGS[a["cell_methods"]]
+        # One chunk each along the whole axis (see loaded_variables), so rewriting all of it is the
+        # same cost as writing the few hours, and leaves no partial-chunk question.
+        g["experiment"][:] = exp
+        for k in VARS:
+            g[f"cell_methods_{k}"][:] = flags[k]
+        keys = [a["key"] for a in rows]
+        first, last = rows[0]["time"], rows[-1]["time"]
+        head = f"gap fill ({reason}): {len(keys)} files, {len(hb)} hours, {first} to {last}"
+        body = "\n".join(keys) if len(keys) <= 200 else \
+            f"{len(keys)} files; the full list is in this commit's metadata (files)"
+        sid = s.commit(f"{head}\n\n{body}", metadata={
+            "fill_reason": reason, "files": keys, "pinned_at": when.isoformat(),
+            "gated_against": sorted({a["store_snapshot"] for a in rows}),
+            "cell_methods": {a["key"]: a["cell_methods"] for a in rows if a["cell_methods"]}})
+        del s, g, files, scans
+        gc.collect()                         # #21: `.vz` leaves each batch in a reference cycle
+        res = dict(snapshot=sid, reason=reason, hours=len(hb), files=len(keys), refs=n,
+                   first=str(first), last=str(last), pinned_at=when.isoformat(),
+                   seconds=round(time.perf_counter() - t0, 1),
+                   peak_rss_gb=round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2**20, 2))
+        log(f"{head}: {n:,} refs, {res['seconds']} s, snapshot {sid}")
+        out.append(res)
+    return out
+
+
+def store_gaps(session, group: str = GROUP) -> pd.DataFrame:
+    """The store's gaps as runs of hours per kind, from the flags: the source of the known-gaps
+    table in the README, regenerated after every fill."""
+    import zarr
+    g = zarr.open_group(session.store, path=group, mode="r", zarr_format=3)
+    times = (EPOCH + pd.to_timedelta(g["MT"][:], unit="D")).round("h")
+    rows = []
+    for kind in VARS:
+        gap = np.flatnonzero(g[f"cell_methods_{kind}"][:] == NO_FILE_FLAG)
+        if len(gap):
+            for a, b in _runs(gap.tolist()):
+                rows.append(dict(kind=kind, first=times[a], last=times[b - 1], hours=b - a))
+    return pd.DataFrame(rows, columns=["kind", "first", "last", "hours"])
+
+
+def gaps_markdown(gaps: pd.DataFrame) -> str:
+    lines = ["| Kind | First hour | Last hour | Hours |", "|---|---|---|---|"]
+    lines += [f"| {r.kind} | {r.first:%Y-%m-%d %H}Z | {r.last:%Y-%m-%d %H}Z | {r.hours} |"
+              for r in gaps.itertuples()]
+    return "\n".join(lines)

@@ -1,0 +1,1019 @@
+{
+ "C_gate": {
+  "ok": true,
+  "reasons": [],
+  "cell_methods": "MT: mean",
+  "fingerprint": "1cb0ede4c6",
+  "full_fingerprint": "615cdf11fc"
+ },
+ "C_after": {
+  "fill": [
+   {
+    "snapshot": "3DKMN2BRS2Z75XWFSTR0",
+    "reason": "new hour",
+    "hours": 1,
+    "files": 1,
+    "refs": 3200,
+    "first": "2005-03-20 04:00:00",
+    "last": "2005-03-20 04:00:00",
+    "pinned_at": "2026-11-19T17:53:34+00:00",
+    "seconds": 0.2,
+    "peak_rss_gb": 0.34
+   }
+  ],
+  "cell_methods_3z": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  "values": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "commit_metadata": {
+   "cell_methods": {
+    "2005/010_archv.2005_079_04_3z.nc": "MT: mean"
+   },
+   "fill_reason": "new hour",
+   "files": [
+    "2005/010_archv.2005_079_04_3z.nc"
+   ],
+   "gated_against": [
+    "DPP96GN1NYKFVTWG0WN0"
+   ],
+   "pinned_at": "2026-11-19T17:53:34+00:00"
+  },
+  "attrs_water_temp_unchanged": {
+   "cell_methods": null,
+   "ancillary_variables": "cell_methods_3z"
+  }
+ },
+ "C_total_s": 23.5,
+ "B_before": {
+  "12Z reads the 13Z file": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "16Z is a gap": true
+ },
+ "B_5a": {
+  "without replacement flag": [
+   "not a gap: 2002-02-15 12:00:00 already has a 3z reference; a replacement must say so (replacement=True)"
+  ],
+  "fill": [
+   {
+    "snapshot": "YMP27SZDTT67MYV852F0",
+    "reason": "replacement",
+    "hours": 1,
+    "files": 1,
+    "refs": 3200,
+    "first": "2002-02-15 12:00:00",
+    "last": "2002-02-15 12:00:00",
+    "pinned_at": "2026-11-19T17:54:15+00:00",
+    "seconds": 0.2,
+    "peak_rss_gb": 0.45
+   }
+  ],
+  "diff": {
+   "hours_by_array": {
+    "cell_methods_2d": [
+     0
+    ],
+    "cell_methods_3z": [
+     0
+    ],
+    "experiment": [
+     0
+    ],
+    "salinity": [
+     2
+    ],
+    "u": [
+     2
+    ],
+    "v": [
+     2
+    ],
+    "w_velocity": [
+     2
+    ],
+    "water_temp": [
+     2
+    ]
+   },
+   "chunks_by_array": {
+    "cell_methods_2d": 1,
+    "cell_methods_3z": 1,
+    "experiment": 1,
+    "salinity": 640,
+    "u": 640,
+    "v": 640,
+    "w_velocity": 640,
+    "water_temp": 640
+   },
+   "updated_arrays_metadata": [],
+   "updated_groups": [],
+   "new_arrays": []
+  },
+  "12Z now equals the 12Z file": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "12Z still equals the 13Z file at the box (should be False)": false,
+  "old snapshot 12Z still the 13Z file": true
+ },
+ "B_5b": {
+  "object_last_modified": "2026-11-14 20:16:37+00:00",
+  "stale pin": "2026-11-10T00:00:00+00:00",
+  "read with stale pin": "StorageError: the checksum of the object owning the virtual chunk has changed (https://hycom-tsis-gom-reanalysis.s3.us-west-2.amazonaws.com/data/2002/010_archv.2002_046_16_3z.nc)",
+  "fill_stale": [
+   {
+    "snapshot": "8R5DRPBKCJNGGVZK3ZP0",
+    "reason": "new hour",
+    "hours": 1,
+    "files": 1,
+    "refs": 3200,
+    "first": "2002-02-15 16:00:00",
+    "last": "2002-02-15 16:00:00",
+    "pinned_at": "2026-11-10T00:00:00+00:00",
+    "seconds": 0.2,
+    "peak_rss_gb": 0.45
+   }
+  ],
+  "refill": [
+   {
+    "snapshot": "XVC0EH6M2K8E5CCPQQM0",
+    "reason": "replacement",
+    "hours": 1,
+    "files": 1,
+    "refs": 3200,
+    "first": "2002-02-15 16:00:00",
+    "last": "2002-02-15 16:00:00",
+    "pinned_at": "2026-11-19T17:54:47+00:00",
+    "seconds": 0.2,
+    "peak_rss_gb": 0.45
+   }
+  ],
+  "16Z after refill equals h5py": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "diff refill": {
+   "hours_by_array": {
+    "cell_methods_2d": [
+     0
+    ],
+    "cell_methods_3z": [
+     0
+    ],
+    "experiment": [
+     0
+    ],
+    "salinity": [
+     6
+    ],
+    "u": [
+     6
+    ],
+    "v": [
+     6
+    ],
+    "w_velocity": [
+     6
+    ],
+    "water_temp": [
+     6
+    ]
+   },
+   "chunks_by_array": {
+    "cell_methods_2d": 1,
+    "cell_methods_3z": 1,
+    "experiment": 1,
+    "salinity": 640,
+    "u": 640,
+    "v": 640,
+    "w_velocity": 640,
+    "water_temp": 640
+   },
+   "updated_arrays_metadata": [],
+   "updated_groups": [],
+   "new_arrays": []
+  }
+ },
+ "B_flags": {
+  "cell_methods_3z": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "experiment": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10
+  ]
+ },
+ "B_total_s": 69.7,
+ "A_scan": {
+  "files": 326,
+  "s": 11.1
+ },
+ "A_build": {
+  "s": 6.4,
+  "snapshot": "38TYNSS48XP1JHRGRP40",
+  "left_out": [
+   "2022/023_archv.2022_002_06_3z.nc",
+   "2022/023_archv.2022_003_12_2d.nc",
+   "2022/023_archv.2022_004_18_2d.nc",
+   "2022/023_archv.2022_004_18_3z.nc",
+   "2022/023_archv.2022_005_00_3z.nc",
+   "2022/023_archv.2022_005_01_3z.nc",
+   "2022/023_archv.2022_005_02_3z.nc",
+   "2022/023_archv.2022_005_03_3z.nc",
+   "2022/023_archv.2022_005_04_3z.nc",
+   "2022/023_archv.2022_005_05_3z.nc"
+  ]
+ },
+ "A_gaps_before": {
+  "3z only": {
+   "2022-01-02 06:00:00 3z": true
+  },
+  "2d only": {
+   "2022-01-03 12:00:00 2d": true
+  },
+  "both": {
+   "2022-01-04 18:00:00 2d": true,
+   "2022-01-04 18:00:00 3z": true
+  },
+  "run of 6 (3z)": {
+   "2022-01-05 00:00:00 3z": true,
+   "2022-01-05 01:00:00 3z": true,
+   "2022-01-05 02:00:00 3z": true,
+   "2022-01-05 03:00:00 3z": true,
+   "2022-01-05 04:00:00 3z": true,
+   "2022-01-05 05:00:00 3z": true
+  }
+ },
+ "A_store_gaps_before": "| Kind | First hour | Last hour | Hours |\n|---|---|---|---|\n| 2d | 2022-01-03 12Z | 2022-01-03 12Z | 1 |\n| 2d | 2022-01-04 18Z | 2022-01-04 18Z | 1 |\n| 2d | 2022-01-08 00Z | 2022-02-28 23Z | 1248 |\n| 3z | 2022-01-02 06Z | 2022-01-02 06Z | 1 |\n| 3z | 2022-01-04 18Z | 2022-01-04 18Z | 1 |\n| 3z | 2022-01-05 00Z | 2022-01-05 05Z | 6 |\n| 3z | 2022-01-08 00Z | 2022-02-28 23Z | 1248 |",
+ "gate_reject_real_s": 1.1,
+ "gate_reject_real": {
+  "layout B chunking (2004_153_19_2d)": {
+   "ok": false,
+   "reasons": [
+    "time: 2004-06-01 19:00:00 is not on the store's MT axis (2022-01-01 00:00:00 to 2022-02-28 23:00:00)",
+    "layout: 2004/010_archv.2004_153_19_2d.nc:ssh is not layout A: (1, 1537, 2101) (1, 769, 1051) <f4 None"
+   ]
+  },
+  "empty 3z (2006_177_18_3z)": {
+   "ok": false,
+   "reasons": [
+    "time: 2006-06-26 18:00:00 is not on the store's MT axis (2022-01-01 00:00:00 to 2022-02-28 23:00:00)",
+    "empty: 49,818 bytes; a good 3z file has at least 2,590,000,000 (zero time steps)"
+   ]
+  },
+  "hour not on the axis": {
+   "ok": false,
+   "reasons": [
+    "time: 2022-04-10 00:00:00 is not on the store's MT axis (2022-01-01 00:00:00 to 2022-02-28 23:00:00)"
+   ]
+  },
+  "hour not a gap, no replacement flag": {
+   "ok": false,
+   "reasons": [
+    "not a gap: 2022-01-01 00:00:00 already has a 3z reference; a replacement must say so (replacement=True)"
+   ]
+  },
+  "layout B experiment 027": {
+   "ok": false,
+   "reasons": [
+    "name: not a layout A hourly file name (a layout B experiment (027/028))"
+   ]
+  },
+  "_COPY name": {
+   "ok": false,
+   "reasons": [
+    "name: not a layout A hourly file name (a _CORRUPTED, _COPY or stray name)"
+   ]
+  },
+  "_CORRUPTED name (HYCOM's, not on S3)": {
+   "ok": false,
+   "reasons": [
+    "name: not a layout A hourly file name (a _CORRUPTED, _COPY or stray name)"
+   ]
+  }
+ },
+ "gate_reject_flags": {
+  "not a gap (single-file path)": [
+   "not a gap: 2022-01-01 00:00:00 already has a 3z reference; a replacement must say so (replacement=True)"
+  ],
+  "replacement flag on a gap": [
+   "replacement: 2022-01-02 06:00:00 has no 3z reference to replace; fill it as a new hour"
+  ]
+ },
+ "gate_accept_2022_3z": {
+  "ok": true,
+  "reasons": [],
+  "lon_md5_file": "8edb2d05",
+  "lon_md5_store": "e3b00e34",
+  "fingerprint": "1cb0ede4c6"
+ },
+ "gate_reject_simulated": {
+  "unknown cell_methods": [
+   "cell_methods: 'MT: sum' is not a known value [\"'MT: mean'\", 'None']; review it first"
+  ],
+  "unknown Longitude": [
+   "coordinates: Longitude checksum deadbeef is not the store's or a known variant ['8edb2d05', 'e3b00e34']"
+  ],
+  "unknown Latitude": [
+   "coordinates: Latitude checksum deadbeef is not the store's or a known variant ['ee434938']"
+  ],
+  "unknown Depth": [
+   "coordinates: Depth checksum deadbeef is not the store's or a known variant ['00def95c']"
+  ],
+  "changed variable attribute (units)": [
+   "attributes: fingerprint ed5817cc86 is not a reviewed 3z fingerprint ['1cb0ede4c6']"
+  ],
+  "changed global title": [
+   "attributes: fingerprint 9207971629 is not a reviewed 3z fingerprint ['1cb0ede4c6']",
+   "global attributes: title = 'HYCOM v2', the store's sources have 'HYCOM'"
+  ],
+  "MT one hour off": [
+   "time: the file's MT 44197.291666666664 is 2022-01-02 07:00:00, not the filename's 2022-01-02 06:00:00"
+  ],
+  "experiment differs from neighbours": [
+   "experiment: 023, but this hour's other file is 026"
+  ],
+  "land check against an inverted mask": [
+   "fill value: water_temp probe (8 rows): 2103 land points are not 2**100, 2105 sea points are fill or not finite"
+  ]
+ },
+ "A_fills": [
+  {
+   "gap": "3z only",
+   "gate_s": 0.5,
+   "fill": [
+    {
+     "snapshot": "WSN95Y808CBRTDKZKAH0",
+     "reason": "new hour",
+     "hours": 1,
+     "files": 1,
+     "refs": 3200,
+     "first": "2022-01-02 06:00:00",
+     "last": "2022-01-02 06:00:00",
+     "pinned_at": "2026-11-19T17:55:29+00:00",
+     "seconds": 1.3,
+     "peak_rss_gb": 2.22
+    }
+   ],
+   "lon_md5": [
+    "8edb2d05"
+   ],
+   "diff": {
+    "hours_by_array": {
+     "cell_methods_2d": [
+      0
+     ],
+     "cell_methods_3z": [
+      0
+     ],
+     "experiment": [
+      0
+     ],
+     "salinity": [
+      30
+     ],
+     "u": [
+      30
+     ],
+     "v": [
+      30
+     ],
+     "w_velocity": [
+      30
+     ],
+     "water_temp": [
+      30
+     ]
+    },
+    "chunks_by_array": {
+     "cell_methods_2d": 1,
+     "cell_methods_3z": 1,
+     "experiment": 1,
+     "salinity": 640,
+     "u": 640,
+     "v": 640,
+     "w_velocity": 640,
+     "water_temp": 640
+    },
+    "updated_arrays_metadata": [],
+    "updated_groups": [],
+    "new_arrays": []
+   }
+  },
+  {
+   "gap": "2d only",
+   "gate_s": 0.5,
+   "fill": [
+    {
+     "snapshot": "75GKPH14RCM1M0KRZPR0",
+     "reason": "new hour",
+     "hours": 1,
+     "files": 1,
+     "refs": 6,
+     "first": "2022-01-03 12:00:00",
+     "last": "2022-01-03 12:00:00",
+     "pinned_at": "2026-11-19T17:55:31+00:00",
+     "seconds": 0.2,
+     "peak_rss_gb": 2.22
+    }
+   ],
+   "lon_md5": [
+    "e3b00e34"
+   ],
+   "diff": {
+    "hours_by_array": {
+     "cell_methods_2d": [
+      0
+     ],
+     "cell_methods_3z": [
+      0
+     ],
+     "experiment": [
+      0
+     ],
+     "mixed_layer_thickness": [
+      60
+     ],
+     "ssh": [
+      60
+     ],
+     "u_barotropic_velocity": [
+      60
+     ],
+     "v_barotropic_velocity": [
+      60
+     ],
+     "wnd_ewd": [
+      60
+     ],
+     "wnd_nwd": [
+      60
+     ]
+    },
+    "chunks_by_array": {
+     "cell_methods_2d": 1,
+     "cell_methods_3z": 1,
+     "experiment": 1,
+     "mixed_layer_thickness": 1,
+     "ssh": 1,
+     "u_barotropic_velocity": 1,
+     "v_barotropic_velocity": 1,
+     "wnd_ewd": 1,
+     "wnd_nwd": 1
+    },
+    "updated_arrays_metadata": [],
+    "updated_groups": [],
+    "new_arrays": []
+   }
+  },
+  {
+   "gap": "both",
+   "gate_s": 1.2,
+   "fill": [
+    {
+     "snapshot": "6AWA2QT9QGRS61THYQFG",
+     "reason": "new hour",
+     "hours": 1,
+     "files": 2,
+     "refs": 3206,
+     "first": "2022-01-04 18:00:00",
+     "last": "2022-01-04 18:00:00",
+     "pinned_at": "2026-11-19T17:55:32+00:00",
+     "seconds": 1.2,
+     "peak_rss_gb": 2.22
+    }
+   ],
+   "lon_md5": [
+    "8edb2d05",
+    "e3b00e34"
+   ],
+   "diff": {
+    "hours_by_array": {
+     "cell_methods_2d": [
+      0
+     ],
+     "cell_methods_3z": [
+      0
+     ],
+     "experiment": [
+      0
+     ],
+     "mixed_layer_thickness": [
+      90
+     ],
+     "salinity": [
+      90
+     ],
+     "ssh": [
+      90
+     ],
+     "u": [
+      90
+     ],
+     "u_barotropic_velocity": [
+      90
+     ],
+     "v": [
+      90
+     ],
+     "v_barotropic_velocity": [
+      90
+     ],
+     "w_velocity": [
+      90
+     ],
+     "water_temp": [
+      90
+     ],
+     "wnd_ewd": [
+      90
+     ],
+     "wnd_nwd": [
+      90
+     ]
+    },
+    "chunks_by_array": {
+     "cell_methods_2d": 1,
+     "cell_methods_3z": 1,
+     "experiment": 1,
+     "mixed_layer_thickness": 1,
+     "salinity": 640,
+     "ssh": 1,
+     "u": 640,
+     "u_barotropic_velocity": 1,
+     "v": 640,
+     "v_barotropic_velocity": 1,
+     "w_velocity": 640,
+     "water_temp": 640,
+     "wnd_ewd": 1,
+     "wnd_nwd": 1
+    },
+    "updated_arrays_metadata": [],
+    "updated_groups": [],
+    "new_arrays": []
+   }
+  },
+  {
+   "gap": "run of 6 (3z)",
+   "gate_s": 1.6,
+   "fill": [
+    {
+     "snapshot": "618BZ91YMBD0ZCV55C7G",
+     "reason": "new hour",
+     "hours": 6,
+     "files": 6,
+     "refs": 19200,
+     "first": "2022-01-05 00:00:00",
+     "last": "2022-01-05 05:00:00",
+     "pinned_at": "2026-11-19T17:55:34+00:00",
+     "seconds": 1.5,
+     "peak_rss_gb": 2.22
+    }
+   ],
+   "lon_md5": [
+    "8edb2d05"
+   ],
+   "diff": {
+    "hours_by_array": {
+     "cell_methods_2d": [
+      0
+     ],
+     "cell_methods_3z": [
+      0
+     ],
+     "experiment": [
+      0
+     ],
+     "salinity": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101
+     ],
+     "u": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101
+     ],
+     "v": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101
+     ],
+     "w_velocity": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101
+     ],
+     "water_temp": [
+      96,
+      97,
+      98,
+      99,
+      100,
+      101
+     ]
+    },
+    "chunks_by_array": {
+     "cell_methods_2d": 1,
+     "cell_methods_3z": 1,
+     "experiment": 1,
+     "salinity": 3840,
+     "u": 3840,
+     "v": 3840,
+     "w_velocity": 3840,
+     "water_temp": 3840
+    },
+    "updated_arrays_metadata": [],
+    "updated_groups": [],
+    "new_arrays": []
+   }
+  }
+ ],
+ "A_values_after": {
+  "2022-01-02 06:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-03 12:00:00 2d": {
+   "ssh map": true,
+   "mixed_layer_thickness map": true,
+   "u_barotropic_velocity map": true,
+   "v_barotropic_velocity map": true,
+   "wnd_ewd map": true,
+   "wnd_nwd map": true
+  },
+  "2022-01-04 18:00:00 2d": {
+   "ssh map": true,
+   "mixed_layer_thickness map": true,
+   "u_barotropic_velocity map": true,
+   "v_barotropic_velocity map": true,
+   "wnd_ewd map": true,
+   "wnd_nwd map": true
+  },
+  "2022-01-04 18:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 00:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 01:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 02:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 03:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 04:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  },
+  "2022-01-05 05:00:00 3z": {
+   "water_temp map depth 0": true,
+   "salinity profile": true,
+   "u box depth 0": true,
+   "u box depth 17": true,
+   "u box depth 39": true,
+   "v box depth 0": true,
+   "v box depth 17": true,
+   "v box depth 39": true,
+   "w_velocity box depth 0": true,
+   "w_velocity box depth 17": true,
+   "w_velocity box depth 39": true,
+   "water_temp box depth 0": true,
+   "water_temp box depth 17": true,
+   "water_temp box depth 39": true,
+   "salinity box depth 0": true,
+   "salinity box depth 17": true,
+   "salinity box depth 39": true
+  }
+ },
+ "A_values_all_identical": true,
+ "A_other_hours_unchanged": {
+  "ssh": {
+   "changed_hours": [
+    60,
+    90
+   ],
+   "expected": [
+    60,
+    90
+   ],
+   "ok": true
+  },
+  "water_temp": {
+   "changed_hours": [
+    30,
+    90,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101
+   ],
+   "expected": [
+    30,
+    90,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101
+   ],
+   "ok": true
+  }
+ },
+ "A_flags_after": {
+  "experiment_first_week": {
+   "23": 168
+  },
+  "cm2d_first_week": {
+   "0": 168
+  },
+  "cm3z_first_week": {
+   "0": 168
+  }
+ },
+ "A_old_snapshot_still_gaps": {
+  "2022-01-02 06:00:00 3z": true,
+  "2022-01-03 12:00:00 2d": true,
+  "2022-01-04 18:00:00 2d": true,
+  "2022-01-04 18:00:00 3z": true,
+  "2022-01-05 00:00:00 3z": true,
+  "2022-01-05 01:00:00 3z": true,
+  "2022-01-05 02:00:00 3z": true,
+  "2022-01-05 03:00:00 3z": true,
+  "2022-01-05 04:00:00 3z": true,
+  "2022-01-05 05:00:00 3z": true
+ },
+ "A_old_snapshot_flags": {
+  "cm3z at 2022-01-05 00-05Z": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2
+  ],
+  "experiment at 2022-01-04 18Z": 0
+ },
+ "A_store_gaps_after": "| Kind | First hour | Last hour | Hours |\n|---|---|---|---|\n| 2d | 2022-01-08 00Z | 2022-02-28 23Z | 1248 |\n| 3z | 2022-01-08 00Z | 2022-02-28 23Z | 1248 |",
+ "A_commits": [
+  [
+   "618BZ91YMBD0ZCV55C7G",
+   "gap fill (new hour): 6 files, 6 hours, 2022-01-05 00:00:00 to 2022-01-05 05:00:00"
+  ],
+  [
+   "6AWA2QT9QGRS61THYQFG",
+   "gap fill (new hour): 2 files, 1 hours, 2022-01-04 18:00:00 to 2022-01-04 18:00:00"
+  ],
+  [
+   "75GKPH14RCM1M0KRZPR0",
+   "gap fill (new hour): 1 files, 1 hours, 2022-01-03 12:00:00 to 2022-01-03 12:00:00"
+  ],
+  [
+   "WSN95Y808CBRTDKZKAH0",
+   "gap fill (new hour): 1 files, 1 hours, 2022-01-02 06:00:00 to 2022-01-02 06:00:00"
+  ],
+  [
+   "38TYNSS48XP1JHRGRP40",
+   "references for 2022-01-01 00:00:00 to 2022-01-07 23:00:00 (with deliberate gaps)"
+  ],
+  [
+   "8C2P9BFS6BHEJRYE4VX0",
+   "skeleton"
+  ],
+  [
+   "1CECHNKREP0F1RSTCMT0",
+   "Repository initialized"
+  ]
+ ],
+ "A_last_commit_metadata": {
+  "pinned_at": "2026-11-19T17:55:34+00:00",
+  "fill_reason": "new hour",
+  "gated_against": [
+   "6AWA2QT9QGRS61THYQFG"
+  ],
+  "cell_methods": {},
+  "files": [
+   "2022/023_archv.2022_005_00_3z.nc",
+   "2022/023_archv.2022_005_01_3z.nc",
+   "2022/023_archv.2022_005_02_3z.nc",
+   "2022/023_archv.2022_005_03_3z.nc",
+   "2022/023_archv.2022_005_04_3z.nc",
+   "2022/023_archv.2022_005_05_3z.nc"
+  ]
+ },
+ "A_total_s": 186.2,
+ "peak_rss_gb": 2.33,
+ "read_retries": []
+}
