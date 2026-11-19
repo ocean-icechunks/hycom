@@ -1,0 +1,31 @@
+05:21:39 read water_temp map, 1 depth, 1 hour (cold): 0.6s
+05:21:40 read water_temp map, 1 depth, 1 hour (warm): 0.27s
+05:21:40 read water_temp map, 1 depth, other month (cold): 0.63s
+05:21:41 read salinity profile, 40 depths, 1 hour: 0.62s
+05:21:41 read ssh map, 1 hour (cold): 0.32s
+05:21:57 read water_temp point, 1 depth, year: 15.88s
+05:22:14 read water_temp 200x200 box in 1 tile, year: 17.53s
+05:23:07 read water_temp 200x200 box over 4 tiles, year: 52.94s
+{
+ "d": 1,
+ "url": "https://data.source.coop/ocean-icechunks/test-repo/hycom/hycom-tsis-gom-reanalysis",
+ "repo_open_s": 0.48,
+ "containers": [
+  "https://hycom-tsis-gom-reanalysis.s3.us-west-2.amazonaws.com/data/"
+ ],
+ "open_zarr_s": 0.89,
+ "commits": 14,
+ "reads_s": {
+  "water_temp map, 1 depth, 1 hour (cold)": 0.6,
+  "water_temp map, 1 depth, 1 hour (warm)": 0.27,
+  "water_temp map, 1 depth, other month (cold)": 0.63,
+  "salinity profile, 40 depths, 1 hour": 0.62,
+  "ssh map, 1 hour (cold)": 0.32,
+  "water_temp point, 1 depth, year": 15.88,
+  "water_temp 200x200 box in 1 tile, year": 17.53,
+  "water_temp 200x200 box over 4 tiles, year": 52.94
+ },
+ "retries": [],
+ "value_check": true,
+ "rss_peak_gb": 5.13
+}

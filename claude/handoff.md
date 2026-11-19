@@ -28,22 +28,54 @@ works on Colab (2026-09-29). The cold years are 1999 and 2007–2012; the warm o
   notebook runs in 67 s from the hub.
 - **Both demo notebooks work on Colab**, as Eli confirmed on 2026-09-29.
 
-## GOMb0.01 is on S3: file review (2026-11-18)
+## GOMb0.01 layout A store (#17): phase 1 (smoke tests) done; phase 2 is HYCOM's answers (2026-11-19)
 
-GOM work is now a 2026 IOOS hackathon project,
+GOM work is a 2026 IOOS hackathon project,
 [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
-**Post every prompt Eli writes in this work to that issue, verbatim.** The bucket
-`hycom-tsis-gom-reanalysis` exists (public, us-west-2; the copy is still running). The review
-is on branch `gom-s3-file-review`: `hycom-tsis-gom-reanalysis/s3-review/report.md`, with
-scripts. Headlines: 027 and a new experiment 028 (2024-09 to 2026-07) share a
-second chunk layout (#15); 028 lacks winds (#16); 2021–2023 are complete and could be #11's test year; 9 truncated
-028 files. Four decisions (D1–D4) are open for Eli; D1 and D2 are up for team comment in #15 and #16. Notes:
-[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
+**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–29 are
+there; find the last N from the comments). Side questions stay out. "Notes:" comments summarise results for the
+team (the last one, 2026-11-19, summarises phase 1).
 
-**Next (Eli, 2026-11-18): build layout A (2001 → 2024-04), issue #17**, starting with a 2022 smoke test
-and a test store in `test-repo/hycom/` for the team. #17 lists the subtasks in the skill's order. Her answers (time axis, group renaming, VMs,
-waiting on HYCOM) are in the last section of that note. Eli planned to clear the session before
-this work started.
+**Phase 1 is done, and its PR is open from `gom-layout-a-plan`** (Eli tests and merges; do not merge). Read first:
+[notes/plan-issue-17.md](notes/plan-issue-17.md). It has every decision, repairs R1–R22, the "For the HYCOM team"
+list (items 1–8, which Eli sends), the team FYI, the known-gaps table, and the measured results of each step.
+- Steps 1–4 of #17 are done (boxes ticked). Code: `hycom-tsis-gom-reanalysis/gom_virtual.py`. Smoke test:
+  `gom-smoke-test-local.ipynb` (clean venv from that directory's `requirements.txt`). Test scripts and results:
+  `notes/issue-17-research/`.
+- **The 2022 scratch store is up for the team:** `test-repo/hycom/hycom-tsis-gom-reanalysis`, group `hourly`, at d = 1
+  (one depth of a 385 × 526 tile per 3z chunk; **Eli chose d = 1 for the test store**, not yet for production). It is
+  in the test viewer through `publish_viewer.py` `TEST_ONLY`, and **Eli confirmed it renders**. Its README is
+  `test-repo/hycom/README.md`, whose source is now `test-repo-README.md` at the repo root. It opens anonymously in
+  about 1 s.
+- **#21 (build memory) is fixed and confirmed:** `gc.collect()` per batch, plus `gv.build_config_override()` (no
+  chunk-reference cache) **at open, never in `create`**. That gives 2.7 GB flat over a year, against 6.0 GB. Detail:
+  [notes/issue-21-research/findings.md](notes/issue-21-research/findings.md).
+- Skill lessons: ocean-icechunks/ocean-icechunks-skills#20.
+
+**Next (Eli, 2026-11-19):** **phase 2** folds the HYCOM team's answers into the plan. Eli is asking them items 1–8.
+At the same time, **#22 (gap filling after the build, with a gate that checks each fill file)** runs in a separate
+session: locally first, then under `test-repo/hycom/gapfill-test/`, **never** in the team's 2022 store.
+
+**Facts most likely to be got wrong:**
+- **The source `_FillValue` (1.267651e30) is not the land value (2**100).** The store declares 2**100 (R21). Never write
+  the fill value as a decimal.
+- **Names follow the GOM files** (`MT`, `Depth`, `Latitude`, `Longitude`, `Date`). `MT` is float64
+  `days since 1900-12-31 00:00:00`, written as plain numbers, because xarray's datetime encoding shortens the units.
+- **Scan in processes, not threads** (h5py's global lock). About 28 files/s at 16 processes on this hub.
+- **`Latitude`/`Longitude` come from a 2d file.** The 3z longitude drifts from 2021 on (HYCOM item 8).
+- **`2004/010_archv.2004_153_19_2d.nc` is chunked like layout B**, so it is skipped (a 2d gap).
+- **A float `_FillValue` on a ManifestArray must be in xarray's base64 form**, or the store won't open (xarray 2026.9).
+- **The skeleton does not scale to the full record** (0.84 GB per year at d = 1). Production must create the empty
+  arrays without manifests. Also check the final manifest size after snapshot expiry.
+- **Reprocessing 027 was never decided.** Layout B is #15, and the 028 winds are #16.
+
+**Hub notes:** a `nohup … &` process started in one shell call is invisible to `ps` in later calls, and is killed when
+its call ends if the call waits. Use the tool's background mode, and don't wait with `pgrep -f <name>`, which matches
+the waiting loop itself. The test venv used for every clean-venv run is in the session scratchpad. Rebuild it
+from `hycom-tsis-gom-reanalysis/requirements.txt` with `/srv/conda/envs/notebook/bin/python3.13 -m venv`.
+
+S3 file review, merged 2026-11-18 (PR #18): `hycom-tsis-gom-reanalysis/s3-review/report.md`, notes in
+[notes/gom-s3-review-2026-11.md](notes/gom-s3-review-2026-11.md).
 
 ## Second dataset: GOMb0.01 reanalysis (2026-09-26)
 
@@ -142,9 +174,11 @@ The three facts most likely to be got wrong:
 
 - Follow the `virtual-icechunk` skill's order: plan → smoke test → production → docs. The
   plan is reviewed; the smoke test is next.
-- The kernel env is Python 3.11 and cannot install icechunk 2.x. Build a 3.12 venv in the
-  scratchpad with `/srv/conda/bin/python3.12 -m venv` and `pip install --no-cache-dir`
-  (`~` has a small quota; pip's cache fills it).
+- **Hub images differ; check which Python you have.** In September the kernel was Python 3.11,
+  and the venv was built with `/srv/conda/bin/python3.12 -m venv`. On 2026-11-18 the kernel env
+  was Python 3.13 with icechunk 2.3.1 already installed, and no `python3.12` existed, so the venv
+  was built with `/srv/conda/envs/notebook/bin/python3.13 -m venv`. Either way, build the venv in
+  the scratchpad and use `pip install --no-cache-dir` (`~` has a small quota; pip's cache fills it).
 - Conventions for README, `requirements.txt`, notebooks-as-build-log, mirroring and the
   gridlook viewer follow `~/icechunks` (its `CLAUDE.md` and `claude/notes/`).
 - **Source Cooperative login** goes through the hub proxy. Run

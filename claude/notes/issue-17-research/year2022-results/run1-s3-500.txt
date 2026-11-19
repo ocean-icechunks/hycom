@@ -1,0 +1,155 @@
+04:42:09 scanned 17520 files in 626.3s (28.0/s), errors 0
+  [2m2026-11-19T04:42:12.050448Z[0m [33m WARN[0m [1;33micechunk_arrow_object_store[0m[33m: [33mThe LocalFileSystem storage is not safe for concurrent commits. If more than one thread/process will attempt to commit at the same time, prefer using object stores.[0m
+    [2;3mat[0m icechunk-arrow-object-store/src/lib.rs:343
+
+  [2m2026-11-19T04:42:12.051641Z[0m [33m WARN[0m [1;33micechunk_storage::readback[0m[33m: [33mconditional PUT is enabled but `unsafe_use_metadata` is disabled — lost-response recovery for conditional writes requires user metadata to stamp write-ids; without it, transient PUT failures may surface as spurious conflicts even when the write actually landed. See icechunk_storage::Settings::unsafe_use_metadata.[0m
+    [2;3mat[0m icechunk-storage/src/readback.rs:31
+
+04:42:33 d=1 2022-01 2,385,264 refs 12.9s rss 2.79 GB
+04:42:44 d=1 2022-02 2,154,432 refs 10.9s rss 3.38 GB
+04:43:01 d=1 2022-03 2,385,264 refs 16.8s rss 4.45 GB
+04:43:16 d=1 2022-04 2,308,320 refs 15.3s rss 4.68 GB
+04:43:33 d=1 2022-05 2,385,264 refs 16.8s rss 5.0 GB
+04:43:50 d=1 2022-06 2,308,320 refs 17.1s rss 5.32 GB
+04:44:08 d=1 2022-07 2,385,264 refs 17.7s rss 5.5 GB
+04:44:25 d=1 2022-08 2,385,264 refs 17.1s rss 5.5 GB
+04:44:42 d=1 2022-09 2,308,320 refs 17.6s rss 5.67 GB
+04:44:59 d=1 2022-10 2,385,264 refs 17.0s rss 5.83 GB
+04:45:16 d=1 2022-11 2,308,320 refs 16.8s rss 5.83 GB
+04:45:34 d=1 2022-12 2,385,264 refs 17.8s rss 6.04 GB
+  [2m2026-11-19T04:45:34.533886Z[0m [33m WARN[0m [1;33micechunk_arrow_object_store[0m[33m: [33mThe LocalFileSystem storage is not safe for concurrent commits. If more than one thread/process will attempt to commit at the same time, prefer using object stores.[0m
+    [2;3mat[0m icechunk-arrow-object-store/src/lib.rs:343
+
+04:45:35 d=1 read water_temp map, 1 depth, 1 hour: 0.4s
+04:45:35 d=1 read salinity profile, 40 depths, 1 hour: 0.3s
+04:45:54 d=1 read water_temp point, 1 depth, year: 18.7s
+04:46:14 d=1 read water_temp 200x200 box in 1 tile, year: 19.5s
+Traceback (most recent call last):
+  File "/home/jovyan/hycom/claude/notes/issue-17-research/year_test.py", line 152, in <module>
+    main()
+    ~~~~^^
+  File "/home/jovyan/hycom/claude/notes/issue-17-research/year_test.py", line 145, in main
+    R.update(reads(out / f"d{d}", d, store, check_key, check_time))
+             ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jovyan/hycom/claude/notes/issue-17-research/year_test.py", line 96, in reads
+    t = T(); v = f(); R["reads_s"][name] = round(T() - t, 1); R["reads_nan"][name] = int(np.isnan(v).sum())
+                 ~^^
+  File "/home/jovyan/hycom/claude/notes/issue-17-research/year_test.py", line 90, in <lambda>
+    "water_temp 200x200 box over 4 tiles, year": lambda: ds.water_temp.isel(Depth=0, Latitude=across[0], Longitude=across[1]).values,
+                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/dataarray.py", line 923, in values
+    return self.variable.values
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/variable.py", line 566, in values
+    return _as_array_or_item(self._data)
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/variable.py", line 346, in _as_array_or_item
+    data = np.asarray(data)
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/indexing.py", line 609, in __array__
+    return np.asarray(self.get_duck_array(), dtype=dtype, copy=copy)
+                      ~~~~~~~~~~~~~~~~~~~^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/indexing.py", line 976, in get_duck_array
+    duck_array = self.array.get_duck_array()
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/indexing.py", line 930, in get_duck_array
+    return self.array.get_duck_array()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/coding/common.py", line 80, in get_duck_array
+    return self.func(self.array.get_duck_array())
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/indexing.py", line 770, in get_duck_array
+    array = self.array[self.key]
+            ~~~~~~~~~~^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/backends/zarr.py", line 296, in __getitem__
+    value = indexing.explicit_indexing_adapter(
+        key, array.shape, indexing.IndexingSupport.VECTORIZED, method
+    )
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/core/indexing.py", line 1162, in explicit_indexing_adapter
+    result = raw_indexing_method(raw_key.tuple)
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/xarray/backends/zarr.py", line 264, in _getitem
+    return self._array[key]
+           ~~~~~~~~~~~^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/array.py", line 2763, in __getitem__
+    return self.get_orthogonal_selection(pure_selection, fields=fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/array.py", line 3240, in get_orthogonal_selection
+    return sync(
+        self.async_array._get_selection(
+            indexer=indexer, out=out, fields=fields, prototype=prototype
+        )
+    )
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/sync.py", line 155, in sync
+    raise return_result
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/sync.py", line 116, in _runner
+    return await coro
+           ^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/array.py", line 1489, in _get_selection
+    return await _get_selection(
+           ^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/array.py", line 5738, in _get_selection
+    results = await codec_pipeline.read(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<14 lines>...
+    )
+    ^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/codec_pipeline.py", line 852, in read
+    batch_results = await concurrent_map(
+                    ^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/common.py", line 145, in concurrent_map
+    return await asyncio.gather(*concurrent_iter(items, func, limit))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/common.py", line 135, in run
+    return await func(*item)
+           ^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/codec_pipeline.py", line 800, in read_batch
+    return await _async_read_fallback(self, list(batch_info), out, drop_axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/codec_pipeline.py", line 365, in _async_read_fallback
+    chunk_bytes_batch = await concurrent_map(
+                        ^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/common.py", line 145, in concurrent_map
+    return await asyncio.gather(*concurrent_iter(items, func, limit))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/core/common.py", line 135, in run
+    return await func(*item)
+           ^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/zarr/storage/_common.py", line 161, in get
+    return await self.store.get(self.path, prototype=prototype, byte_range=byte_range)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/venv/lib/python3.13/site-packages/icechunk/store.py", line 173, in get
+    result = await self._store.get(key, _byte_request_to_tuple(byte_range))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+icechunk.StorageError: error fetching virtual reference: Generic HTTP error: Error performing GET https://hycom-tsis-gom-reanalysis.s3.us-west-2.amazonaws.com/data/2022/023_archv.2022_240_15_3z.nc in 179.947385ms - Server returned non-2xx status code: 500 Internal Server Error: <?xml version="1.0" encoding="UTF-8"?>
+<Error><Code>InternalError</Code><Message>We encountered an internal error. Please try again.</Message><RequestId>DCSX8W9A6X8QXTZK</RequestId><HostId>K5Xsvb/h3uwfkxv4ycdQNkredQoie3ZgJKDKYBWWamXlGw4wKGQzcQM4ZsNIrkJL9fbpagUM9jc=</HostId></Error>
+
+context:
+   0: icechunk::store::get
+           with key="hourly/water_temp/c/5751/0/1/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+  x error fetching virtual reference
+  | 
+  | context:
+  |    0: icechunk::store::get
+  |            with key="hourly/water_temp/c/5751/0/1/0" byte_range=From(0)
+  |              at icechunk/src/store.rs:183
+  | 
+  |-> error fetching virtual reference
+  |-> Generic HTTP error: Error performing GET https://hycom-tsis-gom-reanalysis.s3.us-west-2.amazonaws.com/data/2022/023_archv.2022_240_15_3z.nc in 179.947385ms - Server returned non-2xx status
+  |   code: 500 Internal Server Error: <?xml version="1.0" encoding="UTF-8"?>
+  |   <Error><Code>InternalError</Code><Message>We encountered an internal error. Please try again.</Message><RequestId>DCSX8W9A6X8QXTZK</RequestId><HostId>K5Xsvb/
+  |   h3uwfkxv4ycdQNkredQoie3ZgJKDKYBWWamXlGw4wKGQzcQM4ZsNIrkJL9fbpagUM9jc=</HostId></Error>
+  |-> Error performing GET https://hycom-tsis-gom-reanalysis.s3.us-west-2.amazonaws.com/data/2022/023_archv.2022_240_15_3z.nc in 179.947385ms - Server returned non-2xx status code: 500 Internal
+  |   Server Error: <?xml version="1.0" encoding="UTF-8"?>
+  |   <Error><Code>InternalError</Code><Message>We encountered an internal error. Please try again.</Message><RequestId>DCSX8W9A6X8QXTZK</RequestId><HostId>K5Xsvb/
+  |   h3uwfkxv4ycdQNkredQoie3ZgJKDKYBWWamXlGw4wKGQzcQM4ZsNIrkJL9fbpagUM9jc=</HostId></Error>
+  `-> Server returned non-2xx status code: 500 Internal Server Error: <?xml version="1.0" encoding="UTF-8"?>
+      <Error><Code>InternalError</Code><Message>We encountered an internal error. Please try again.</Message><RequestId>DCSX8W9A6X8QXTZK</RequestId><HostId>K5Xsvb/
+      h3uwfkxv4ycdQNkredQoie3ZgJKDKYBWWamXlGw4wKGQzcQM4ZsNIrkJL9fbpagUM9jc=</HostId></Error>
+

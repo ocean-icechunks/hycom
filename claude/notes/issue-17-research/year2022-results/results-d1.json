@@ -1,0 +1,102 @@
+{
+ "d": 1,
+ "skeleton_s": null,
+ "months": [
+  {
+   "month": "2022-01",
+   "refs": 2385264,
+   "s": 12.9
+  },
+  {
+   "month": "2022-02",
+   "refs": 2154432,
+   "s": 10.9
+  },
+  {
+   "month": "2022-03",
+   "refs": 2385264,
+   "s": 16.8
+  },
+  {
+   "month": "2022-04",
+   "refs": 2308320,
+   "s": 15.3
+  },
+  {
+   "month": "2022-05",
+   "refs": 2385264,
+   "s": 16.8
+  },
+  {
+   "month": "2022-06",
+   "refs": 2308320,
+   "s": 17.1
+  },
+  {
+   "month": "2022-07",
+   "refs": 2385264,
+   "s": 17.7
+  },
+  {
+   "month": "2022-08",
+   "refs": 2385264,
+   "s": 17.1
+  },
+  {
+   "month": "2022-09",
+   "refs": 2308320,
+   "s": 17.6
+  },
+  {
+   "month": "2022-10",
+   "refs": 2385264,
+   "s": 17.0
+  },
+  {
+   "month": "2022-11",
+   "refs": 2308320,
+   "s": 16.8
+  },
+  {
+   "month": "2022-12",
+   "refs": 2385264,
+   "s": 17.8
+  }
+ ],
+ "batches_s": 193.8,
+ "refs": 28084560,
+ "rss_after_build_gb": 6.04,
+ "repo_mb": 429.1,
+ "manifest_mb": 316.3,
+ "note": "reconstructed from the log after the first run's reads failed on an S3 500",
+ "open_s": 0.03,
+ "reads_s": {
+  "water_temp map, 1 depth, 1 hour": 0.5,
+  "salinity profile, 40 depths, 1 hour": 0.5,
+  "water_temp point, 1 depth, year": 17.2,
+  "water_temp 200x200 box in 1 tile, year": 15.9,
+  "water_temp 200x200 box over 4 tiles, year": 58.1,
+  "ssh point, year": 157.4
+ },
+ "reads_nan": {
+  "water_temp map, 1 depth, 1 hour": 945478,
+  "salinity profile, 40 depths, 1 hour": 26,
+  "water_temp point, 1 depth, year": 0,
+  "water_temp 200x200 box in 1 tile, year": 0,
+  "water_temp 200x200 box over 4 tiles, year": 0,
+  "ssh point, year": 0
+ },
+ "read_retries": [],
+ "value_check": true,
+ "cell_methods_3z_counts": {
+  "0": 8760
+ },
+ "cell_methods_2d_counts": {
+  "0": 8760
+ },
+ "experiment_counts": {
+  "23": 8760
+ },
+ "rss_after_reads_gb": 5.53,
+ "total_s": 251.1
+}

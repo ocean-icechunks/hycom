@@ -1,0 +1,20 @@
+16:33:07 scan reused from /tmp/claude-1000/-home-jovyan-hycom/e09b5f9c-6fe3-4066-94a9-2f9b42c8ae48/scratchpad/year2022-fix/scans.pkl
+16:33:33 d=1 2022-01 2,385,264 refs 13.4s rss 2.15 GB
+16:33:44 d=1 2022-02 2,154,432 refs 11.4s rss 2.24 GB
+16:34:02 d=1 2022-03 2,385,264 refs 17.3s rss 2.56 GB
+16:34:19 d=1 2022-04 2,308,320 refs 17.1s rss 2.63 GB
+16:34:36 d=1 2022-05 2,385,264 refs 17.5s rss 2.68 GB
+16:34:53 d=1 2022-06 2,308,320 refs 17.0s rss 2.68 GB
+16:35:11 d=1 2022-07 2,385,264 refs 17.3s rss 2.68 GB
+16:35:28 d=1 2022-08 2,385,264 refs 17.2s rss 2.69 GB
+16:35:45 d=1 2022-09 2,308,320 refs 16.8s rss 2.69 GB
+16:36:02 d=1 2022-10 2,385,264 refs 17.1s rss 2.69 GB
+16:36:18 d=1 2022-11 2,308,320 refs 16.7s rss 2.69 GB
+16:36:36 d=1 2022-12 2,385,264 refs 17.3s rss 2.69 GB
+16:36:36 d=1 read water_temp map, 1 depth, 1 hour: 0.5s
+16:36:37 d=1 read salinity profile, 40 depths, 1 hour: 0.5s
+16:36:54 d=1 read water_temp point, 1 depth, year: 17.5s
+16:37:11 d=1 read water_temp 200x200 box in 1 tile, year: 16.5s
+16:38:09 d=1 read water_temp 200x200 box over 4 tiles, year: 57.6s
+16:40:39 d=1 read ssh point, year: 149.7s
+16:40:40 d=1 done in 449.3s

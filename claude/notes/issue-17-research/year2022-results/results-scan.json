@@ -1,0 +1,21 @@
+{
+ "files": 17520,
+ "scan_s": 626.3,
+ "files_per_s": 28.0,
+ "errors": [],
+ "fingerprints": {
+  "9eacfbca62": 8760,
+  "936320f7b7": 8760
+ },
+ "cell_methods": {
+  "null": 17520
+ },
+ "coords_md5": [
+  [
+   "ee434938",
+   "8edb2d05",
+   "00def95c",
+   8760
+  ]
+ ]
+}

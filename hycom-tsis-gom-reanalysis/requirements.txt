@@ -1,0 +1,27 @@
+# Dependencies for the GOMb0.01 layout A build (ocean-icechunks/hycom#17): gom_virtual.py and the
+# smoke-test notebook. The scripts under audit/ and s3-review/ have their own requirements.txt.
+#
+#     pip install -r requirements.txt
+#
+# Lower bounds only, no lock file. The bounds are the versions the smoke-test notebook was last
+# run against, in a clean Python 3.13 venv on 2026-11-19. icechunk 2.x requires Python >= 3.12.
+
+icechunk>=2.3
+virtualizarr>=2.8      # ChunkManifest/ManifestArray and the Icechunk writer, incl. `region=` writes
+zarr>=3.4
+xarray>=2026.9         # reads a float _FillValue in Zarr v3 only in its base64 form (see gom_virtual.py)
+numpy>=2.3
+pandas>=2.2
+
+# Listing the source bucket, and the file reader h5py uses for each file's chunk index.
+obstore>=0.12
+obspec-utils>=0.9      # BlockStoreReader; VirtualiZarr's ObjectStoreRegistry for the HDFParser comparison
+h5py>=3.12             # parser (b): each file's own HDF5 chunk index
+
+scipy>=1.14            # topo/regional.{depth,mask}.nc are NetCDF-3
+netCDF4>=1.7           # the NetCDF export the CF check reads
+compliance-checker>=6.1
+
+# Running the notebook non-interactively
+nbconvert>=7.16
+ipykernel>=6.29
