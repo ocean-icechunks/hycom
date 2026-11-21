@@ -194,6 +194,11 @@ are left out of this table (HYCOM item 1). They are gaps only until the copy fin
 | 3z | 6 | 2011 day 148 00–05Z | no file; **HYCOM will regenerate** | 5 |
 | **2d** | **1** | **2004 day 153 19Z** (2004-06-01) | **chunked like layout B; found by the smoke-test scan**; not yet asked | 6 |
 
+**Update (Eli, 2026-11-21):** HYCOM is sorting out some corruption issues and resuming the transfer to AWS, and Eli
+takes them to mean all of these 3z hours will be filled in, the 41 below included. **`_CORRUPTED` files are never to
+be used** (the key pattern already drops them). Wait until HYCOM says everything is uploaded, then re-audit; this
+table is then rebuilt from that audit.
+
 That is 41 3z hours and 1 2d hour, of 204,096. The five regenerated 2002 3z hours (item 2) are no longer gaps: HYCOM
 confirmed the new files on 2026-11-19. The 41 3z hours are all to be filled later as commits, when HYCOM's regenerated
 files reach S3 (gap filling, #22). The 2d gap is the only one in the 2d record, and its 3z file is
@@ -207,6 +212,25 @@ The 653 hours where 026 and 027 overlap (2024-04-01 19Z → 04-28 23Z): **HYCOM 
 
 *Until 2026-11-19 the scope was one group, `hourly`, for 010/023/026 only, with 027/028 out (#15). HYCOM's answers
 replaced that; what is decided now is below. The 2022 scratch store still uses `hourly`.*
+
+**What is in each product** (HYCOM, 2026-11-19; checked on the S3 files):
+
+| | **GOMb0.01** | **GOMe0.01** |
+|---|---|---|
+| Experiments | 010, 023, 026, 027 | 028 |
+| Hours | 2001-01-16 00Z → 2024-09-01 18Z | 2024-09-01 19Z → present (still running; files keep arriving on S3) |
+| Boundary conditions | GOFS 3.1 | ESPC-D-V02 |
+| Bathymetry / mask | `topo/` on the bucket (026 and 027 match it exactly) | changed near the open boundaries: 1,611 fewer sea points; not on the bucket (item 12) |
+| 2d wind variables | 10 m winds `wnd_ewd`, `wnd_nwd` | wind stress `surface_e_stress`, `surface_n_stress`; no 10 m winds, and HYCOM won't add them |
+| Chunk layout | **A** for 010/023/026 (2d whole maps; 3z {1, 10, 385, 526}); **B** for 027 (2d {1, 769, 1051}; 3z {1, 7, 308, 421}) | B throughout |
+
+**Why Eli is waiting to hear whether HYCOM will reprocess 027.** 027 is part of GOMb0.01 by product (same
+boundary conditions, same bathymetry, same variables), but its files are chunked like GOMe0.01's. Files with the two
+layouts cannot share a Zarr chunk grid (see "What blocks GOMb0.01 as one array" below), so as the files are now,
+027 cannot go into the same arrays as 2001–March 2024. If HYCOM rewrites the April–August 2024 (027) files in layout A
+(item 13; a rechunk only, about 7,344 files / 9.8 TB), GOMb0.01 is one continuous array with no groups. If they won't,
+the fallbacks are in the options table below, and the main one is a second group for 027. Eli does not want per-run
+groups, so the store design waits on HYCOM's answer.
 
 What HYCOM's answers (2026-11-19) changed:
 

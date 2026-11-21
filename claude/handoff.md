@@ -24,8 +24,14 @@ Side questions stay out. Don't confuse it with ocean-icechunks/hycom#22 (gap fil
 **Read first:** [notes/plan-issue-17.md](notes/plan-issue-17.md) — "HYCOM's answers", "For the HYCOM team" (status of
 items 1–13), "Scope" (decisions), "Still open". Gap filling: [notes/gapfill-22.md](notes/gapfill-22.md).
 
-**Decided (Eli, 2026-11-19):** two stores, **GOMb0.01** (experiments 010/023/026/027, to 2024-09-01 18Z) and
-**GOMe0.01** (028 only, still running). **027 belongs to GOMb0.01**, though it shares GOMe0.01's chunk layout (B).
+**Decided (Eli, 2026-11-19): two stores, one per HYCOM product.**
+- **GOMb0.01** = experiments 010, 023, 026, 027; 2001-01-16 → 2024-09-01 18Z; GOFS 3.1 boundaries; `topo/` bathymetry;
+  10 m winds. Layout A for 010/023/026, **layout B for 027**.
+- **GOMe0.01** = 028 only; 2024-09-01 19Z → present, still running; ESPC-D-V02 boundaries; bathymetry changed near the
+  boundaries (not on the bucket, item 12); wind stress instead of 10 m winds. Layout B throughout.
+- **Why Eli waits on 027:** it belongs to GOMb0.01 but is chunked like GOMe0.01, and the two layouts cannot share a
+  Zarr chunk grid. If HYCOM rewrites 027 in layout A, GOMb0.01 is one array. If not, it needs a second group, which
+  Eli does not want. Full table and options: the plan's "Scope".
 
 **Not decided (Eli, 2026-11-21): how 027 gets into GOMb0.01.** Her latest pitch to the team is to redo the
 April–August 2024 (027) files in layout A, so GOMb0.01 is one array (HYCOM item 13); nobody has agreed yet. The
@@ -33,7 +39,8 @@ April–August 2024 (027) files in layout A, so GOMb0.01 is one array (HYCOM ite
 HYCOM says 027 is authoritative for the 653 overlap hours. Options table: the plan's "Scope".
 
 **Next step on the files (Eli, 2026-11-21): wait until HYCOM says everything is up on S3, then run another audit.**
-HYCOM said the gaps are from the transfer to AWS stopping; it is resuming. The audit sets the real gaps table.
+HYCOM is sorting out corruption issues and resuming the transfer; Eli takes them to mean the 3z gaps (the 41 bad
+hours included) will be filled. **`_CORRUPTED` files are never used.** The new audit sets the real gaps table.
 
 **When HYCOM replies:** update the item status table in the plan (it does not record which of items 6–8, 12, 13 went
 in Eli's email; ask her), then PR the branch.
