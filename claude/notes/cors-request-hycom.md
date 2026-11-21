@@ -98,9 +98,9 @@ S3 does allow one `*` wildcard inside an origin, unlike GCS.
 > **Done (2026-11-21).** Eli reported the HYCOM team set CORS on both buckets. Checked from the hub: both
 > `?cors` policies allow `*` origins, GET/HEAD, all headers, and expose `Content-Range`. On the GOFS file below the
 > preflight returned 200 with `Access-Control-Allow-Headers: range`, and the ranged GET 206 with
-> `Access-Control-Allow-Origin: *`. Eli saw the viewer draw with the extension off (2026-11-21). Caveat removed in PR #26 (merged) and re-mirrored, 2026-11-21. It was
-> comes out of `README.md`, `hycom-gofs-3pt1-reanalysis/README.md` (line ~27 and ~257), `test-repo-README.md` (~75)
-> and `publish_viewer.py` (docstring ~21–32), and the docs are re-mirrored.
+> `Access-Control-Allow-Origin: *`. Eli saw the viewer draw with the extension off (2026-11-21). The caveat was removed from both READMEs,
+> `test-repo-README.md` and the `publish_viewer.py` docstring in PR #26 (merged 2026-11-21), and the READMEs were
+> re-mirrored the same day.
 
 ```sh
 U="https://hycom-gofs-3pt1-reanalysis.s3.us-west-2.amazonaws.com/2010/hycom_GLBv0.08_536_2010061512_t000.nc"
