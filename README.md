@@ -17,13 +17,6 @@ The stores are **virtual**: each holds only Zarr metadata and byte-range referen
 
 ## View it in a browser
 
-> ### ⚠️ The data will not draw unless you disable CORS
->
-> The data arrays are read from the provider's bucket, and the GOFS 3.1 reanalysis bucket on
-> AWS has no CORS configuration (checked 2026-09-19), so **your browser** will refuse to hand
-> those bytes to the page. To look at the data anyway, you can install a CORS-disabling browser extension (search your
-> browser's extension store for "CORS unblock" or "Allow CORS"). This affects browsers only; loading data via code works normally.
-
 | Dataset | Viewer |
 |---|---|
 | GOFS 3.1 Global Ocean Reanalysis | [Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0) |
