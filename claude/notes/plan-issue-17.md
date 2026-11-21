@@ -165,7 +165,7 @@ comes. To Michael McDonald: item 1 and the 028 layout question.
 13. **Reprocessing 027 to layout A** (Eli asks, 2026-11-19). Would HYCOM rechunk the 027 files to the layout of
    010/023/026 (2d {1, 1537, 2101}; 3z {1, 10, 385, 526})? That is a rechunk with `nccopy -c` or `h5repack`, no change to
    values or post-processing: 7,344 files, about 9.8 TB. Without it, GOMb0.01 needs a second group for 027, because the
-   two tilings cannot share one Zarr chunk grid (see [Scope](#scope)). If HYCOM would rather not, the two groups stay.
+   two tilings cannot share one Zarr chunk grid (see [Scope](#scope)). If HYCOM would rather not, the other options in Scope apply.
 
 ## For the team (FYI)
 
@@ -201,7 +201,7 @@ fine. So far only the 32-file transition sample and all of 2022 have been scanne
 more files like 2004_153_19. This table is updated from each build's skip list. The store README will carry it.
 
 The 653 hours where 026 and 027 overlap (2024-04-01 19Z → 04-28 23Z): **HYCOM says 027 is authoritative**
-(2026-11-19). In `v1` they come from 026; `v2` adds them from 027 as well (see [Scope](#scope)).
+(2026-11-19). Where they come from depends on how 027 is handled, still open (see [Scope](#scope)).
 
 ## Scope
 
@@ -220,24 +220,17 @@ What HYCOM's answers (2026-11-19) changed:
 
 **Decided (Eli, 2026-11-19): two Icechunk stores, GOMb0.01 and GOMe0.01.**
 
-**Decided (Eli, 2026-11-19, later the same day): GOMb0.01 has two groups for now**, one for layout A (010/023/026) and
-one for 027 (layout B), because nothing else gets the whole product in without HYCOM acting. Eli would rather have no
-per-run groups, so she will ask HYCOM what they want to do about reprocessing 027 (HYCOM item 13). If 027 is rechunked
-to layout A, it moves into the main group and the 027 group goes.
+**Not decided (Eli, 2026-11-21): how 027 gets into GOMb0.01.** 027 is part of GOMb0.01 (it uses GOFS 3.1 boundary
+conditions and ends 2024-09-01 18Z, where 028 begins), but it is chunked like GOMe0.01 (layout B). Eli's latest
+pitch to the team is **to redo the April–August 2024 files (027) in layout A**, option (a) below; nobody has agreed to
+do it yet. Eli would rather have no per-run groups.
 
-**Names (Eli, 2026-11-19): the stores are GOMb0.01 and GOMe0.01; the groups in GOMb0.01 are `026` and `027`.** Note that
-the `026` group also holds 010 and 023, since it is all of layout A. Eli's concern: after a reprocessing of 027, the
-group names may not fit. **An idea of hers for then (an option, not decided):** a group like `best` holding the whole
-product, and a `026` group holding only the superseded 026 overlap hours.
+*History: on 2026-11-19 (Prompt 37) Eli worked from two groups, `026` and `027`, with tags `v1` (`026` to 2024-04-28
+23Z) and `v2` (adds `027`), while she asked HYCOM about 027 (item 13). On 2026-11-21 she said this is still not
+decided, so the groups, their names and the v1/v2 releases are option (e), not the plan.* Her idea if 027 is
+redone, also an option: a group like `best` with the whole product, and a `026` group of the superseded overlap hours.
 
-**Releases (Eli, 2026-11-19):**
-- **`v1`**: the `026` group only (010, 023, 026), **2001-01-16 00Z → 2024-04-28 23Z**, 204,096 hours, the current scope
-  and the current `END` in `gom_virtual.py`. So the 653 overlap hours are in `026` (the agent had recommended ending at
-  04-01 18Z; Eli chose 04-28).
-- **`v2`**: adds the `027` group, 2024-04-01 19Z → 09-01 18Z (3,672 hours). From `v2` on, the overlap hours are in both
-  groups, and the README must say that **027 is authoritative for them** (HYCOM, 2026-11-19).
-
-The analysis below explains why groups are needed, and the options it lists for 027.
+The analysis below explains why 027 cannot simply join the layout A arrays, and the options for it.
 
 **What blocks GOMb0.01 as one array: only 027's chunk layout.** Checked on 2026-11-19 on the S3 files:
 - 027 has the same grid, depths and variables as 010/023/026 (including `wnd_ewd`/`wnd_nwd`), and land holds 2**100 as
@@ -261,11 +254,12 @@ Ways to unblock it (agent's list for Eli; none decided):
 | **(b) 027 copied into the store as native Icechunk chunks** on layout A's grid, beside the virtual chunks | Us | One array, no action by HYCOM | About 9.8 TB on Source Cooperative, **uncompressed**, because a Zarr array has one codec pipeline and the virtual chunks are raw bytes. No longer a purely virtual store. The copy is ours to keep in sync if HYCOM ever changes 027 |
 | (c) GOMb0.01 ends 2024-04-01 18Z for now, 027 added later by (a) or (b) | Us | Follows HYCOM on authority; build can start now; adding hours later is the #22 fill path | Leaves out the product's last five months until then |
 | (d) keep 026 for the overlap, end 2024-04-28 23Z | — | No change | Against HYCOM's authority |
-| **(e) two groups: layout A and 027. Chosen for now (Eli, 2026-11-19)** | A second group holding 027 on layout B's grid | Us | The whole product, fully virtual, built now | Readers join two groups for 2024. Revisited after HYCOM answers item 13 |
+| (e) two groups: layout A (`026`) and `027`. Eli's working assumption on 2026-11-19; not decided (2026-11-21) | A second group holding 027 on layout B's grid | Us | The whole product, fully virtual, built now | Readers join two groups for 2024. Revisited after HYCOM answers item 13 |
 
-With (e) as decided, the `026` group keeps the current scope, 204,096 hours to 2024-04-28 23Z, so the skeleton and
-`END` in `gom_virtual.py` do not change. The 027 group is 3,672 hours (2024-04-01 19Z → 09-01 18Z), on layout
-B's grid. The 2022 scratch store is unaffected in every case.
+**Eli's pitch to the team (2026-11-21): (a), redo the April–August 2024 files.** Under (a) GOMb0.01 is one group ending
+2024-09-01 18Z, with 027 for the overlap. Under (e) the layout A group keeps the current `END` (2024-04-28 23Z, 204,096
+hours) and a 027 group adds 3,672 hours (2024-04-01 19Z → 09-01 18Z) on layout B's grid. `END` in `gom_virtual.py`
+is still 2024-04-28 23Z. The 2022 scratch store is unaffected in every case.
 
 **GOMe0.01 (028) has no layout blocker**: all of it is layout B, one grid. What it needs before a build:
 - **its own `mask` and `bathy`.** 028 has 1,611 fewer sea points than `topo/`, and `topo/` holds only GOMb0.01's. The
@@ -358,7 +352,7 @@ Either way, a month's references go into pre-allocated numpy arrays (`paths`, `o
 
 ## Store layout
 
-Each GOMb0.01 group (`026`, and `027` from `v2`; see [Scope](#scope)) has these arrays. The 2022 scratch store
+GOMb0.01's layout A arrays (one group or more, still open; see [Scope](#scope)) are these. The 2022 scratch store
 uses one group, `hourly`. The names are the source's.
 
 | Name | Dims | Kind | Notes |
@@ -533,8 +527,8 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 ## Still open
 
-- **GOMb0.01 groups and releases (decided, Eli 2026-11-19):** `v1` = group `026` to 2024-04-28 23Z; `v2` adds group
-  `027`. Revisit after HYCOM answers item 13 (reprocessing 027).
+- **How 027 gets into GOMb0.01 (not decided, Eli 2026-11-21):** Eli pitched redoing the April–August 2024 files in
+  layout A (option (a), HYCOM item 13); two groups (e) is the fallback. This also settles group names, releases and `END`.
 - **GOMe0.01:** its bathymetry and mask from HYCOM (item 12), and when to start it.
 - Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.

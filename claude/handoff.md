@@ -23,18 +23,19 @@ Side questions stay out. Don't confuse it with ocean-icechunks/hycom#22 (gap fil
 **Read first:** [notes/plan-issue-17.md](notes/plan-issue-17.md) — "HYCOM's answers", "For the HYCOM team" (status of
 items 1–13), "Scope" (decisions), "Still open". Gap filling: [notes/gapfill-22.md](notes/gapfill-22.md).
 
-**Decided (Eli, 2026-11-19):**
-- Two stores: **GOMb0.01** (experiments 010/023/026/027, to 2024-09-01 18Z) and **GOMe0.01** (028, still running).
-- GOMb0.01 groups **`026`** (all of layout A: 010/023/026) and **`027`** (layout B). Tag **`v1`** = `026` to
-  2024-04-28 23Z (the current `END`); **`v2`** adds `027`, and its README says 027 is authoritative for the 653
-  overlap hours. Groups are a workaround Eli dislikes; she asked HYCOM about rechunking 027 to layout A (item 13).
-  Her idea for afterwards, an option only: a `best` group plus a `026` group of the superseded hours.
+**Decided (Eli, 2026-11-19):** two stores, **GOMb0.01** (experiments 010/023/026/027, to 2024-09-01 18Z) and
+**GOMe0.01** (028 only, still running). **027 belongs to GOMb0.01**, though it shares GOMe0.01's chunk layout (B).
+
+**Not decided (Eli, 2026-11-21): how 027 gets into GOMb0.01.** Her latest pitch to the team is to redo the
+April–August 2024 (027) files in layout A, so GOMb0.01 is one array (HYCOM item 13); nobody has agreed yet. The
+`026`/`027` groups with tags `v1`/`v2` were her working assumption on 2026-11-19, now only the fallback option (e).
+HYCOM says 027 is authoritative for the 653 overlap hours. Options table: the plan's "Scope".
 
 **When HYCOM replies:** update the item status table in the plan (it does not record which of items 6–8, 12, 13 went
 in Eli's email; ask her), then PR the branch.
 
 **What Eli decides when she is back (open):**
-- 027: two groups as decided, or rechunked by HYCOM (item 13). See the options table in "Scope".
+- 027: redone in layout A (her pitch), or two groups, or another option in the plan's "Scope". Settles group names, releases and `END`.
 - Production 3z chunking d for GOMb0.01 (d = 1 was chosen for the test store only), and d for GOMe0.01's 7-depth chunks.
 - Production prefixes on Source Cooperative for the two stores.
 - Gap filling: where reviewed fingerprints live; whether a replacement needs sign-off.
@@ -57,7 +58,7 @@ layout A only. #21's fix is confirmed for d = 1 over one year; still untested at
 - **`Latitude`/`Longitude` come from a 2d file.** The 3z longitude drifts from 2021 on (HYCOM item 8).
 - **`2004/010_archv.2004_153_19_2d.nc` is chunked like layout B**, so it is skipped (a 2d gap).
 - **A float `_FillValue` on a ManifestArray must be in xarray's base64 form**, or the store won't open (xarray 2026.9).
-- **No Zarr chunk grid fits both layouts** (tile widths 526 vs 421, 421 prime) — that is why 027 needs its own group.
+- **No Zarr chunk grid fits both layouts** (tile widths 526 vs 421, 421 prime) — that is why 027 as it is cannot join the layout A arrays.
   The product change (027 → 028) does not change the chunking; 028 has 1,611 fewer sea points than `topo/`.
 - **The skeleton does not scale to the full record** (0.84 GB per year at d = 1). Production must create the empty
   arrays without manifests. Also check the final manifest size after snapshot expiry.
