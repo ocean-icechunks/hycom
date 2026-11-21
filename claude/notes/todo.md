@@ -1,47 +1,40 @@
-# To do — written 2026-09-19 as Eli signed off
+# To do — written 2026-09-19 as Eli signed off; re-checked 2026-11-21
 
-Everything here is unfinished by choice, not broken. All repos are on `main`, clean, pushed;
-no PRs are open. Items span several repos because the session did; each says where it lives.
-Cross items off here as they are done.
+Everything here is unfinished by choice, not broken. Items span several repos; each says where it lives.
+Cross items off here as they are done. **GOM (GOMb0.01/GOMe0.01) work is not tracked here**: it is in the
+handoff and [plan-issue-17.md](plan-issue-17.md).
 
 ## Waiting on Eli (nobody else can do these)
 
-- [ ] **Send the CORS request for the HYCOM bucket** to help@hycom.org. Draft, S3 policy and
+- [ ] **Send the CORS request for the GOFS 3.1 bucket** to help@hycom.org. Draft, S3 policy and
       the curl checks to run afterwards: [cors-request-hycom.md](cors-request-hycom.md). Check
       the sentence about egress being covered by AWS's open-data sponsorship first — it was not
-      verified for this bucket. Until the bucket has a policy, the HYCOM viewer draws data only
-      with a CORS-disabling extension.
+      verified for this bucket. Until the bucket has a policy, the GOFS 3.1 viewer draws data only
+      with a CORS-disabling extension. (The GOM bucket already sends CORS headers.)
 - [ ] **Authorize the GitHub CLI for the `noaa-nwfsc` org** so `cefi-icechunks` can be reached:
       `gh auth refresh -h github.com`, approve the org in the browser. Then its README gets the
       "icechunk 1.x will not work" note (it uses `http_storage` twice), and its deprecated
       `{prefix: None}` virtual-chunk authorization could move to `HttpAccess`.
-- [ ] **Commit or discard the working-copy README in `~/globcolour-Icechunks`.** Its
-      `http_storage` code exists only there, uncommitted, so it could not get the note.
-- [ ] **Watch <https://github.com/ocean-icechunks/noaa_oisst/issues/2>** (filed for Alex
-      Kerney): `daily/time` stored as 16,452 one-value chunks, and `monthly` metadata copied
-      from `daily` with `valid_max` not rescaled. It also tells him a README and viewer now sit
-      beside his store. If he fixes the store, `~/icechunks/noaa-oisst/README.md` needs its
-      caveats and its 7 s open time revisited, then re-mirroring.
+- [ ] **Commit or discard the working copy in `~/globcolour-Icechunks`.** Still uncommitted on
+      2026-11-21: `README.md` and `copernicus-icechunk-sc.ipynb` modified, plus an untracked
+      `copernicus-icechunk-sc-parallel.ipynb`. Its `http_storage` code exists only there, so it could not get the note.
 - [ ] Decide on two offers not taken up: the **NOAA disclaimer** section at the bottom of this
       repo's root README, and a **self-refresh check** in published viewers (compare
       `build-info.json`, reload once) so a republish does not need a hard reload.
 
 ## Could be picked up by a session
 
-- [ ] **GOMb0.01 (second HYCOM dataset):** waits on the file team putting one year on S3; then
-      the 3z chunking decision and performance tests. See
-      [gomb0pt01-audit-2026-09.md](gomb0pt01-audit-2026-09.md). Another dataset after that: none chosen. Same order as the first: plan → local smoke
-      test → scratch test under `ocean-icechunks/test-repo/hycom/` with its viewer and README →
-      production → READMEs in the standard format → mirror from merged `main`. Add the store to
-      `DATASETS` in `publish_viewer.py`; lift the generic parts of `hycom_virtual.py` (header
-      parser, scan, `check_scan`) to the repo root once it is clear what is shared.
-- [ ] **A Learn pass on the `virtual-icechunk` skill**, now in
-      ocean-icechunks/ocean-icechunks-skills (`~/ocean-icechunks-skills`; moved from
-      nmfs-opensci/agent-skills on 2026-11-13). The input is written:
-      `docs/design/inbound-from-hycom-2026-09.md` there. Two places where the
-      skill is wrong (`to_icechunk(encoding=…)` does not exist in VirtualiZarr 2.7.3; `chunks={}`
-      breaks down at millions of chunks) and several new patterns. That repo wants an issue, a
-      branch and a PR.
+- [ ] **`~/icechunks/noaa-oisst/README.md`: revisit after ocean-icechunks/noaa_oisst#2 was fixed.** Alex Kerney
+      closed the issue as completed on 2026-10-09 (time rechunked, `monthly` metadata fixed). The README's
+      caveats and its 7 s open time were written against the old store, so they need re-measuring, then re-mirroring.
+- [ ] **Issue #9 (this repo): a performance section for GOFS 3.1** — map, regional subset, point time series, with
+      time, bytes downloaded and what optimal chunking would give. Open since 2026-09-25, not started.
+- [ ] **A Learn pass on the `virtual-icechunk` skill** with the September input,
+      `docs/design/inbound-from-hycom-2026-09.md` in ocean-icechunks/ocean-icechunks-skills
+      (`~/ocean-icechunks-skills`). ocean-icechunks-skills#20 (the GOMb0.01 lessons) was closed on 2026-11-19;
+      whether the September items went in with it was not checked. Two places the skill was wrong
+      (`to_icechunk(encoding=…)` does not exist in VirtualiZarr 2.7.3; `chunks={}` breaks down at millions of chunks).
+      That repo wants an issue, a branch and a PR.
 - [ ] **gridlook: take the default dataset from the first catalog entry** instead of the
       hard-coded OGS store (`DEFAULT_DATASET` in `HashGlobeView.vue`). It would retire the
       default-hash workaround in both `publish_viewer.py` copies. No issue filed; noted in
@@ -52,12 +45,11 @@ Cross items off here as they are done.
       with a `bytes(endian=big)` codec. Details in [smoke-test-findings.md](smoke-test-findings.md).
 - [ ] **`~/icechunks`: a committed `mirror_docs.py`.** The README mirrors there were refreshed
       by hand twice with throwaway scripts; only the READMEs were compared, not the other
-      mirrored files. Its handoff has the detail. `git pull` also fails in that checkout
-      ("Cannot rebase onto multiple branches") — use `git fetch && git merge --ff-only origin/main`.
-- [ ] `~/pace-icechunks` is 2 commits behind origin with one uncommitted file of Eli's; a
-      fast-forward is safe. Its mirrored README on Source Cooperative is current.
+      mirrored files. Its handoff has the detail.
+- [ ] `~/pace-icechunks` is 2 commits behind origin with an untracked `untitled.txt` (2026-11-21); a
+      fast-forward is safe.
 
-## Settled today, for the record
+## Settled, for the record
 
 Rich Signell's Medium post: Eli confirmed the title and year (2024) used in both READMEs.
 `tau`/`experiment` stay auxiliary coordinates. One viewer per root. Store READMEs use the

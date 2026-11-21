@@ -34,7 +34,7 @@ is either an option or an open decision for Eli, not a plan, unless it says "dec
 | Rewrite the layout B files in layout A? | Not answered directly. On the winds HYCOM said that regenerating files "would be quite time-consuming" | No rewrite should be assumed. Asking again is an option for Eli |
 | Add 10 m winds to 028 (#16)? | **No.** The 10 m winds were a post-processing step BOEM asked for, because BOEM paid for the reanalysis. HYCOM decided it was not needed when it carried on the project itself. Regenerating would be quite time-consuming | GOMe0.01 has wind stress and no 10 m winds, so its variables differ from GOMb0.01's. #16 is answered |
 | Item 1: when will the rest of 2001–2020 be on S3? | For Michael McDonald (the copy to AWS is his) | Still open, with Michael McDonald |
-| Item 2: are the five regenerated 2002 3z files right? | **Yes.** Michael found corrupted files during the transfer. HYCOM moved them to `_CORRUPTED` and recreated them, and the files without `_CORRUPTED` in the name should be fine | The five hours can go into the store. They are no longer held back (code still to change: `gom_virtual.py` line 60) |
+| Item 2: are the five regenerated 2002 3z files right? | **Yes.** Michael found corrupted files during the transfer. HYCOM moved them to `_CORRUPTED` and recreated them, and the files without `_CORRUPTED` in the name should be fine | The five hours can go into the store. They are no longer held back (code still to change: `HELD_BACK` in `gom_virtual.py`) |
 | Items 3–5: the 17 `_CORRUPTED` hours, 18 empty 3z files and 6 missing 3z files | **Will be regenerated.** Michael sent HYCOM the list. HYCOM must get them back from storage and post-process them like the others. "Might take a while", because the Navy archive server is in maintenance this week | All 41 hours are gaps at first build, filled later as commits (#22) |
 | Item 10: 9 truncated 028 copies, and missing 028 3z hours | **Will be redone**, "same thing as the other ones but these should be easier to get to" | For GOMe0.01; gaps until they arrive |
 | 026/027 overlap: which run is authoritative? | **027.** "We made a lot of changes starting 2024" | The layout A store currently takes the 653 overlap hours from 026. That now goes against HYCOM's own choice. See [Scope](#scope) |
@@ -201,15 +201,14 @@ fine. So far only the 32-file transition sample and all of 2022 have been scanne
 more files like 2004_153_19. This table is updated from each build's skip list. The store README will carry it.
 
 The 653 hours where 026 and 027 overlap (2024-04-01 19Z → 04-28 23Z): **HYCOM says 027 is authoritative**
-(2026-11-19). The current scope takes them from 026; see [Scope](#scope) for the options.
+(2026-11-19). In `v1` they come from 026; `v2` adds them from 027 as well (see [Scope](#scope)).
 
 ## Scope
 
-Experiments 010, 023 and 026, all chunk layout A, **2001-01-16 00Z → 2024-04-28 23Z, 204,096 hourly
-time steps**. One group, `hourly`, holds all 11 variables and the two static fields. The overlap
-hours come from 026, because 027 is layout B. 027/028 are out of scope (#15).
+*Until 2026-11-19 the scope was one group, `hourly`, for 010/023/026 only, with 027/028 out (#15). HYCOM's answers
+replaced that; what is decided now is below. The 2022 scratch store still uses `hourly`.*
 
-**HYCOM's answers (2026-11-19) put this scope in question. Not decided; Eli decides, with #15.**
+What HYCOM's answers (2026-11-19) changed:
 
 - **The product is GOMb0.01, 2001-01 → 2024-08.** In the files that is 010, 023, 026 and 027, ending 2024-09-01 18Z.
   This store covers it only up to 2024-04-28 23Z, so it leaves out 027's last 3,019 hours (2024-04-29 00Z →
@@ -324,7 +323,8 @@ gave byte-identical offsets for all 31 sample files both accepted. h5py was 2–
 against 7.7 s, 16 processes). The scan runs in **processes, not threads**. h5py serialises every call on one
 global lock, and the reads happen inside those calls, so threads give no parallelism: 8 files took as
 long on 8 threads as 4 files serially. `HDFParser` uses h5py too. On this 4-core hub, h5py reaches about
-17 files/s at 16 processes: about 17 min for 2022, about 5 h for all 296,585 files. A bigger VM should do better; step 3 measures it.
+17 files/s at 16 processes on the 32-file sample. *The full 2022 scan later measured 28 files/s, about 3 h for all
+296,585 files; see [2022 test year](#2022-test-year-results-for-choosing-the-3z-chunking-2026-11-19).*
 
 - **(a) `HDFParser` + manifest split.** `open_virtual_dataset` per file. For 3z, each 10-depth
   reference is split into `10/d` references at `offset + k·d·810,040`, length `d·810,040`. The
@@ -358,7 +358,8 @@ Either way, a month's references go into pre-allocated numpy arrays (`paths`, `o
 
 ## Store layout
 
-Group `hourly`. The names are the source's.
+Each GOMb0.01 group (`026`, and `027` from `v2`; see [Scope](#scope)) has these arrays. The 2022 scratch store
+uses one group, `hourly`. The names are the source's.
 
 | Name | Dims | Kind | Notes |
 |---|---|---|---|
@@ -369,7 +370,7 @@ Group `hourly`. The names are the source's.
 | `experiment` | MT | loaded, one chunk | new: int16 10/23/26, 0 where no file (as GOFS 3.1 has; R12) |
 | `cell_methods_2d`, `cell_methods_3z` | MT | loaded, one chunk | new: int8 flags from each file's `cell_methods` (R22) |
 | `ssh`, `mixed_layer_thickness`, `u_barotropic_velocity`, `v_barotropic_velocity`, `wnd_ewd`, `wnd_nwd` | MT, Latitude, Longitude | virtual | chunk {1, 1537, 2101} |
-| `u`, `v`, `w_velocity`, `water_temp`, `salinity` | MT, Depth, Latitude, Longitude | virtual | chunk {1, d, 385, 526}, d chosen on 2022 |
+| `u`, `v`, `w_velocity`, `water_temp`, `salinity` | MT, Depth, Latitude, Longitude | virtual | chunk {1, d, 385, 526} (layout A; the `027` group uses {1, d, 308, 421}). d = 1 in the test store; **d for production not yet chosen** |
 | `bathy`, `mask` | Latitude, Longitude | loaded | from `topo/`, the names as there (R13, R14) |
 
 ## Time: the encoding of `MT`
@@ -493,7 +494,9 @@ so it checks an export.
 
 ## Predicted read performance (to be measured on 2022)
 
-These use the audit's same-region raw rates. Icechunk's read path may take up to twice as long.
+*Superseded by the measurements in [2022 test year](#2022-test-year-results-for-choosing-the-3z-chunking-2026-11-19)
+(reads came in at or below these). Kept as the prediction they were checked against.* These use the audit's
+same-region raw rates. Icechunk's read path may take up to twice as long.
 
 | One variable | 2d, whole map | 3z, d = 10 | 3z, d = 2 | 3z, d = 1 |
 |---|---|---|---|---|
@@ -508,6 +511,8 @@ These use the audit's same-region raw rates. Icechunk's read path may take up to
   variable has 3.3 billion chunks.
 
 ## Steps 2–4 (what follows the review)
+
+*All three are done (2026-11-19); results are in the sections below. Kept as the plan they followed.*
 
 1. **Smoke test** (`hycom-tsis-gom-reanalysis/gom-smoke-test-local.ipynb`, local temporary repository; done, see below): 6
    hours of 2022, one of them deliberately left out to make a gap. All 11 variables plus `bathy`/`mask`,
@@ -535,33 +540,13 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
   [FYI items](#for-the-team-fyi).
-- **Filling gaps after the fact (Eli, 2026-11-19: a key part of the plan to work out with the team). Tested in #22
-  (PR #25, merged 2026-11-19; detail in [gapfill-22.md](gapfill-22.md)).** HYCOM will regenerate the 41 missing 3z
-  hours, and the rest of 2001–2020 is still to be copied, so later files go into the store as new commits, in two
-  steps. **The gate** (`check_fill_candidates`) checks every file against the store first. It checks the name, that the
-  hour is on the axis and is a gap (or an explicit replacement), the experiment against the neighbouring hours, the size,
-  layout and `_FillValue`, the file's `MT`, `cell_methods`, an attribute fingerprint against reviewed values, the
-  coordinates (plus the known 3z Longitude variant), and that land is 2**100. A rejected file is listed with its reasons,
-  and nothing is written. **The fill** (`fill_hours`) region-writes references for just those hours, rewrites
-  `experiment` and `cell_methods_*`, and commits with the files and the reason. References are pinned to the time the
-  gate first saw the files, so if HYCOM rewrites a file later, reads fail until it is gated and filled again as a
-  replacement. **Measured:** every filled hour was identical to h5py, no other hour changed, the earlier snapshot still
-  showed the gaps, and the ncra stand-in was flagged `MT_mean`. A bulk fill of 1,248 hours took 109 s to gate and 24 s to
-  write, with a 2.1 GB peak. It also ran on Source Cooperative (`test-repo/hycom/gapfill-test/`). Eli checked the gaps in
-  the viewer (`gapfill-test/with-gaps`). The README's gaps table is generated from the store (`store_gaps`). **Still
-  open:** where the reviewed fingerprints live, whether a replacement needs a person's sign-off, fills on the
-  manifest-less production skeleton, and why commits to Source Cooperative are slow (17–70 s). The design points it
-  settled, kept for reference:
-  - A region write of just the affected hours (`region={"MT": slice(i, i + 1)}`) for the virtual variables. The
-    loaded per-hour variables `experiment`, `cell_methods_2d` and `cell_methods_3z` must be rewritten for those hours
-    too, because they say "no source file" there now.
-  - A file that *replaces* one already referenced (for example the 5 held-back 2002 files, if HYCOM confirms the new
-    copies) needs its references rewritten. The checksum pin (`last_updated_at`) then has to be the time of that new
-    commit, or reads fail on the changed object.
-  - Every fill re-runs the scan checks on the new files (layout, `_FillValue`, `cell_methods`, coordinates) and
-    updates the known-gaps table and the README.
-  - A test before production: on a local copy of the 2022 store, remove some hours, then fill them back with
-    commits, and check values, flags and the snapshot history.
+- **Filling gaps after the fact: tested and merged in #22** (PR #25, 2026-11-19). Design, measurements and what is
+  untested are in [gapfill-22.md](gapfill-22.md). **Still open:** where the reviewed fingerprints live, whether a
+  replacement needs a person's sign-off, fills on the manifest-less production skeleton, and why commits to Source
+  Cooperative are slow (17–70 s).
+- **Production 3z chunking (d) for GOMb0.01**: d = 1 was chosen for the test store only. GOMe0.01 (7-depth chunks) needs its own d.
+- **Production prefixes** on Source Cooperative for the two stores (the plan's `…/hycom/hycom-tsis-gom-reanalysis`
+  predates the GOMb0.01/GOMe0.01 names).
 
 ## Smoke test result (2026-11-19)
 

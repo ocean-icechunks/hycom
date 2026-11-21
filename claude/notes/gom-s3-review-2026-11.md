@@ -14,6 +14,10 @@ report does not: how the work is tracked, and what the next session must not get
 
 ## Status (2026-11-18)
 
+> **Moved on (2026-11-21).** The S3 review is merged (PR #18). D1 (#15) and D2 (#16) were answered by HYCOM on
+> 2026-11-19, and the layout A plan below grew into [plan-issue-17.md](plan-issue-17.md) — read that for the
+> current state. Kept here: the VirtualiZarr variable-chunk check, the hub environment, and the build-machine estimate.
+
 - The bucket exists, is public, and is in us-west-2. The copy, by the file team, was still in
   progress: 2001–2020 stalled partway through each year about 2026-11-16 18:16 UTC, and only 2025 was
   still moving. Re-list before trusting any count in the report.
@@ -70,6 +74,9 @@ So D1 is still: rewrite 027 + 028, keep the second layout in its own store or gr
 reader concatenates in xarray, and that can be replaced by one array if #288 lands).
 
 ## Next: layout A store, starting with a 2022 test (Eli's answers, 2026-11-18)
+
+*Done: smoke test, 2022 test year and scratch store all finished 2026-11-19 (plan-issue-17.md). The group `hourly`
+below is the test store's; GOMb0.01 production uses groups `026` and `027` (Eli, 2026-11-19).*
 
 Eli's plan: **build layout A** (010, 023, 026; 2001-01-16 → 2024-04-28) now. If the team decides to
 rewrite 027/028 to layout A (#15), append those hours to it later.

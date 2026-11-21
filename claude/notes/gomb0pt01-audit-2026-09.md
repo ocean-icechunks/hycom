@@ -6,6 +6,10 @@ wrong.
 
 ## Status (2026-09-26)
 
+> **Superseded (2026-11-21).** The year arrived on S3 and the work moved on: the S3 review is in
+> [gom-s3-review-2026-11.md](gom-s3-review-2026-11.md) and the store plan in [plan-issue-17.md](plan-issue-17.md).
+> #11 is closed. The status and test plan below are history; the decisions and "facts easy to get wrong" still hold.
+
 **The follow-up task is issue #11:** the store design and 3z chunking, with the options table, test
 plan and build facts. #8 is closed; the `audit-gom-issue-8` branch is deleted.
 
