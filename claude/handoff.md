@@ -54,9 +54,10 @@ in Eli's email; ask her), then PR the branch.
   Not acted on: it would reopen her September choice of whole maps.
 - When to start GOMe0.01 (HYCOM will add its bathymetry/mask files, item 12).
 
-**GitHub issues out of date (suggested 2026-11-21, not done; Eli's call):** #15 and #16 were answered by HYCOM on
-2026-11-19 and could get a summary comment and be closed. #17's title and "Decided" still say group `hourly` and
-layout A only. #21's fix is confirmed for d = 1 over one year; still untested at d = 2/10 and over multiple years.
+**Issue review (2026-11-21, suggestions only; nothing closed or edited):** close #16 (answered: no 10 m winds for 028)
+and #7 (Eli's scratch notes, superseded; carry its data.hycom.org links into a GOMe0.01 issue when that starts). Keep
+#15 (027 handling is still open; retitle to 027), #17 (build not done; title/body still say `hourly`, layout A only),
+#21 (multi-year memory not yet measured), #20 (the script for the re-audit), #9 (not started).
 
 **Small code change waiting:** `HELD_BACK` in `gom_virtual.py` still excludes the five 2002 3z files HYCOM confirmed good.
 
