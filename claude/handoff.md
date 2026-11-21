@@ -18,8 +18,7 @@ task list. Eli's cross-repo to-do list (not GOM) is [notes/todo.md](notes/todo.m
 
 A 2026 IOOS hackathon project:
 [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22).
-**Post each GOM prompt Eli writes to that issue, verbatim, before acting on it** (Prompts 1–51 are there).
-Side questions stay out. Don't confuse it with ocean-icechunks/hycom#22 (gap filling).
+Prompts 1–56 are posted there; **Eli stopped the prompt posting on 2026-11-21**, so don't post new ones. Don't confuse it with ocean-icechunks/hycom#22 (gap filling).
 
 **Read first:** [notes/plan-issue-17.md](notes/plan-issue-17.md) — "HYCOM's answers", "For the HYCOM team" (status of
 items 1–13), "Scope" (decisions), "Still open". Gap filling: [notes/gapfill-22.md](notes/gapfill-22.md).
@@ -140,8 +139,8 @@ Facts most likely to be got wrong:
 
 - **Issues:** #9 (GOFS 3.1 performance section, not started); #20 (a file-audit script from the audit skill, plus what the team
   wants in it; not started).
-- **PR #13 (Renovate)** is open: Renovate's onboarding PR (adds only `renovate.json`; merging turns on automatic
-  dependency-update PRs for the four `requirements.txt` files). Eli is looking at it, don't touch it.
+- **PR #13 (Renovate) closed unmerged** (Eli, 2026-11-21): automatic dependency PRs aren't wanted; the
+  `requirements.txt` files are updated by hand after a clean-venv test.
 - **`icechunk-readme` skill** — Eli will do it later: [eeholmes/claude-config#4](https://github.com/eeholmes/claude-config/issues/4).
 - **Offered, not taken up:** a NOAA disclaimer section for the root README; a viewer self-refresh check against
   `build-info.json`.
