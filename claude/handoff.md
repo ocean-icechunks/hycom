@@ -28,7 +28,7 @@ items 1–13), "Scope" (decisions), "Still open". Gap filling: [notes/gapfill-22
 - **GOMb0.01** = experiments 010, 023, 026, 027; 2001-01-16 → 2024-09-01 18Z; GOFS 3.1 boundaries; `topo/` bathymetry;
   10 m winds. Layout A for 010/023/026, **layout B for 027**.
 - **GOMe0.01** = 028 only; 2024-09-01 19Z → present, still running; ESPC-D-V02 boundaries; bathymetry changed near the
-  boundaries (not on the bucket, item 12); wind stress instead of 10 m winds. Layout B throughout.
+  boundaries (HYCOM will add its topo files, item 12); wind stress instead of 10 m winds. Layout B throughout.
 - **Why Eli waits on 027:** it belongs to GOMb0.01 but is chunked like GOMe0.01, and the two layouts cannot share a
   Zarr chunk grid. If HYCOM rewrites 027 in layout A, GOMb0.01 is one array. If not, it needs a second group, which
   Eli does not want. Full table and options: the plan's "Scope".
@@ -52,7 +52,7 @@ in Eli's email; ask her), then PR the branch.
 - Gap filling: where reviewed fingerprints live; whether a replacement needs sign-off.
 - The 2d latitude-band option (53-row bands, ~15 s vs 157 s for a one-year point series; virtual, no rewrite).
   Not acted on: it would reopen her September choice of whole maps.
-- When to start GOMe0.01 (needs its own bathymetry/mask from HYCOM, item 12).
+- When to start GOMe0.01 (HYCOM will add its bathymetry/mask files, item 12).
 
 **GitHub issues out of date (suggested 2026-11-21, not done; Eli's call):** #15 and #16 were answered by HYCOM on
 2026-11-19 and could get a summary comment and be closed. #17's title and "Decided" still say group `hourly` and

@@ -92,7 +92,7 @@ Items 1–8 affect this store (layout A). Items 9–10 are about layout B. **Sta
 | 10. 028 truncated copies and missing 3z hours | **Answered: HYCOM will redo them**, sooner than items 3–5. The `_COPY` file was not raised |
 | New: 026/027 overlap | **Answered: 027 is authoritative** |
 | New: will 028's future output keep layout B? | **Redirected to Michael McDonald** |
-| 12. GOMe0.01 bathymetry and mask | **Not yet asked** (new 2026-11-19) |
+| 12. GOMe0.01 bathymetry and mask | **Answered: HYCOM will add the GOMe0.01 topo files** to the bucket (Eli, 2026-11-21) |
 | 13. Reprocess 027 to layout A | **Not yet asked**; Eli will ask (2026-11-19) |
 
 **2026-11-19: Eli emailed the HYCOM team the two chunk layouts** (shapes, sizes, why they can't share one array). HYCOM
@@ -162,6 +162,7 @@ comes. To Michael McDonald: item 1 and the 028 layout question.
    of 88°W and mostly near the eastern and southern open boundaries, which fits the bathymetry change HYCOM described.
    Could HYCOM (or Michael) put GOMe0.01's `regional.depth` and `regional.mask` (and `regional.grid`, if it changed) on the
    bucket, for example under `topo/` with a name that says which product each set is for?
+   **HYCOM (reported by Eli, 2026-11-21): they will add the GOMe0.01 files.** Check where and under what names when they appear.
 13. **Reprocessing 027 to layout A** (Eli asks, 2026-11-19). Would HYCOM rechunk the 027 files to the layout of
    010/023/026 (2d {1, 1537, 2101}; 3z {1, 10, 385, 526})? That is a rechunk with `nccopy -c` or `h5repack`, no change to
    values or post-processing: 7,344 files, about 9.8 TB. Without it, GOMb0.01 needs a second group for 027, because the
@@ -220,7 +221,7 @@ replaced that; what is decided now is below. The 2022 scratch store still uses `
 | Experiments | 010, 023, 026, 027 | 028 |
 | Hours | 2001-01-16 00Z → 2024-09-01 18Z | 2024-09-01 19Z → present (still running; files keep arriving on S3) |
 | Boundary conditions | GOFS 3.1 | ESPC-D-V02 |
-| Bathymetry / mask | `topo/` on the bucket (026 and 027 match it exactly) | changed near the open boundaries: 1,611 fewer sea points; not on the bucket (item 12) |
+| Bathymetry / mask | `topo/` on the bucket (026 and 027 match it exactly) | changed near the open boundaries: 1,611 fewer sea points; HYCOM will add its topo files to the bucket (item 12) |
 | 2d wind variables | 10 m winds `wnd_ewd`, `wnd_nwd` | wind stress `surface_e_stress`, `surface_n_stress`; no 10 m winds, and HYCOM won't add them |
 | Chunk layout | **A** for 010/023/026 (2d whole maps; 3z {1, 10, 385, 526}); **B** for 027 (2d {1, 769, 1051}; 3z {1, 7, 308, 421}) | B throughout |
 
@@ -553,7 +554,7 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 
 - **How 027 gets into GOMb0.01 (not decided, Eli 2026-11-21):** Eli pitched redoing the April–August 2024 files in
   layout A (option (a), HYCOM item 13); two groups (e) is the fallback. This also settles group names, releases and `END`.
-- **GOMe0.01:** its bathymetry and mask from HYCOM (item 12), and when to start it.
+- **GOMe0.01:** when to start it. HYCOM will add its bathymetry and mask files (item 12, 2026-11-21).
 - **Next step (Eli, 2026-11-21): wait until HYCOM says everything is on S3, then run another audit** (re-list the bucket
   and redo the S3 review's checks), and rebuild the known-gaps table from it. HYCOM said the gaps come from the stopped
   transfer, which is resuming. The audit will show which gaps remain; for any that do, the #22 fill path applies.
