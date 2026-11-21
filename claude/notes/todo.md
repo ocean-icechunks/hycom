@@ -6,9 +6,8 @@ handoff and [plan-issue-17.md](plan-issue-17.md).
 
 ## Waiting on Eli (nobody else can do these)
 
-- [ ] **CORS is set on both HYCOM buckets** (HYCOM team; curl checks pass, 2026-11-21). Check the GOFS 3.1 viewer
-      with the CORS extension **off**. Then a session removes the "needs a CORS extension" text from both READMEs,
-      `test-repo-README.md` and `publish_viewer.py`, and re-mirrors (see [cors-request-hycom.md](cors-request-hycom.md)).
+- [x] **CORS is set on both HYCOM buckets** and the GOFS 3.1 viewer draws with the extension off (2026-11-21).
+      Caveat removal: PR #26. **Left:** merge it, then re-mirror the three READMEs.
 - [ ] **Authorize the GitHub CLI for the `noaa-nwfsc` org** so `cefi-icechunks` can be reached:
       `gh auth refresh -h github.com`, approve the org in the browser. Then its README gets the
       "icechunk 1.x will not work" note (it uses `http_storage` twice), and its deprecated
