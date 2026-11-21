@@ -12,7 +12,9 @@ task list. Eli's cross-repo to-do list (not GOM) is [notes/todo.md](notes/todo.m
   filling (#22) are merged. Phase 2 (HYCOM's answers and Eli's decisions) is on branch **`gom-phase2-hycom-answers`**,
   pushed, no PR yet. Eli emailed HYCOM the chunk layouts on 2026-11-19; nothing can be built for production until
   the decisions under "What Eli decides when she is back" are made.
-- Nothing is running. No store was written after 2026-11-19.
+- **What restarts the GOM work:** HYCOM saying everything is uploaded to S3 (then Eli re-audits; #20 is the script
+  for it), and HYCOM's answer on rewriting 027 in layout A (item 13).
+- Nothing is running. No store was written after 2026-11-19. The branch has `main` merged in as of 2026-11-21.
 
 ## GOMb0.01 / GOMe0.01 (#17)
 
