@@ -16,20 +16,16 @@ Same script as in https://github.com/ocean-icechunks/icechunks, with this repo's
 are set explicitly here; there is no directory index, so links name
 ``index.html``; and the edge 403s the default ``Python-urllib`` User-Agent.
 
-The GOFS 3.1 reanalysis will NOT draw in an ordinary browser
-------------------------------------------------------------
+CORS on the source buckets
+--------------------------
 A virtual store needs CORS on two hosts: the repository (Source Cooperative,
-wide open) and wherever the referenced bytes live. The HYCOM bucket,
-``hycom-gofs-3pt1-reanalysis.s3.us-west-2.amazonaws.com``, answers a ranged GET
-with 206 and **no** ``Access-Control-Allow-Origin``, and its OPTIONS preflight
-is 403 (checked 2026-09-18). So the viewer loads, lists the variables and draws
-the coordinates -- real chunks in the Icechunk repository -- and the browser
-then blocks every science array.
-
-Nothing published here can waive that: CORS is enforced by the browser. The
-fix is a CORS policy on the bucket, which only its owner (COAPS /
-help@hycom.org) can apply; no rebuild would be needed. Until then the viewer
-works for anyone running a CORS-disabling browser extension.
+wide open) and wherever the referenced bytes live. Until November 2026 the GOFS
+3.1 bucket, ``hycom-gofs-3pt1-reanalysis.s3.us-west-2.amazonaws.com``, sent no
+``Access-Control-Allow-Origin``, so the viewer drew the coordinates and the
+browser blocked every science array. The HYCOM team has since added a CORS
+policy to it and to ``hycom-tsis-gom-reanalysis`` (curl checks passed and the
+viewer drew with no extension, 2026-11-21). A new source host needs the same
+check: CORS is enforced by the browser, and nothing published here can waive it.
 
 Also expect it to be slow: every frame is one whole 29 MB level, fetched from
 us-west-2, because the source files are unchunked.
