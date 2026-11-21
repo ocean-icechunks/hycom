@@ -24,13 +24,6 @@ references. The 306 TB of arrays stay in the 63,341 NetCDF files they came from,
 
 ## View it in a browser
 
-> ### ⚠️ The data will not draw unless you disable CORS
->
-> The data arrays are read from the provider's bucket, and the GOFS 3.1 reanalysis bucket on
-> AWS has no CORS configuration (checked 2026-09-19), so **your browser** will refuse to hand
-> those bytes to the page. To look at the data anyway, you can install a CORS-disabling browser extension (search your
-> browser's extension store for "CORS unblock" or "Allow CORS"). This affects browsers only; loading data via code works normally.
-
 Choose variables from the dropdown in the viewer dashboard:
 
 [Open it in the viewer](https://data.source.coop/ocean-icechunks/hycom/viewer/index.html#icechunk+https://data.source.coop/ocean-icechunks/hycom/hycom-gofs-3pt1-reanalysis::varname=water_temp::dimIndices_time=0::dimIndices_depth=0)
@@ -253,9 +246,10 @@ compliance checker](https://github.com/ioos/compliance-checker) passes `cf:1.11`
   read through the references is **identical to netCDF4-C's own byte-range reader** for 30
   files — the first and last, both sides of all nine experiment boundaries, the longest gap,
   and eight at random — across all nine variables. The executed notebook shows the run.
-- **Not verified:** reads from outside us-west-2; rendering of this full store in a browser
-  (only the 16-step test copy was looked at, and only with a CORS extension); and the
-  references for the ~63,000 files not sampled, which rest on the header checks above.
+- The full store draws in an ordinary browser, with no CORS extension, since HYCOM added a CORS
+  policy to the source bucket (checked 2026-11-21).
+- **Not verified:** reads from outside us-west-2; and the references for the ~63,000 files not
+  sampled, which rest on the header checks above.
 
 The archive is static (1994–2015, no updates), so there is no update pipeline.
 

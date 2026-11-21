@@ -72,9 +72,8 @@ rewritten or deleted at any time.
 
 Change `varname=` to `salinity`, `surf_el`, `water_u` or `water_v` for the other fields.
 
-**You need a CORS-disabling browser extension.** The HYCOM bucket sends no
-`Access-Control-Allow-Origin` header, so an ordinary browser draws the axes and blocks the
-data. Each frame is one whole 29 MB level fetched from us-west-2, so it is slow.
+Both hosts send CORS headers (the HYCOM bucket since November 2026), so no browser extension is
+needed. Each frame is one whole 29 MB level fetched from us-west-2, so it is slow.
 
 ### How to open it
 
