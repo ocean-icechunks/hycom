@@ -32,6 +32,9 @@ April–August 2024 (027) files in layout A, so GOMb0.01 is one array (HYCOM ite
 `026`/`027` groups with tags `v1`/`v2` were her working assumption on 2026-11-19, now only the fallback option (e).
 HYCOM says 027 is authoritative for the 653 overlap hours. Options table: the plan's "Scope".
 
+**Next step on the files (Eli, 2026-11-21): wait until HYCOM says everything is up on S3, then run another audit.**
+HYCOM said the gaps are from the transfer to AWS stopping; it is resuming. The audit sets the real gaps table.
+
 **When HYCOM replies:** update the item status table in the plan (it does not record which of items 6–8, 12, 13 went
 in Eli's email; ask her), then PR the branch.
 

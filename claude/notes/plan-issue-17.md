@@ -33,7 +33,7 @@ is either an option or an open decision for Eli, not a plan, unless it says "dec
 | Is 028 still running, with layout B? | 028 is still running. Files will be added to AWS as it goes, but that and the Icechunk questions are for Michael McDonald | GOMe0.01 grows. Its store needs appends. Whether its future output keeps layout B is not answered; ask Michael McDonald |
 | Rewrite the layout B files in layout A? | Not answered directly. On the winds HYCOM said that regenerating files "would be quite time-consuming" | No rewrite should be assumed. Asking again is an option for Eli |
 | Add 10 m winds to 028 (#16)? | **No.** The 10 m winds were a post-processing step BOEM asked for, because BOEM paid for the reanalysis. HYCOM decided it was not needed when it carried on the project itself. Regenerating would be quite time-consuming | GOMe0.01 has wind stress and no 10 m winds, so its variables differ from GOMb0.01's. #16 is answered |
-| Item 1: when will the rest of 2001–2020 be on S3? | For Michael McDonald (the copy to AWS is his) | Still open, with Michael McDonald |
+| Item 1: when will the rest of 2001–2020 be on S3? | For Michael McDonald (the copy to AWS is his). **Later (Eli, 2026-11-21):** the transfer to AWS had to stop; it is resuming, and the missing files will be filled in | **Eli waits until HYCOM says everything is up, then runs another audit**, before any production build |
 | Item 2: are the five regenerated 2002 3z files right? | **Yes.** Michael found corrupted files during the transfer. HYCOM moved them to `_CORRUPTED` and recreated them, and the files without `_CORRUPTED` in the name should be fine | The five hours can go into the store. They are no longer held back (code still to change: `HELD_BACK` in `gom_virtual.py`) |
 | Items 3–5: the 17 `_CORRUPTED` hours, 18 empty 3z files and 6 missing 3z files | **Will be regenerated.** Michael sent HYCOM the list. HYCOM must get them back from storage and post-process them like the others. "Might take a while", because the Navy archive server is in maintenance this week | All 41 hours are gaps at first build, filled later as commits (#22) |
 | Item 10: 9 truncated 028 copies, and missing 028 3z hours | **Will be redone**, "same thing as the other ones but these should be easier to get to" | For GOMe0.01; gaps until they arrive |
@@ -82,7 +82,7 @@ Items 1–8 affect this store (layout A). Items 9–10 are about layout B. **Sta
 
 | Item | Status |
 |---|---|
-| 1. Rest of 2001–2020 on S3 | **Redirected to Michael McDonald** (he runs the copy to AWS) |
+| 1. Rest of 2001–2020 on S3 | **Transfer resuming** (Eli, 2026-11-21). Wait for HYCOM's "everything is up", then re-audit |
 | 2. Five regenerated 2002 3z files | **Answered: the new files are correct.** Bring them into the store |
 | 3–5. 41 missing 3z hours | **Answered: HYCOM will regenerate them**, not soon (Navy archive maintenance this week). Gaps until then |
 | 6. 2004-06-01 19Z 2d chunked like layout B | **Not yet asked** |
@@ -530,6 +530,9 @@ h5py 3.16.0. The build gets its own `requirements.txt`, tested in a clean venv.
 - **How 027 gets into GOMb0.01 (not decided, Eli 2026-11-21):** Eli pitched redoing the April–August 2024 files in
   layout A (option (a), HYCOM item 13); two groups (e) is the fallback. This also settles group names, releases and `END`.
 - **GOMe0.01:** its bathymetry and mask from HYCOM (item 12), and when to start it.
+- **Next step (Eli, 2026-11-21): wait until HYCOM says everything is on S3, then run another audit** (re-list the bucket
+  and redo the S3 review's checks), and rebuild the known-gaps table from it. HYCOM said the gaps come from the stopped
+  transfer, which is resuming. The audit will show which gaps remain; for any that do, the #22 fill path applies.
 - Waiting on HYCOM: the regenerated 3z hours (items 3–5, 10). Not yet asked: items 6–8. For Michael McDonald: item 1
   and whether 028 keeps layout B. See [For the HYCOM team](#for-the-hycom-team). None of it blocks the 2022 work.
 - **For the team review:** the shape of the R22 flag (names, flag values, one flag per kind), and the two
