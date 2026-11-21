@@ -1,0 +1,94 @@
+{
+ "url": "https://data.source.coop/ocean-icechunks/test-repo/hycom/gapfill-test/store",
+ "open_s": 0.42,
+ "commits": [
+  [
+   "HFKKRHNVKWN7BN918040",
+   "gap fill (new hour): 6 files, 6 hours, 2022-01-03 00:00:00 to 2022-01-03 05:00:00",
+   "new hour"
+  ],
+  [
+   "9DZ7V0APW2EDS0CZ6HR0",
+   "gap fill (new hour): 2 files, 1 hours, 2022-01-02 18:00:00 to 2022-01-02 18:00:00",
+   "new hour"
+  ],
+  [
+   "WQS2GC1TS1AB0HAJ7PAG",
+   "gap fill (new hour): 1 files, 1 hours, 2022-01-02 12:00:00 to 2022-01-02 12:00:00",
+   "new hour"
+  ],
+  [
+   "CHMDMYYYSMMGC4CA83YG",
+   "gap fill (new hour): 1 files, 1 hours, 2022-01-02 06:00:00 to 2022-01-02 06:00:00",
+   "new hour"
+  ],
+  [
+   "BY38DWRX51E44JHKHRJG",
+   "references for 2022-01-01 to 2022-01-03, with 10 hours left out on purpose (#22)",
+   null
+  ],
+  [
+   "QFYDMWVPTE2CDET5Z7Q0",
+   "skeleton (gap-fill test, #22)",
+   null
+  ],
+  [
+   "1CECHNKREP0F1RSTCMT0",
+   "Repository initialized",
+   null
+  ]
+ ],
+ "values": {
+  "2022-01-02 06:00:00 3z": true,
+  "2022-01-02 12:00:00 2d": true,
+  "2022-01-02 18:00:00 2d": true,
+  "2022-01-02 18:00:00 3z": true,
+  "2022-01-03 00:00:00 3z": true,
+  "2022-01-03 01:00:00 3z": true,
+  "2022-01-03 02:00:00 3z": true,
+  "2022-01-03 03:00:00 3z": true,
+  "2022-01-03 04:00:00 3z": true,
+  "2022-01-03 05:00:00 3z": true
+ },
+ "old_snapshot_gap": {
+  "2022-01-02 06:00:00 3z": true,
+  "2022-01-02 12:00:00 2d": true,
+  "2022-01-02 18:00:00 2d": true,
+  "2022-01-02 18:00:00 3z": true,
+  "2022-01-03 00:00:00 3z": true,
+  "2022-01-03 01:00:00 3z": true,
+  "2022-01-03 02:00:00 3z": true,
+  "2022-01-03 03:00:00 3z": true,
+  "2022-01-03 04:00:00 3z": true,
+  "2022-01-03 05:00:00 3z": true
+ },
+ "flags_main": {
+  "experiment": {
+   "23": 72
+  },
+  "cell_methods_2d": {
+   "0": 72
+  },
+  "cell_methods_3z": {
+   "0": 72
+  }
+ },
+ "flags_old": {
+  "experiment": {
+   "0": 1,
+   "23": 71
+  },
+  "cell_methods_2d": {
+   "0": 70,
+   "2": 2
+  },
+  "cell_methods_3z": {
+   "0": 64,
+   "2": 8
+  }
+ },
+ "store_gaps_main": "| Kind | First hour | Last hour | Hours |\n|---|---|---|---|",
+ "store_gaps_old": "| Kind | First hour | Last hour | Hours |\n|---|---|---|---|\n| 2d | 2022-01-02 12Z | 2022-01-02 12Z | 1 |\n| 2d | 2022-01-02 18Z | 2022-01-02 18Z | 1 |\n| 3z | 2022-01-02 06Z | 2022-01-02 06Z | 1 |\n| 3z | 2022-01-02 18Z | 2022-01-02 18Z | 1 |\n| 3z | 2022-01-03 00Z | 2022-01-03 05Z | 6 |",
+ "masked_ssh_nan_at_land": 945478,
+ "rss_peak_gb": 0.37
+}
