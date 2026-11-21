@@ -5,8 +5,9 @@ task list. Eli's cross-repo to-do list (not GOM) is [notes/todo.md](notes/todo.m
 
 ## Where it stands (2026-11-21, Eli away about two weeks)
 
-- **GOFS 3.1 reanalysis: done and published** (tag `v1`, viewer, docs mirrored). Open only: the CORS request (Eli
-  sends) and a performance section (#9).
+- **GOFS 3.1 reanalysis: done and published** (tag `v1`, viewer, docs mirrored). **CORS is now set on both HYCOM
+  buckets** (2026-11-21, curl checks pass); the README caveat comes out once Eli sees the viewer work with the
+  extension off. Also open: a performance section (#9).
 - **GOMb0.01 / GOMe0.01: waiting on HYCOM.** Phase 1 (plan, smoke test, 2022 test year, scratch store) and gap
   filling (#22) are merged. Phase 2 (HYCOM's answers and Eli's decisions) is on branch **`gom-phase2-hycom-answers`**,
   pushed, no PR yet. Eli emailed HYCOM the chunk layouts on 2026-11-19; nothing can be built for production until
@@ -85,9 +86,10 @@ Notes, in reading order: [plan-issue-1.md](notes/plan-issue-1.md), [smoke-test-f
   compelling": **the model for future demo notebooks.** Pitfall: `xr.concat` on the lazy store (`chunks=None`) reads
   everything and OOM'd the hub; `.load()` each side of the dateline first.
 - README wording "a demonstration product **for** the HYCOM Consortium" is deliberate: Eli is not a member.
-- **CORS request to help@hycom.org is drafted, not sent** ([notes/cors-request-hycom.md](notes/cors-request-hycom.md)).
-  When the bucket gets a policy: run the curl checks there, have Eli look with the extension OFF, then remove the
-  "needs a CORS extension" text from both READMEs and `publish_viewer.py`, and re-mirror.
+- **CORS: set by the HYCOM team on both buckets; curl checks passed 2026-11-21**
+  ([notes/cors-request-hycom.md](notes/cors-request-hycom.md)). Next: Eli looks at the viewer with the extension OFF,
+  then remove the "needs a CORS extension" text from both READMEs, `test-repo-README.md` and `publish_viewer.py`, and
+  re-mirror.
 
 Facts most likely to be got wrong:
 - **Two header layouts, 40 bytes apart; file size, not experiment number, tells them apart.** Offsets come from each

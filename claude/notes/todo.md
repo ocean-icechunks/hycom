@@ -6,11 +6,9 @@ handoff and [plan-issue-17.md](plan-issue-17.md).
 
 ## Waiting on Eli (nobody else can do these)
 
-- [ ] **Send the CORS request for the GOFS 3.1 bucket** to help@hycom.org. Draft, S3 policy and
-      the curl checks to run afterwards: [cors-request-hycom.md](cors-request-hycom.md). Check
-      the sentence about egress being covered by AWS's open-data sponsorship first — it was not
-      verified for this bucket. Until the bucket has a policy, the GOFS 3.1 viewer draws data only
-      with a CORS-disabling extension. (The GOM bucket already sends CORS headers.)
+- [ ] **CORS is set on both HYCOM buckets** (HYCOM team; curl checks pass, 2026-11-21). Check the GOFS 3.1 viewer
+      with the CORS extension **off**. Then a session removes the "needs a CORS extension" text from both READMEs,
+      `test-repo-README.md` and `publish_viewer.py`, and re-mirrors (see [cors-request-hycom.md](cors-request-hycom.md)).
 - [ ] **Authorize the GitHub CLI for the `noaa-nwfsc` org** so `cefi-icechunks` can be reached:
       `gh auth refresh -h github.com`, approve the org in the browser. Then its README gets the
       "icechunk 1.x will not work" note (it uses `http_storage` twice), and its deprecated
