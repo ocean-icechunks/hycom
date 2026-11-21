@@ -7,7 +7,7 @@ report does not: how the work is tracked, and what the next session must not get
 
 - **Project issue: [ocean-icechunks/2026-ioos-hackathon#22](https://github.com/ocean-icechunks/2026-ioos-hackathon/issues/22)**
   ("Project: HYCOM GOM", with Michael McDonald). Eli asked (2026-11-18) that **every prompt
-  she writes in this work is posted to that issue** as a comment, quoted verbatim, numbered
+  she writes in this work is posted to that issue** (stopped by Eli on 2026-11-21, after Prompt 56) as a comment, quoted verbatim, numbered
   "Prompt N". Prompt 1 is there. The code and notes stay in this repo (ocean-icechunks/hycom).
 - Issue #11 in this repo (3z chunking and performance tests) is the store-design task this
   review feeds. It was waiting for "one year on S3". That condition is now met by 2021–2023.
