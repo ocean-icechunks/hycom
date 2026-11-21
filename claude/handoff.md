@@ -54,10 +54,9 @@ in Eli's email; ask her), then PR the branch.
   Not acted on: it would reopen her September choice of whole maps.
 - When to start GOMe0.01 (HYCOM will add its bathymetry/mask files, item 12).
 
-**Issue review (2026-11-21, suggestions only; nothing closed or edited):** close #16 (answered: no 10 m winds for 028)
-and #7 (Eli's scratch notes, superseded; carry its data.hycom.org links into a GOMe0.01 issue when that starts). Keep
-#15 (027 handling is still open; retitle to 027), #17 (build not done; title/body still say `hourly`, layout A only),
-#21 (multi-year memory not yet measured), #20 (the script for the re-audit), #9 (not started).
+**Issues (2026-11-21):** #16 and #7 closed with summary comments (Eli asked; #7's data.hycom.org links are in its
+closing comment, for a future GOMe0.01 issue). Suggested, not done: retitle #15 to the 027 question; update #17's
+title/body (still `hourly`, layout A only). Keep #21 (multi-year memory unmeasured), #20 (re-audit script), #9.
 
 **Small code change waiting:** `HELD_BACK` in `gom_virtual.py` still excludes the five 2002 3z files HYCOM confirmed good.
 
@@ -139,10 +138,10 @@ Facts most likely to be got wrong:
 
 ## Open threads (not GOM)
 
-- **Issues:** #9 (GOFS 3.1 performance section, not started); #7 (Eli's scratch notes on GOMe0.01 at data.hycom.org —
-  relevant again now that GOMe0.01 is a store); #20 (a file-audit script from the audit skill, plus what the team
+- **Issues:** #9 (GOFS 3.1 performance section, not started); #20 (a file-audit script from the audit skill, plus what the team
   wants in it; not started).
-- **PR #13 (Renovate)** is open; Eli is looking at it, don't touch it.
+- **PR #13 (Renovate)** is open: Renovate's onboarding PR (adds only `renovate.json`; merging turns on automatic
+  dependency-update PRs for the four `requirements.txt` files). Eli is looking at it, don't touch it.
 - **`icechunk-readme` skill** — Eli will do it later: [eeholmes/claude-config#4](https://github.com/eeholmes/claude-config/issues/4).
 - **Offered, not taken up:** a NOAA disclaimer section for the root README; a viewer self-refresh check against
   `build-info.json`.
